@@ -1,0 +1,4 @@
+# Files from the staging repo to not include
+dev/
+release-candidate/
+.integration-lab/
