@@ -42,7 +42,7 @@ If you want to fork this repo, there are some additional steps you will need to 
 
     1. Create parameter file where environment configuration is specified for your AIO deployment. For an example, see `environments/example.parameters.json`.
 
-
+    <br />
     | **Parameter** | **Value**                  |
     | ------------- | -------------------------- |
     | clusterName   | ***[Required]*** The Arc-enabled cluster resource in Azure.  |
