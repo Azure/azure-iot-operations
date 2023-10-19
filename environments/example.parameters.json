@@ -16,6 +16,26 @@
     },
     "opcuaDiscoveryEndpoint": {
       "value": "opc.tcp://<NOT_SET>:<NOT_SET>"
+    },
+    "dataProcessorSecrets": {
+      "value": {
+        "enabled": false,
+        "secretProviderClassName": "",
+        "servicePrincipalSecretRef": ""
+      }
+    },
+    "mqSecrets": {
+      "value": {
+        "enabled": false,
+        "secretProviderClassName": "",
+        "servicePrincipalSecretRef": ""
+      }
+    },
+    "opcUaBrokerSecrets": {
+      "value": {
+        "kind": "csi",
+        "csiServicePrincipalSecretRef": ""
+      }
     }
   }
 }
