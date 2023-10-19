@@ -41,8 +41,7 @@ If you want to fork this repo, there are some additional steps you will need to 
 4. Deploy Azure IoT Operations.
 
     1. Create parameter file where environment configuration is specified for your AIO deployment. For an example, see `environments/example.parameters.json`.
-
-    <br /><br />
+    <br />
 
     | **Parameter** | **Value**                  |
     | ------------- | -------------------------- |
