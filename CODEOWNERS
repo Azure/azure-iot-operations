@@ -1,8 +1,5 @@
 # global owners
-* @chgennar @nonsocode @juancooldude @reddydMSFT @rafarhat
-
-# owners of integration lab
-.integration-lab/ @tommo-ms @chgennar
+* @chgennar @juancooldude @reddydMSFT @rafarhat
 
 # owners of clean up tool
 tools/cleanup-cluster/ @zzcodework
