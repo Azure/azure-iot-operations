@@ -1,0 +1,40 @@
+name: GitOps Deployment of Azure IoT Operations
+run-name: Deploy to ${{ github.event.inputs.aioParamsPath }}
+on:
+  workflow_dispatch:
+    inputs:
+      clusterSubscription:
+        description: 'The subscription ID where the Arc-enabled cluster is.'
+        required: true
+        type: string
+      clusterResourceGroup:
+        description: 'The resource group where the Arc-enabled cluster is.'
+        required: true
+        type: string
+      aioParamsPath:
+        description: 'The path to the environment parameters file for the AIO deployment. (e.g., environments/example.parameters.json)'
+        required: true
+        type: string
+jobs:
+  Deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Checkout
+        uses: actions/checkout@v1
+
+      - name: Deploy AIO to Arc-enabled Cluster
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+            az deployment group create \
+              --resource-group ${{ github.event.inputs.clusterResourceGroup }} \
+              --subscription ${{ github.event.inputs.clusterSubscription }} \
+              --name aio-deployment-${{ github.run_number }} \
+              --template-file "$GITHUB_WORKSPACE/release/azure-iot-operations.json" \
+              --parameters "@${{ github.event.inputs.aioParamsPath }}" \
+              --verbose --no-prompt
