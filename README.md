@@ -61,7 +61,7 @@ If you want to fork this repo, there are some additional steps you will need to 
         | mqSecrets | *[Optional]*<sup>1</sup>| Add the name of the SecretProviderClass and k8s AKV SP secret that were created from the `setup-cluster.sh`. This should be something like `aio-default-spc` and `aio-akv-sp`, respectively. |
         | opcUaBrokerSecrets | *[Optional]*<sup>1</sup>| Add the name of the k8s AKV SP secret that was created from the `setup-cluster.sh`. This should be something like `aio-akv-sp`. This param is only necessary if you are using different values that the defaults specified in `setup|
         
-        > <sup>1</sup> This param is only necessary if you are using different values that the defaults specified in `setup
+        > <sup>1</sup> This param is only necessary if you are using different values than the defaults specified in `setup-cluster.sh`.
 
     2. On the forked repo, select **Actions** and select **I understand my workflows, go ahead and enable them.**
 
