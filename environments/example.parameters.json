@@ -19,22 +19,21 @@
     },
     "dataProcessorSecrets": {
       "value": {
-        "enabled": false,
-        "secretProviderClassName": "",
-        "servicePrincipalSecretRef": ""
+        "secretProviderClassName": "aio-default-spc",
+        "servicePrincipalSecretRef": "aio-akv-sp"
       }
     },
     "mqSecrets": {
       "value": {
-        "enabled": false,
-        "secretProviderClassName": "",
-        "servicePrincipalSecretRef": ""
+        "enabled": true,
+        "secretProviderClassName": "aio-default-spc",
+        "servicePrincipalSecretRef": "aio-akv-sp"
       }
     },
     "opcUaBrokerSecrets": {
       "value": {
         "kind": "csi",
-        "csiServicePrincipalSecretRef": ""
+        "csiServicePrincipalSecretRef": "aio-akv-sp"
       }
     }
   }

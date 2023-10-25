@@ -31,6 +31,7 @@ jobs:
         uses: azure/CLI@v1
         with:
           inlineScript: |
+            az cloud update --endpoint-resource-manager https://westcentralus.management.azure.com
             az deployment group create \
               --resource-group ${{ github.event.inputs.clusterResourceGroup }} \
               --subscription ${{ github.event.inputs.clusterSubscription }} \
