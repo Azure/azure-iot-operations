@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.22.6.54827",
-      "templateHash": "4469483521171015032"
+      "templateHash": "15061446158033430252"
     },
     "description": "This template deploys Azure IoT Operations."
   },
@@ -23,8 +23,7 @@
         "westus2",
         "westus3",
         "westeurope",
-        "northeurope",
-        "southeastasia"
+        "northeurope"
       ]
     },
     "location": {
@@ -37,8 +36,7 @@
         "westus2",
         "westus3",
         "westeurope",
-        "northeurope",
-        "southeastasia"
+        "northeurope"
       ]
     },
     "customLocationName": {
@@ -57,27 +55,39 @@
       "type": "string",
       "defaultValue": "[format('{0}-target', toLower(parameters('clusterName')))]"
     },
+    "dataProcessorInstanceName": {
+      "type": "string",
+      "defaultValue": "[format('{0}-processor', toLower(parameters('clusterName')))]"
+    },
+    "mqServiceType": {
+      "type": "string",
+      "defaultValue": "clusterIp",
+      "allowedValues": [
+        "clusterIp",
+        "loadBalancer",
+        "nodePort"
+      ]
+    },
     "dataProcessorSecrets": {
       "type": "object",
       "defaultValue": {
-        "enabled": false,
-        "secretProviderClassName": "",
-        "servicePrincipalSecretRef": ""
+        "secretProviderClassName": "aio-default-spc",
+        "servicePrincipalSecretRef": "aio-akv-sp"
       }
     },
     "mqSecrets": {
       "type": "object",
       "defaultValue": {
-        "enabled": false,
-        "secretProviderClassName": "",
-        "servicePrincipalSecretRef": ""
+        "enabled": true,
+        "secretProviderClassName": "aio-default-spc",
+        "servicePrincipalSecretRef": "aio-akv-sp"
       }
     },
     "opcUaBrokerSecrets": {
       "type": "object",
       "defaultValue": {
         "kind": "csi",
-        "csiServicePrincipalSecretRef": ""
+        "csiServicePrincipalSecretRef": "aio-akv-sp"
       }
     },
     "dataProcessorCardinality": {
@@ -118,13 +128,13 @@
     },
     "VERSIONS": {
       "adr": "0.12.0",
-      "opcUaBroker": "0.1.0-preview.2",
+      "opcUaBroker": "0.1.0-preview.3",
       "observability": "0.62.3",
-      "mq": "0.7.0-dev-10-17-23",
-      "akri": "0.1.0-preview-rc1",
+      "mq": "0.1.0-preview-rc2",
+      "akri": "0.1.0-preview-rc2",
       "aio": "0.45.1-buddy-20231018.2",
-      "layeredNetworking": "0.1.0-alpha.3",
-      "processor": "0.1.0-preview.10"
+      "layeredNetworking": "0.1.0-alpha.4",
+      "processor": "0.1.0-preview.13"
     },
     "TRAINS": {
       "mq": "dev",
@@ -265,7 +275,7 @@
                         "cpu": "10m"
                       },
                       "limits": {
-                        "memory": "512Mi",
+                        "memory": "300Mi",
                         "cpu": "100m"
                       }
                     },
@@ -344,7 +354,7 @@
               "repository": "alicesprings.azurecr.io/diagnostics-service",
               "tag": "[variables('VERSIONS').mq]"
             },
-            "enableSelfCheck": false,
+            "enableSelfCheck": true,
             "logLevel": "info",
             "logFormat": "text"
           }
@@ -362,6 +372,7 @@
             "name": "listener"
           },
           "spec": {
+            "serviceType": "[parameters('mqServiceType')]",
             "authenticationEnabled": true,
             "authorizationEnabled": false,
             "brokerRef": "broker",
@@ -433,7 +444,7 @@
             },
             "diagnostics": {
               "probeImage": "[format('alicesprings.azurecr.io/diagnostics-probe:{0}', variables('VERSIONS').mq)]",
-              "enableSelfCheck": false
+              "enableSelfCheck": true
             },
             "mode": "distributed",
             "memoryProfile": "medium",
@@ -780,7 +791,7 @@
     {
       "type": "Microsoft.IoTOperationsDataProcessor/instances",
       "apiVersion": "2023-10-04-preview",
-      "name": "[format('{0}-processor', toLower(parameters('clusterName')))]",
+      "name": "[parameters('dataProcessorInstanceName')]",
       "location": "[parameters('location')]",
       "extendedLocation": {
         "name": "[resourceId('Microsoft.ExtendedLocation/customLocations', parameters('customLocationName'))]",
@@ -855,7 +866,7 @@
     },
     "processorInstanceName": {
       "type": "string",
-      "value": "[format('{0}-processor', toLower(parameters('clusterName')))]"
+      "value": "[parameters('dataProcessorInstanceName')]"
     },
     "aioNamespace": {
       "type": "string",
