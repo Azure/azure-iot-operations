@@ -59,7 +59,7 @@ If you want to fork this repo, there are some additional steps you will need to 
         | location      | *[Optional]*  | `string` | If the resource group's location is not a supported AIO region, this parameter can be used to override the location of the AIO resources. |
         | dataProcessorSecrets | *[Optional]*<sup>1</sup>| <pre>{<br>  secretProviderClassName: string,<br>  servicePrincipalSecretRef: string<br>}</pre> |Add the name of the SecretProviderClass and k8s AKV SP secret that were created from the `setup-cluster.sh`. This should be something like `aio-default-spc` and `aio-akv-sp`, respectively. |
         | mqSecrets | *[Optional]*<sup>1</sup>| <pre>{<br>  secretProviderClassName: string,<br>  servicePrincipalSecretRef: string<br>}</pre>| Add the name of the SecretProviderClass and k8s AKV SP secret that were created from the `setup-cluster.sh`. This should be something like `aio-default-spc` and `aio-akv-sp`, respectively. |
-        | opcUaBrokerSecrets | *[Optional]*<sup>1</sup>| <pre>{<br>  kind: string,<br>  csiServicePrincipalSecretRef: string<br>}</pre> | Add the name of the k8s AKV SP secret that was created from the `setup-cluster.sh`. This should be something like `aio-akv-sp`. This param is only necessary if you are using different values that the defaults specified in `setup|
+        | opcUaBrokerSecrets | *[Optional]*<sup>1</sup>| <pre>{<br>  kind: string,<br>  csiServicePrincipalSecretRef: string<br>}</pre> | Add the name of the k8s AKV SP secret that was created from the `setup-cluster.sh`. This should be something like `aio-akv-sp` and kind should be `csi`.|
         
         > <sup>1</sup> This param is only necessary if you are using different values than the defaults specified in `setup-cluster.sh`.
 
