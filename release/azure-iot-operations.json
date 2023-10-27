@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.22.6.54827",
-      "templateHash": "4328250493092632673"
+      "templateHash": "2042820400516106600"
     },
     "description": "This template deploys Azure IoT Operations."
   },
@@ -182,10 +182,10 @@
     },
     "VERSIONS": {
       "adr": "0.12.0",
-      "opcUaBroker": "0.1.0-preview.4",
+      "opcUaBroker": "0.1.0-preview.5",
       "observability": "0.62.3",
-      "mq": "0.1.0-preview-rc2",
-      "akri": "0.1.0-preview-rc2",
+      "akri": "0.1.0-preview-rc3",
+      "mq": "0.1.0-preview-rc3",
       "aio": "0.45.1-buddy-20231018.2",
       "layeredNetworking": "0.1.0-alpha.4",
       "processor": "0.1.0-preview.13"
