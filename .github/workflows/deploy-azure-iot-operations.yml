@@ -32,10 +32,17 @@ jobs:
         with:
           inlineScript: |
             az cloud update --endpoint-resource-manager https://westcentralus.management.azure.com
+            templateFile="$GITHUB_WORKSPACE/dev/azure-iot-operations.bicep"
+            [[ ! -f "$templateFile" ]] && templateFile="$GITHUB_WORKSPACE/release/azure-iot-operations.json"
+            if [[ ! -f "$templateFile" ]]; then
+              echo "ERROR: Could not find the AIO template to deploy."
+              exit 1
+            fi
+            
             az deployment group create \
               --resource-group ${{ github.event.inputs.clusterResourceGroup }} \
               --subscription ${{ github.event.inputs.clusterSubscription }} \
               --name aio-deployment-${{ github.run_number }} \
-              --template-file "$GITHUB_WORKSPACE/release/azure-iot-operations.json" \
+              --template-file "$templateFile" \
               --parameters "@${{ github.event.inputs.aioParamsPath }}" \
               --verbose --no-prompt
