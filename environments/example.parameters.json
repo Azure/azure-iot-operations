@@ -16,25 +16,6 @@
     },
     "opcuaDiscoveryEndpoint": {
       "value": "opc.tcp://<NOT_SET>:<NOT_SET>"
-    },
-    "dataProcessorSecrets": {
-      "value": {
-        "secretProviderClassName": "aio-default-spc",
-        "servicePrincipalSecretRef": "aio-akv-sp"
-      }
-    },
-    "mqSecrets": {
-      "value": {
-        "enabled": true,
-        "secretProviderClassName": "aio-default-spc",
-        "servicePrincipalSecretRef": "aio-akv-sp"
-      }
-    },
-    "opcUaBrokerSecrets": {
-      "value": {
-        "kind": "csi",
-        "csiServicePrincipalSecretRef": "aio-akv-sp"
-      }
     }
   }
 }
