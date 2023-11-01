@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.22.6.54827",
-      "templateHash": "4899187055135562996"
+      "templateHash": "1806437414174233782"
     },
     "description": "This template deploys Azure IoT Operations."
   },
@@ -62,6 +62,10 @@
     "mqInstanceName": {
       "type": "string",
       "defaultValue": "mq-instance"
+    },
+    "mqFrontendServer": {
+      "type": "string",
+      "defaultValue": "mq-dmqtt-frontend"
     },
     "mqListenerName": {
       "type": "string",
@@ -186,8 +190,8 @@
       "observability": "0.62.3",
       "akri": "0.1.0-preview-rc3",
       "mq": "0.1.0-preview-rc3",
-      "aio": "0.1.0-preview-rc1",
-      "layeredNetworking": "0.1.0-alpha.4",
+      "aio": "0.1.0-preview-rc2",
+      "layeredNetworking": "0.1.0-alpha.5",
       "processor": "0.1.0-preview.14"
     },
     "TRAINS": {
@@ -208,11 +212,11 @@
           "apiVersion": "cert-manager.io/v1",
           "kind": "Issuer",
           "metadata": {
-            "name": "e4k-frontend-server"
+            "name": "[parameters('mqFrontendServer')]"
           },
           "spec": {
             "ca": {
-              "secretName": "aio-ca-key-pair-test-only"
+              "secretName": "[variables('AIO_TRUST_SECRET_NAME')]"
             }
           }
         }
@@ -699,7 +703,8 @@
         "targetResourceGroup": "[resourceGroup().id]"
       },
       "dependsOn": [
-        "[resourceId('Microsoft.ExtendedLocation/customLocations', parameters('customLocationName'))]"
+        "[resourceId('Microsoft.ExtendedLocation/customLocations', parameters('customLocationName'))]",
+        "[resourceId('Microsoft.ExtendedLocation/customLocations/resourceSyncRules', parameters('customLocationName'), format('{0}-mq-sync', parameters('customLocationName')))]"
       ]
     },
     {
@@ -717,7 +722,8 @@
         "targetResourceGroup": "[resourceGroup().id]"
       },
       "dependsOn": [
-        "[resourceId('Microsoft.ExtendedLocation/customLocations', parameters('customLocationName'))]"
+        "[resourceId('Microsoft.ExtendedLocation/customLocations', parameters('customLocationName'))]",
+        "[resourceId('Microsoft.ExtendedLocation/customLocations/resourceSyncRules', parameters('customLocationName'), format('{0}-aio-sync', parameters('customLocationName')))]"
       ]
     },
     {
@@ -735,7 +741,8 @@
         "targetResourceGroup": "[resourceGroup().id]"
       },
       "dependsOn": [
-        "[resourceId('Microsoft.ExtendedLocation/customLocations', parameters('customLocationName'))]"
+        "[resourceId('Microsoft.ExtendedLocation/customLocations', parameters('customLocationName'))]",
+        "[resourceId('Microsoft.ExtendedLocation/customLocations/resourceSyncRules', parameters('customLocationName'), format('{0}-dp-sync', parameters('customLocationName')))]"
       ]
     },
     {
@@ -749,7 +756,8 @@
       },
       "properties": {},
       "dependsOn": [
-        "[resourceId('Microsoft.ExtendedLocation/customLocations', parameters('customLocationName'))]"
+        "[resourceId('Microsoft.ExtendedLocation/customLocations', parameters('customLocationName'))]",
+        "[resourceId('Microsoft.ExtendedLocation/customLocations/resourceSyncRules', parameters('customLocationName'), format('{0}-dp-sync', parameters('customLocationName')))]"
       ]
     },
     {
@@ -764,6 +772,7 @@
       "properties": {},
       "dependsOn": [
         "[resourceId('Microsoft.ExtendedLocation/customLocations', parameters('customLocationName'))]",
+        "[resourceId('Microsoft.ExtendedLocation/customLocations/resourceSyncRules', parameters('customLocationName'), format('{0}-mq-sync', parameters('customLocationName')))]",
         "[resourceId('Microsoft.IoTOperationsOrchestrator/Targets', parameters('targetName'))]"
       ]
     },
@@ -855,7 +864,7 @@
         "tls": {
           "automatic": {
             "issuerRef": {
-              "name": "e4k-frontend-server",
+              "name": "[parameters('mqFrontendServer')]",
               "kind": "Issuer",
               "group": "cert-manager.io"
             }
@@ -937,7 +946,8 @@
         ]
       },
       "dependsOn": [
-        "[resourceId('Microsoft.ExtendedLocation/customLocations', parameters('customLocationName'))]"
+        "[resourceId('Microsoft.ExtendedLocation/customLocations', parameters('customLocationName'))]",
+        "[resourceId('Microsoft.ExtendedLocation/customLocations/resourceSyncRules', parameters('customLocationName'), format('{0}-aio-sync', parameters('customLocationName')))]"
       ]
     }
   ],

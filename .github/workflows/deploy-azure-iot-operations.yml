@@ -31,7 +31,6 @@ jobs:
         uses: azure/CLI@v1
         with:
           inlineScript: |
-            az cloud update --endpoint-resource-manager https://westcentralus.management.azure.com
             templateFile="$GITHUB_WORKSPACE/dev/azure-iot-operations.bicep"
             [[ ! -f "$templateFile" ]] && templateFile="$GITHUB_WORKSPACE/release/azure-iot-operations.json"
             if [[ ! -f "$templateFile" ]]; then
