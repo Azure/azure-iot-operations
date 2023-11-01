@@ -32,7 +32,7 @@ If you want to fork this repo, there are some additional steps you will need to 
 
     1. If you don't have an existing K8s cluster, try [minikube](https://minikube.sigs.k8s.io/docs/).
 
-    2. Arc-enable cluster your K8s cluster using the [az connectedk8s connect](https://learn.microsoft.com/cli/azure/connectedk8s#az-connectedk8s-connect) command.
+    2. Arc-enable your K8s cluster using the [az connectedk8s connect](https://learn.microsoft.com/cli/azure/connectedk8s#az-connectedk8s-connect) command.
 
         ```bash
         az connectedk8s connect -n $CLUSTER_NAME -l $LOCATION -g $RESOURCE_GROUP --subscription $SUBSCRIPTION_ID
@@ -52,14 +52,14 @@ If you want to fork this repo, there are some additional steps you will need to 
 
     1. Create parameter file where environment configuration is specified for your AIO deployment. For an example, see `environments/example.parameters.json`.
     
-        | **Parameter** | **Presense** | Type |**Value**                  |
+        | **Parameter** | **Requirement** | **Type** | **Description** |
         | ------------- |--|------------|-------------- |
         | clusterName   | ***[Required]*** | `string` | The Arc-enabled cluster resource in Azure.  |
         | clusterLocation | *[Optional]* | `string` |If the cluster resource's location is different than its resource group's location, the cluster location will need to be specified. Otherwise, this parameter will default to the location of the resource group.  |
         | location      | *[Optional]*  | `string` | If the resource group's location is not a supported AIO region, this parameter can be used to override the location of the AIO resources. |
-        | dataProcessorSecrets | *[Optional]*<sup>1</sup>| <pre>{<br>  secretProviderClassName: string,<br>  servicePrincipalSecretRef: string<br>}</pre> |Add the name of the SecretProviderClass and k8s AKV SP secret that were created from the `setup-cluster.sh`. This should be something like `aio-default-spc` and `aio-akv-sp`, respectively. |
-        | mqSecrets | *[Optional]*<sup>1</sup>| <pre>{<br>  secretProviderClassName: string,<br>  servicePrincipalSecretRef: string<br>}</pre>| Add the name of the SecretProviderClass and k8s AKV SP secret that were created from the `setup-cluster.sh`. This should be something like `aio-default-spc` and `aio-akv-sp`, respectively. |
-        | opcUaBrokerSecrets | *[Optional]*<sup>1</sup>| <pre>{<br>  kind: string,<br>  csiServicePrincipalSecretRef: string<br>}</pre> | Add the name of the k8s AKV SP secret that was created from the `setup-cluster.sh`. This should be something like `aio-akv-sp` and kind should be `csi`.|
+        | dataProcessorSecrets | *[Optional]*<sup>1</sup>| `object` | Add the name of the SecretProviderClass and k8s AKV SP secret that were created from the `setup-cluster.sh`. This should be something like `aio-default-spc` and `aio-akv-sp`, respectively. <br><br>Example:<br> <pre>{<br>  "secretProviderClassName": "aio-default-spc",<br>  "servicePrincipalSecretRef": "aio-akv-sp"<br>}</pre>|
+        | mqSecrets | *[Optional]*<sup>1</sup>| `object` | Add the name of the SecretProviderClass and k8s AKV SP secret that were created from the `setup-cluster.sh`. This should be something like `aio-default-spc` and `aio-akv-sp`, respectively. <br><br>Example:<br> <pre>{<br>  "secretProviderClassName": "aio-default-spc",<br>  "servicePrincipalSecretRef": "aio-akv-sp"<br>}</pre>|
+        | opcUaBrokerSecrets | *[Optional]*<sup>1</sup>| `object` | Add the name of the k8s AKV SP secret that was created from the `setup-cluster.sh`. This should be something like `aio-akv-sp` and kind should be `csi`. <br><br>Example:<br> <pre>{<br>  "kind": "csi",<br> "csiServicePrincipalSecretRef": "aio-akv-sp"<br>}</pre>|
         
         > <sup>1</sup> This param is only necessary if you are using different values than the defaults specified in `setup-cluster.sh`.
 
