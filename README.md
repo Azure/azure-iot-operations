@@ -41,7 +41,7 @@ If you want to fork this repo, there are some additional steps you will need to 
     3. Use the [az connectedk8s enable-features](https://learn.microsoft.com/cli/azure/connectedk8s?view=azure-cli-latest#az-connectedk8s-enable-features) command to enable custom location support on your cluster.
 
         ```bash
-        az connectedk8s enable-features -n $CLUSTER_NAME -g $RESOURCE_GROUP --custom-locations-oid <objectId/id> --features cluster-connect custom-locations
+        az connectedk8s enable-features -n $CLUSTER_NAME -g $RESOURCE_GROUP --features cluster-connect custom-locations
         ```
 
     3. Run cluster setup script from `tools/setup-cluster/setup-cluster.sh`.
