@@ -24,12 +24,6 @@ k8sClusterName="<<K8S_CLUSTER_NAME>>"
 # If the k8s cluster context does not exist, you can run "az aks get-credentials --resource-group RESOURCE_GROUP_NAME --name K8S_CLUSTER_NAME [--admin]" to store the context locally
 k8sClusterContext="<<K8S_CLUSTER_CONTEXT>>"
 
-# All Alice Springs' namespaces
-namespaceAliceSprings="alice-springs"
-namespaceAliceSpringsSolution="alice-springs-solution"
-namespaceSymphony="symphony-k8s-system"
-namespaceCustomLocation="custom-location-a"
-
 # Below scripts are used to delete Alice Springs resources, check each .sh file to understand what it does
 # Please contact the author if you have any questions, or submit PR directly for review
 echo ""
@@ -70,12 +64,12 @@ sh ./components/helm.sh
 
 sh ./components/crd.sh
 
-sh ./components/resource.sh $k8sClusterContext $namespaceAliceSprings $namespaceCustomLocation $namespaceSymphony $namespaceAliceSpringsSolution
-sh ./components/force.sh $namespaceAliceSprings $namespaceAliceSpringsSolution
-sh ./components/namespace.sh $k8sClusterContext $namespaceAliceSprings $namespaceCustomLocation $namespaceSymphony $namespaceAliceSpringsSolution
+sh ./components/resource.sh
+sh ./components/force.sh
+sh ./components/namespace.sh
 
-sh ./components/role.sh $namespaceAliceSprings $namespaceCustomLocation $namespaceSymphony $namespaceAliceSpringsSolution
-sh ./components/rolebinding.sh $namespaceAliceSprings $namespaceCustomLocation $namespaceSymphony $namespaceAliceSpringsSolution
+sh ./components/role.sh 
+sh ./components/rolebinding.sh
 
 sh ./components/clusterrole.sh
 sh ./components/clusterrolebinding.sh

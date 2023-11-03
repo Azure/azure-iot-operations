@@ -5,20 +5,12 @@ echo "##############################################################"
 echo "I'm role.sh"
 
 echo ""
-echo "Deleting roles in namespace: $1..."
-kubectl delete role --all -n $1
-
-echo ""
-echo "Deleting roles in namespace: $2..."
-kubectl delete role --all -n $2
-
-echo ""
-echo "Deleting roles in namespace: $3..."
-kubectl delete role --all -n $3
-
-echo ""
-echo "Deleting roles in namespace: $4..."
-kubectl delete role --all -n $4
+kubectl delete role --all -n alice-springs
+kubectl delete role --all -n alice-springs-solution
+kubectl delete role --all -n azure-iot-operations
+kubectl delete role --all -n azure-iot-operations-solution
+kubectl delete role --all -n symphony-k8s-system
+kubectl delete role --all -n custom-location-a
 
 kubectl delete role $(kubectl get role -A | grep symphony-cert-manager) -n kube-system
 kubectl delete role $(kubectl get role -A | grep aio-cert-manager) -n kube-system

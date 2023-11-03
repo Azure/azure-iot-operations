@@ -1,0 +1,2099 @@
+{
+  "__inputs": [
+    {
+      "name": "DS_MANAGED_PROMETHEUS_JAJENS-AZMONWORKSPACE-TEST",
+      "label": "Managed_Prometheus_jajens-azmonworkspace-test",
+      "description": "",
+      "type": "datasource",
+      "pluginId": "prometheus",
+      "pluginName": "Prometheus"
+    },
+    {
+      "name": "DS_AZURE_MONITOR",
+      "label": "Azure Monitor",
+      "description": "",
+      "type": "datasource",
+      "pluginId": "grafana-azure-monitor-datasource",
+      "pluginName": "Azure Monitor"
+    }
+  ],
+  "__elements": {},
+  "__requires": [
+    {
+      "type": "grafana",
+      "id": "grafana",
+      "name": "Grafana",
+      "version": "9.5.13"
+    },
+    {
+      "type": "datasource",
+      "id": "grafana-azure-monitor-datasource",
+      "name": "Azure Monitor",
+      "version": "1.0.0"
+    },
+    {
+      "type": "datasource",
+      "id": "prometheus",
+      "name": "Prometheus",
+      "version": "1.0.0"
+    },
+    {
+      "type": "panel",
+      "id": "state-timeline",
+      "name": "State timeline",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "table",
+      "name": "Table",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "text",
+      "name": "Text",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "timeseries",
+      "name": "Time series",
+      "version": ""
+    }
+  ],
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_MANAGED_PROMETHEUS_JAJENS-AZMONWORKSPACE-TEST}"
+      },
+      "description": "",
+      "gridPos": {
+        "h": 3,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 8,
+      "options": {
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "<div style=\"background-color:#283747\">\n  <span style=\"color:#FFFFF8; font-size:28px\">Azure Edge Services - Pod Health</span>\n</div>\n<div style=\"background-color:#595959; text-align: left\"> \n  <span style=\"color:white; font-size:18px\">&nbsp Pod Health - $pod</span>\n</div>\n",
+        "mode": "markdown"
+      },
+      "pluginVersion": "9.5.13",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_MANAGED_PROMETHEUS_JAJENS-AZMONWORKSPACE-TEST}"
+          },
+          "refId": "A"
+        }
+      ],
+      "type": "text"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_MANAGED_PROMETHEUS_JAJENS-AZMONWORKSPACE-TEST}"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "fillOpacity": 70,
+            "lineWidth": 0,
+            "spanNulls": false
+          },
+          "links": [
+            {
+              "targetBlank": true,
+              "title": "Click for more details",
+              "url": "/d/eef9bf1c-b27a-4e86-a7f0-2a39cdfbeeca/health-infrastructure?${__all_variables}&${__url_time_range}"
+            }
+          ],
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#808080",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 0
+              },
+              {
+                "color": "yellow",
+                "value": 0.5
+              },
+              {
+                "color": "green",
+                "value": 1
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 8,
+        "x": 0,
+        "y": 3
+      },
+      "id": 31,
+      "options": {
+        "alignValue": "left",
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "mergeValues": false,
+        "rowHeight": 0.9,
+        "showValue": "never",
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_MANAGED_PROMETHEUS_JAJENS-AZMONWORKSPACE-TEST}"
+          },
+          "editorMode": "code",
+          "expr": "## Workload Readiness health\r\n############################\r\nlabel_replace(min(\r\n  kube_pod_status_phase{cluster=~\"$cluster\",namespace=~\"$namespace\",pod=~\"$component\",pod=~\"$pod\",phase=~\"running|succeeded\"} > 0 or\r\n  kube_pod_status_phase{cluster=~\"$cluster\",namespace=~\"$namespace\",pod=~\"$component\",pod=~\"$pod\",phase!~\"running|succeeded\"} > 0 * 0 or\r\n  vector(0)>0\r\n) or vector(-1),\"_\",\"Pod Readiness\",\"\",\"\")",
+          "hide": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_MANAGED_PROMETHEUS_JAJENS-AZMONWORKSPACE-TEST}"
+          },
+          "editorMode": "code",
+          "expr": "## Container Restart Health:\r\n############################\r\nlabel_replace(\r\n  sgn(sum_over_time(sum(rate(\r\n    kube_pod_container_status_restarts_total{cluster=~\"$cluster\",namespace=~\"$namespace\",pod=~\"${component:raw}\",pod=~\"$pod\"}[10m:1m]\r\n    )*60)[1h:]) > 5) * 0.0 # RED: Cumulative restarts over X(5) time greater than Y(1h)\r\n  or (max(rate(\r\n    kube_pod_container_status_restarts_total{cluster=~\"$cluster\",namespace=~\"$namespace\",pod=~\"${component:raw}\",pod=~\"$pod\"}[5m:1m]\r\n    )*60*5) > 0) * 0.5 # YELLOW: restarts detected but below Red threshold\r\n  or sgn(max(\r\n    kube_pod_container_status_restarts_total{cluster=~\"$cluster\",namespace=~\"$namespace\",pod=~\"${component:raw}\",pod=~\"$pod\"}\r\n    + 1 >= 0))\r\n  #or vector(1) # Healthy\r\n  ,\"_\",\"Container Restart Health\",\"\",\"\")\r\n## uncomment below to t-shoot this health metric\r\n# or label_replace(sum_over_time(sum(rate(kube_pod_container_status_restarts_total{cluster=~\"$cluster\"}[10m:1m])*60)[1h:]),\"_\",\"Total-restarts-over-time\",\"\",\"\")\r\n# or label_replace((max(rate(kube_pod_container_status_restarts_total{cluster=~\"$cluster\"}[5m:1m])*60*5) without (__name__,uid,instance,job) > 0),\"_\",\"restart\",\"\",\"\") # Base query for counting restarts\r\n",
+          "hide": true,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_MANAGED_PROMETHEUS_JAJENS-AZMONWORKSPACE-TEST}"
+          },
+          "editorMode": "code",
+          "expr": "## Container CPU top-level health\r\n################################\r\nlabel_replace(\r\nmin(sgn( # Check for throttling > N indicating container is exceeding its CPU limits\r\n      rate(container_cpu_cfs_throttled_periods_total{cluster=~\"$cluster\",namespace=~\".*\",container!=\"\",pod=~\"${component:raw}\",pod=~\"$pod\"}[10m]) \r\n    / rate(container_cpu_cfs_periods_total{cluster=~\"$cluster\",namespace=~\".*\",container!=\"\",pod=~\"${component:raw}\",pod=~\"$pod\"}[10m])\r\n    > 0.20) # If throttle create is greater than this percentage, we'll multiply sgn by 0.5 to show as error (or warning depending on threshold coloring)\r\n    ) # by (namespace,container) # These are commented out for top-level\r\n    * 0.5\r\nor\r\nmin( # Check to see if container is missing CPU Limits configuration\r\n    sgn(min(kube_pod_container_resource_limits{cluster=~\"$cluster\",namespace=~\".*\",container!=\"\",resource=\"cpu\",pod=~\"${component:raw}\",pod=~\"$pod\"}) by (namespace,container))\r\n    or # if resource limit missing, we or to below to show namespace/container using CPU without limit as a zero to indicate red\r\n    sgn(min(container_cpu_usage_seconds_total{cluster=~\"$cluster\",namespace=~\".*\",container!=\"\",pod=~\"${component:raw}\",pod=~\"$pod\"}) by (namespace,container))\r\n    # * 0 # TEMPORARILY DISABLING RED FOR MISSING LIMITS\r\n    ) #by (namespace,container) # These are commented out for top-level\r\n,\"_\",\"Container CPU Health\",\"\",\"\")",
+          "hide": true,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "C"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_MANAGED_PROMETHEUS_JAJENS-AZMONWORKSPACE-TEST}"
+          },
+          "editorMode": "code",
+          "expr": "## Container Memory Health:\r\n###########################\r\nlabel_replace(\r\nmin( # Look for high memory utilization\r\n    sgn((\r\n        max(container_memory_working_set_bytes{cluster=~\"$cluster\",namespace=~\".*\",container!=\"\",pod=~\"${component:raw}\",pod=~\"$pod\"}) by (namespace,container)\r\n      / min(kube_pod_container_resource_limits{cluster=~\"$cluster\",namespace=~\".*\",container!=\"\",resource=\"memory\",pod=~\"${component:raw}\",pod=~\"$pod\"}) by (namespace, container)\r\n    ) >= .95) - 0.5 # show health state of 0.5 if container memory utilization >= 95%\r\n) #by (container) \r\nor\r\nmin( # Look for missing limits which we will show as 0 if missing\r\n    sgn(min(kube_pod_container_resource_limits{cluster=~\"$cluster\",namespace=~\".*\",container!=\"\",resource=\"memory\",pod=~\"${component:raw}\",pod=~\"$pod\"}) by (namespace,container))\r\n    or # if resource limit missing, we or to below to show namespace/container using CPU without limit as a zero to indicate red\r\n    sgn(min(container_memory_working_set_bytes{cluster=~\"$cluster\",namespace=~\".*\",container!=\"\",pod=~\"${component:raw}\",pod=~\"$pod\"}) by (namespace,container))\r\n    # * 0 # TEMPORARILY DISABLING RED FOR MISSING LIMITS\r\n) #by (container) \r\n,\"_\",\"Container Memory health\",\"\",\"\")",
+          "hide": true,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "D"
+        }
+      ],
+      "title": "Health Summary",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "max(rate(container_cpu_usage_seconds_total{namespace=~\"alice-springs|symphony-k8s-system\",container=\"\",cpu=\"total\"}[5m])*300 > 0) ": "POD CPU (max)",
+              "min( # Workload ready percents (for deployment, daemonset, replicaset, and statefulset)\r\n    label_replace(label_join(\r\n        {job=\"kube-state-metrics\",namespace=~\"alice-springs|symphony-k8s-system\",\r\n         __name__=~\"kube_(deployment|daemonset|replicaset|statefulset)_status_(replicas_ready|ready_replicas|number_ready)\"}\r\n        ,\"workload\", \"\", \"deployment\", \"daemonset\", \"replicaset\", \"statefulset\")\r\n        ,\"workloadType\", \"$1\", \"__name__\", \"kube_(.*)_status_.*\")\r\n  / label_replace(label_join(\r\n        {job=\"kube-state-metrics\",namespace=~\"alice-springs|symphony-k8s-system\",\r\n         __name__=~\"kube_(deployment|daemonset|replicaset|statefulset)_status_(replicas|desired_number_scheduled)\"}\r\n        ,\"workload\", \"\", \"deployment\", \"daemonset\", \"replicaset\", \"statefulset\")\r\n        ,\"workloadType\", \"$1\", \"__name__\", \"kube_(.*)_status_.*\")\r\n) #by (workloadType) #namespace) #, workloadType) #, workload)": "Workload ready health"
+            }
+          }
+        }
+      ],
+      "type": "state-timeline"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_MANAGED_PROMETHEUS_JAJENS-AZMONWORKSPACE-TEST}"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "_"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 70
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "mode": "basic",
+                  "type": "color-background"
+                }
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "."
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "failed": {
+                        "color": "red",
+                        "index": 0
+                      },
+                      "pending": {
+                        "color": "yellow",
+                        "index": 3
+                      },
+                      "running": {
+                        "color": "green",
+                        "index": 1
+                      },
+                      "succeeded": {
+                        "color": "blue",
+                        "index": 2
+                      },
+                      "unknown": {
+                        "color": "orange",
+                        "index": 4
+                      }
+                    },
+                    "type": "value"
+                  },
+                  {
+                    "options": {
+                      "pattern": ".*",
+                      "result": {
+                        "color": "text",
+                        "index": 5
+                      }
+                    },
+                    "type": "regex"
+                  }
+                ]
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 8,
+        "x": 8,
+        "y": 3
+      },
+      "id": 60,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": false
+      },
+      "pluginVersion": "9.5.13",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_MANAGED_PROMETHEUS_JAJENS-AZMONWORKSPACE-TEST}"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "sum by(_,value)(\r\n#label_replace(label_replace(\r\n#  (vector(1)\r\n#  ),\"value\",\"$pod\",\"\",\"\"),\"_\",\"Pod:\",\"\",\"\") or\r\nlabel_replace(label_replace(\r\n  (\r\n  sum by(pod)(kube_pod_owner{cluster=~\"$cluster\",pod=~\"$pod\"})\r\n  ),\"value\",\"$1\",\"pod\",\"(.*)\"),\"_\",\"Pod:\",\"\",\"\") or\r\nlabel_replace(label_replace(\r\n  sum by(namespace)(kube_pod_owner{cluster=~\"$cluster\",namespace=~\"$namespace\",pod=~\"$component\",pod=~\"$pod\"}\r\n  ),\"value\",\"$1\",\"namespace\",\"(.*)\"),\"_\",\"Namespace:\",\"\",\"\") or\r\nlabel_replace(label_replace(\r\n  sum by(owner_kind,owner_name)( # Pod owner kind and name\r\n    sum by(replicaset)(label_replace(\r\n      sum by(owner_kind, owner_name)(\r\n        kube_pod_owner{cluster=~\"$cluster\",namespace=~\"$namespace\",owner_kind=\"replicaset\",pod=~\"$component\",pod=~\"$pod\"}\r\n      ),\"replicaset\",\"$1\",\"owner_name\",\"(.*)\"))\r\n    / on (replicaset) group_left(owner_kind, owner_name) \r\n      sum by(owner_kind,owner_name,replicaset)(kube_replicaset_owner{cluster=~\"$cluster\",namespace=~\"$namespace\",replicaset=~\"$component\"})\r\n    or sum by(owner_kind, owner_name)(\r\n      kube_pod_owner{cluster=~\"$cluster\",namespace=~\"$namespace\",owner_kind!=\"replicaset\",pod=~\"$component\",pod=~\"$pod\"}\r\n    )\r\n  ),\"value\",\"$1\",\"owner_kind\",\"(.*)\"),\"_\",\"Type:\",\"\",\"\") or\r\nlabel_replace(label_replace(\r\n  sum by(owner_kind,owner_name)( # Pod owner kind and name\r\n    sum by(replicaset)(label_replace(\r\n      sum by(owner_kind, owner_name)(\r\n        kube_pod_owner{cluster=~\"$cluster\",namespace=~\"$namespace\",owner_kind=\"replicaset\",pod=~\"$component\",pod=~\"$pod\"}\r\n      ),\"replicaset\",\"$1\",\"owner_name\",\"(.*)\"))\r\n    / on (replicaset) group_left(owner_kind, owner_name) \r\n      sum by(owner_kind,owner_name,replicaset)(kube_replicaset_owner{cluster=~\"$cluster\",namespace=~\"$namespace\",replicaset=~\"$component\"})\r\n    or sum by(owner_kind, owner_name)(\r\n      kube_pod_owner{cluster=~\"$cluster\",namespace=~\"$namespace\",owner_kind!=\"replicaset\",pod=~\"$component\",pod=~\"$pod\"}\r\n    )\r\n  ),\"value\",\"$1\",\"owner_name\",\"(.*)\"),\"_\",\"Parent:\",\"\",\"\") or\r\n#label_replace(label_replace(\r\n#  sum by(phase)(kube_pod_status_phase{cluster=~\"$cluster\",namespace=~\"$namespace\",pod=~\"$component\",pod=~\"$pod\"} > 0\r\n#  ),\"value\",\"$1\",\"phase\",\"(.*)\"),\"_\",\"State:\",\"\",\"\") or\r\nvector(0)>0)",
+          "format": "table",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": " Pod Summary",
+      "transformations": [
+        {
+          "id": "convertFieldType",
+          "options": {
+            "conversions": [
+              {
+                "destinationType": "boolean",
+                "targetField": "Time"
+              }
+            ],
+            "fields": {}
+          }
+        },
+        {
+          "id": "groupingToMatrix",
+          "options": {
+            "columnField": "Time",
+            "rowField": "_",
+            "valueField": "value"
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "_\\Time": "_",
+              "true": "."
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_MANAGED_PROMETHEUS_JAJENS-AZMONWORKSPACE-TEST}"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 1
+              },
+              {
+                "color": "red",
+                "value": 10
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "container"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 150
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "mode": "basic",
+                  "type": "color-background"
+                }
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Restarts"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 75
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              },
+              {
+                "id": "color"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 8,
+        "x": 16,
+        "y": 3
+      },
+      "id": 76,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "9.5.13",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_MANAGED_PROMETHEUS_JAJENS-AZMONWORKSPACE-TEST}"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "sum by(container)(kube_pod_container_info{cluster=~\"$cluster\",namespace=~\"$namespace\",pod=~\"$component\",pod=~\"$pod\"}) \r\n/ on (container) group_right sum by(container,image)(\r\n  kube_pod_container_info{cluster=~\"$cluster\",namespace=~\"$namespace\",pod=~\"$component\",pod=~\"$pod\"})\r\n* on (container) group_left #label_replace(\r\n  max by(container)(\r\n  kube_pod_container_status_restarts_total{cluster=~\"$cluster\",namespace=~\"$namespace\",pod=~\"$component\",pod=~\"$pod\"})\r\n",
+          "format": "table",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Container Summary",
+      "transformations": [
+        {
+          "disabled": true,
+          "id": "convertFieldType",
+          "options": {}
+        },
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Time": {
+                "aggregations": [
+                  "lastNotNull"
+                ],
+                "operation": "aggregate"
+              },
+              "Value": {
+                "aggregations": [
+                  "lastNotNull"
+                ],
+                "operation": "aggregate"
+              },
+              "container": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "image": {
+                "aggregations": [
+                  "lastNotNull"
+                ],
+                "operation": "aggregate"
+              }
+            }
+          }
+        },
+        {
+          "disabled": true,
+          "id": "convertFieldType",
+          "options": {
+            "conversions": [
+              {
+                "destinationType": "boolean",
+                "targetField": "Time"
+              }
+            ],
+            "fields": {}
+          }
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "fields": {},
+            "sort": [
+              {
+                "field": "container"
+              }
+            ]
+          }
+        },
+        {
+          "disabled": true,
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true
+            },
+            "indexByName": {},
+            "renameByName": {
+              "Value": "Restarts",
+              "image": ""
+            }
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time (lastNotNull)": true
+            },
+            "indexByName": {},
+            "renameByName": {
+              "Value (lastNotNull)": "Restarts",
+              "image (lastNotNull)": "image"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_MANAGED_PROMETHEUS_JAJENS-AZMONWORKSPACE-TEST}"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "center",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "_"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 55
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "mode": "basic",
+                  "type": "color-background"
+                }
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "."
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "failed": {
+                        "color": "red",
+                        "index": 0
+                      },
+                      "pending": {
+                        "color": "yellow",
+                        "index": 3
+                      },
+                      "running": {
+                        "color": "green",
+                        "index": 1
+                      },
+                      "succeeded": {
+                        "color": "blue",
+                        "index": 2
+                      },
+                      "unknown": {
+                        "color": "orange",
+                        "index": 4
+                      }
+                    },
+                    "type": "value"
+                  },
+                  {
+                    "options": {
+                      "pattern": ".*",
+                      "result": {
+                        "color": "text",
+                        "index": 5
+                      }
+                    },
+                    "type": "regex"
+                  }
+                ]
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              },
+              {
+                "id": "custom.width",
+                "value": 120
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 3,
+        "x": 0,
+        "y": 6
+      },
+      "id": 63,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "frameIndex": 0,
+        "showHeader": false
+      },
+      "pluginVersion": "9.5.13",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_MANAGED_PROMETHEUS_JAJENS-AZMONWORKSPACE-TEST}"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "sum by(_,value)(\r\n#label_replace(label_replace(\r\n#  (vector(1)\r\n#  ),\"value\",\"$pod\",\"\",\"\"),\"_\",\"Pod:\",\"\",\"\") or\r\nlabel_replace(label_replace(\r\n  sum by(phase)(kube_pod_status_phase{cluster=~\"$cluster\",namespace=~\"$namespace\",pod=~\"$component\",pod=~\"$pod\"}) > 0 or\r\n  label_replace(absent(present_over_time(sum(kube_pod_status_phase{cluster=~\"$cluster\",namespace=~\"$namespace\",pod=~\"$component\",pod=~\"$pod\"})[$__rate_interval:])),\"phase\",\"deleted\",\"\",\"\"\r\n  ),\"value\",\"$1\",\"phase\",\"(.*)\"),\"_\",\"State:\",\"\",\"\") or\r\n  vector(0)>0)",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "legendFormat": "__auto",
+          "range": false,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_MANAGED_PROMETHEUS_JAJENS-AZMONWORKSPACE-TEST}"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "sum by(_,value)(\r\n#label_replace(label_replace(\r\n#  (vector(1)\r\n#  ),\"value\",\"$pod\",\"\",\"\"),\"_\",\"Pod:\",\"\",\"\") or\r\nlabel_replace(label_replace(\r\n  (\r\n  sum by(pod)(kube_pod_owner{cluster=~\"$cluster\",pod=~\"$pod\"})\r\n  ),\"value\",\"$1\",\"pod\",\"(.*)\"),\"_\",\"Pod:\",\"\",\"\") or\r\nlabel_replace(label_replace(\r\n  sum by(namespace)(kube_pod_owner{cluster=~\"$cluster\",namespace=~\"$namespace\",pod=~\"$component\",pod=~\"$pod\"}\r\n  ),\"value\",\"$1\",\"namespace\",\"(.*)\"),\"_\",\"Namespace:\",\"\",\"\") or\r\nlabel_replace(label_replace(\r\n  sum by(owner_kind,owner_name)( # Pod owner kind and name\r\n    sum by(replicaset)(label_replace(\r\n      sum by(owner_kind, owner_name)(\r\n        kube_pod_owner{cluster=~\"$cluster\",namespace=~\"$namespace\",owner_kind=\"replicaset\",pod=~\"$component\",pod=~\"$pod\"}\r\n      ),\"replicaset\",\"$1\",\"owner_name\",\"(.*)\"))\r\n    / on (replicaset) group_left(owner_kind, owner_name) \r\n      sum by(owner_kind,owner_name,replicaset)(kube_replicaset_owner{cluster=~\"$cluster\",namespace=~\"$namespace\",replicaset=~\"$component\"})\r\n    or sum by(owner_kind, owner_name)(\r\n      kube_pod_owner{cluster=~\"$cluster\",namespace=~\"$namespace\",owner_kind!=\"replicaset\",pod=~\"$component\",pod=~\"$pod\"}\r\n    )\r\n  ),\"value\",\"$1\",\"owner_kind\",\"(.*)\"),\"_\",\"Type:\",\"\",\"\") or\r\nlabel_replace(label_replace(\r\n  sum by(owner_kind,owner_name)( # Pod owner kind and name\r\n    sum by(replicaset)(label_replace(\r\n      sum by(owner_kind, owner_name)(\r\n        kube_pod_owner{cluster=~\"$cluster\",namespace=~\"$namespace\",owner_kind=\"replicaset\",pod=~\"$component\",pod=~\"$pod\"}\r\n      ),\"replicaset\",\"$1\",\"owner_name\",\"(.*)\"))\r\n    / on (replicaset) group_left(owner_kind, owner_name) \r\n      sum by(owner_kind,owner_name,replicaset)(kube_replicaset_owner{cluster=~\"$cluster\",namespace=~\"$namespace\",replicaset=~\"$component\"})\r\n    or sum by(owner_kind, owner_name)(\r\n      kube_pod_owner{cluster=~\"$cluster\",namespace=~\"$namespace\",owner_kind!=\"replicaset\",pod=~\"$component\",pod=~\"$pod\"}\r\n    )\r\n  ),\"value\",\"$1\",\"owner_name\",\"(.*)\"),\"_\",\"Parent:\",\"\",\"\") or\r\nlabel_replace(label_replace(\r\n  sum by(phase)(kube_pod_status_phase{cluster=~\"$cluster\",namespace=~\"$namespace\",pod=~\"$component\",pod=~\"$pod\"} > 0\r\n  ),\"value\",\"$1\",\"phase\",\"(.*)\"),\"_\",\"State:\",\"\",\"\") or\r\nlabel_replace(label_replace(\r\n  sum by(phase)(kube_pod_status_phase{cluster=~\"$cluster\",namespace=~\"$namespace\",pod=~\"$component\",pod=~\"$pod\"}) > 0 or\r\n  label_replace(absent(present_over_time(sum(kube_pod_status_phase{cluster=~\"$cluster\",namespace=~\"$namespace\",pod=~\"$component\",pod=~\"$pod\"})[$__rate_interval:])),\"phase\",\"deleted\",\"\",\"\"\r\n  ),\"value\",\"$1\",\"phase\",\"(.*)\"),\"_\",\"State2:\",\"\",\"\") or\r\n  vector(0)>0)",
+          "format": "table",
+          "hide": true,
+          "instant": true,
+          "legendFormat": "__auto",
+          "range": false,
+          "refId": "B"
+        }
+      ],
+      "title": "  ",
+      "transformations": [
+        {
+          "id": "convertFieldType",
+          "options": {
+            "conversions": [
+              {
+                "destinationType": "boolean",
+                "targetField": "Time"
+              }
+            ],
+            "fields": {}
+          }
+        },
+        {
+          "id": "groupingToMatrix",
+          "options": {
+            "columnField": "Time",
+            "rowField": "_",
+            "valueField": "value"
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "_\\Time": "_",
+              "true": "."
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_MANAGED_PROMETHEUS_JAJENS-AZMONWORKSPACE-TEST}"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "fixed"
+          },
+          "custom": {
+            "fillOpacity": 70,
+            "lineWidth": 0,
+            "spanNulls": false
+          },
+          "mappings": [
+            {
+              "options": {
+                "0": {
+                  "index": 5,
+                  "text": "deleted"
+                },
+                "1": {
+                  "color": "red",
+                  "index": 0,
+                  "text": "failed"
+                },
+                "2": {
+                  "color": "yellow",
+                  "index": 1,
+                  "text": "pending"
+                },
+                "3": {
+                  "color": "green",
+                  "index": 2,
+                  "text": "running"
+                },
+                "4": {
+                  "color": "blue",
+                  "index": 3,
+                  "text": "succeeded"
+                },
+                "5": {
+                  "color": "orange",
+                  "index": 4,
+                  "text": "unknown"
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 5,
+        "x": 3,
+        "y": 6
+      },
+      "id": 64,
+      "options": {
+        "alignValue": "left",
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "mergeValues": true,
+        "rowHeight": 0.9,
+        "showValue": "never",
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "9.4.12",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_MANAGED_PROMETHEUS_JAJENS-AZMONWORKSPACE-TEST}"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "sum by(_,value)(\r\n#label_replace(label_replace(\r\n#  (vector(1)\r\n#  ),\"value\",\"$pod\",\"\",\"\"),\"_\",\"Pod:\",\"\",\"\") or\r\nlabel_replace(label_replace(\r\n  1*sum by(phase)(kube_pod_status_phase{cluster=~\"$cluster\",namespace=~\"$namespace\",pod=~\"$component\",pod=~\"$pod\",phase=\"failed\"}) > 0 or\r\n  2*sum by(phase)(kube_pod_status_phase{cluster=~\"$cluster\",namespace=~\"$namespace\",pod=~\"$component\",pod=~\"$pod\",phase=\"pending\"}) > 0 or\r\n  3*sum by(phase)(kube_pod_status_phase{cluster=~\"$cluster\",namespace=~\"$namespace\",pod=~\"$component\",pod=~\"$pod\",phase=\"running\"}) > 0 or\r\n  4*sum by(phase)(kube_pod_status_phase{cluster=~\"$cluster\",namespace=~\"$namespace\",pod=~\"$component\",pod=~\"$pod\",phase=\"succeeded\"}) > 0 or\r\n  5*sum by(phase)(kube_pod_status_phase{cluster=~\"$cluster\",namespace=~\"$namespace\",pod=~\"$component\",pod=~\"$pod\",phase=\"unknown\"}) > 0 or\r\n  0*label_replace(absent(present_over_time(sum(kube_pod_status_phase{cluster=~\"$cluster\",namespace=~\"$namespace\",pod=~\"$component\",pod=~\"$pod\"})[$__rate_interval:])),\"phase\",\"deleted\",\"\",\"\"\r\n  ),\"value\",\"$1\",\"phase\",\"(.*)\"),\"_\",\"State2:\",\"\",\"\") or\r\n  vector(0)>0)",
+          "format": "time_series",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "{{value}}",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_MANAGED_PROMETHEUS_JAJENS-AZMONWORKSPACE-TEST}"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "sum by(_,value)(\r\n#label_replace(label_replace(\r\n#  (vector(1)\r\n#  ),\"value\",\"$pod\",\"\",\"\"),\"_\",\"Pod:\",\"\",\"\") or\r\nlabel_replace(label_replace(\r\n  (\r\n  sum by(pod)(kube_pod_owner{cluster=~\"$cluster\",pod=~\"$pod\"})\r\n  ),\"value\",\"$1\",\"pod\",\"(.*)\"),\"_\",\"Pod:\",\"\",\"\") or\r\nlabel_replace(label_replace(\r\n  sum by(namespace)(kube_pod_owner{cluster=~\"$cluster\",namespace=~\"$namespace\",pod=~\"$component\",pod=~\"$pod\"}\r\n  ),\"value\",\"$1\",\"namespace\",\"(.*)\"),\"_\",\"Namespace:\",\"\",\"\") or\r\nlabel_replace(label_replace(\r\n  sum by(owner_kind,owner_name)( # Pod owner kind and name\r\n    sum by(replicaset)(label_replace(\r\n      sum by(owner_kind, owner_name)(\r\n        kube_pod_owner{cluster=~\"$cluster\",namespace=~\"$namespace\",owner_kind=\"replicaset\",pod=~\"$component\",pod=~\"$pod\"}\r\n      ),\"replicaset\",\"$1\",\"owner_name\",\"(.*)\"))\r\n    / on (replicaset) group_left(owner_kind, owner_name) \r\n      sum by(owner_kind,owner_name,replicaset)(kube_replicaset_owner{cluster=~\"$cluster\",namespace=~\"$namespace\",replicaset=~\"$component\"})\r\n    or sum by(owner_kind, owner_name)(\r\n      kube_pod_owner{cluster=~\"$cluster\",namespace=~\"$namespace\",owner_kind!=\"replicaset\",pod=~\"$component\",pod=~\"$pod\"}\r\n    )\r\n  ),\"value\",\"$1\",\"owner_kind\",\"(.*)\"),\"_\",\"Type:\",\"\",\"\") or\r\nlabel_replace(label_replace(\r\n  sum by(owner_kind,owner_name)( # Pod owner kind and name\r\n    sum by(replicaset)(label_replace(\r\n      sum by(owner_kind, owner_name)(\r\n        kube_pod_owner{cluster=~\"$cluster\",namespace=~\"$namespace\",owner_kind=\"replicaset\",pod=~\"$component\",pod=~\"$pod\"}\r\n      ),\"replicaset\",\"$1\",\"owner_name\",\"(.*)\"))\r\n    / on (replicaset) group_left(owner_kind, owner_name) \r\n      sum by(owner_kind,owner_name,replicaset)(kube_replicaset_owner{cluster=~\"$cluster\",namespace=~\"$namespace\",replicaset=~\"$component\"})\r\n    or sum by(owner_kind, owner_name)(\r\n      kube_pod_owner{cluster=~\"$cluster\",namespace=~\"$namespace\",owner_kind!=\"replicaset\",pod=~\"$component\",pod=~\"$pod\"}\r\n    )\r\n  ),\"value\",\"$1\",\"owner_name\",\"(.*)\"),\"_\",\"Parent:\",\"\",\"\") or\r\nlabel_replace(label_replace(\r\n  sum by(phase)(kube_pod_status_phase{cluster=~\"$cluster\",namespace=~\"$namespace\",pod=~\"$component\",pod=~\"$pod\"} > 0\r\n  ),\"value\",\"$1\",\"phase\",\"(.*)\"),\"_\",\"State:\",\"\",\"\") or\r\nlabel_replace(label_replace(\r\n  sum by(phase)(kube_pod_status_phase{cluster=~\"$cluster\",namespace=~\"$namespace\",pod=~\"$component\",pod=~\"$pod\"}) > 0 or\r\n  label_replace(absent(present_over_time(sum(kube_pod_status_phase{cluster=~\"$cluster\",namespace=~\"$namespace\",pod=~\"$component\",pod=~\"$pod\"})[$__rate_interval:])),\"phase\",\"deleted\",\"\",\"\"\r\n  ),\"value\",\"$1\",\"phase\",\"(.*)\"),\"_\",\"State2:\",\"\",\"\") or\r\n  vector(0)>0)",
+          "format": "table",
+          "hide": true,
+          "instant": true,
+          "legendFormat": "__auto",
+          "range": false,
+          "refId": "B"
+        }
+      ],
+      "title": "State timeline",
+      "transformations": [
+        {
+          "disabled": true,
+          "id": "convertFieldType",
+          "options": {
+            "conversions": [
+              {
+                "destinationType": "boolean",
+                "targetField": "Time"
+              }
+            ],
+            "fields": {}
+          }
+        },
+        {
+          "disabled": true,
+          "id": "groupingToMatrix",
+          "options": {
+            "columnField": "Time",
+            "rowField": "_",
+            "valueField": "value"
+          }
+        },
+        {
+          "disabled": true,
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "_\\Time": "_",
+              "true": "."
+            }
+          }
+        }
+      ],
+      "type": "state-timeline"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_MANAGED_PROMETHEUS_JAJENS-AZMONWORKSPACE-TEST}"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "milli-cores",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "#EAB839",
+                "value": 40
+              },
+              {
+                "color": "red",
+                "value": 60
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "CPU Limits (cores)"
+            },
+            "properties": [
+              {
+                "id": "custom.lineStyle",
+                "value": {
+                  "dash": [
+                    10,
+                    10
+                  ],
+                  "fill": "dash"
+                }
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "super-light-purple",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "custom.axisPlacement",
+                "value": "auto"
+              },
+              {
+                "id": "custom.axisColorMode",
+                "value": "text"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "CPU Usage (cores)"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "CPU Usage (milli-cores)"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "light-blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "CPU Max Throttled (%)"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "dark-orange",
+                  "mode": "thresholds",
+                  "seriesBy": "max"
+                }
+              },
+              {
+                "id": "custom.axisPlacement",
+                "value": "right"
+              },
+              {
+                "id": "unit",
+                "value": "percent"
+              },
+              {
+                "id": "custom.axisColorMode",
+                "value": "series"
+              },
+              {
+                "id": "custom.axisLabel",
+                "value": "Throttle Percent"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 0,
+        "y": 9
+      },
+      "id": 43,
+      "links": [
+        {
+          "targetBlank": true,
+          "title": "Open K8s / Compute Resources / Pod",
+          "url": "/d/6581e46e4e5c7ba40a07646395ef6738/kubernetes-compute-resources-pod?${__url_time_range}&${cluster:queryparam}&var-namespace=${podnamespace}&${pod:queryparam}"
+        }
+      ],
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "9.4.12",
+      "repeat": "container",
+      "repeatDirection": "v",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_MANAGED_PROMETHEUS_JAJENS-AZMONWORKSPACE-TEST}"
+          },
+          "editorMode": "code",
+          "expr": "# CPU Time (milli-cores version, if < 0.2 cores)\r\n#(label_replace(sum(rate(container_cpu_usage_seconds_total{cluster=~\"$cluster\",namespace=~\".*\",pod=~\"${component:raw}\",container=~\"$container\"}[$__rate_interval]))*1000,\"_\",\"CPU Usage (milli-cores)\",\"\",\"\") \r\n#    and label_replace(quantile_over_time(0.95,sum(rate(container_cpu_usage_seconds_total{cluster=~\"$cluster\",namespace=~\".*\",pod=~\"${component:raw}\",container=~\"$container\"}[$__rate_interval]))[3d:]) < 0.2,\"_\",\"CPU Usage (milli-cores)\",\"\",\"\")) # Show milli-cores if rate below 0.2 cores\r\n# CPU Time (cores version, if >= 0.2 cores)\r\n#or \r\n(label_replace(sum(rate(container_cpu_usage_seconds_total{cluster=~\"$cluster\",namespace=~\".*\",pod=~\"${component:raw}\",pod=~\"$pod\",container=~\"$container\"}[$__rate_interval])),\"_\",\"CPU Usage (milli-cores)\",\"\",\"\") *1000\r\n    #and label_replace(quantile_over_time(0.95,sum(rate(container_cpu_usage_seconds_total{cluster=~\"$cluster\",namespace=~\".*\",pod=~\"${component:raw}\",container=~\"$container\"}[$__rate_interval]))[3d:]) >= 0.2,\"_\",\"CPU Usage (cores)\",\"\",\"\")\r\n    ) # Show in cores if rate at or above 0.2 cores\r\n# Shows the max in millicores, used to determine which is shown (commented out for UX; only uncomment to debug above)\r\n#or label_replace(quantile_over_time(0.95,sum(rate(container_cpu_usage_seconds_total{cluster=~\"$cluster\",namespace=~\".*\",pod=~\"${component:raw}\",container=~\"$container\"}[$__rate_interval]))[3d:])*1000,\"_\",\"CPU Usage (milli-cores) MAX\",\"\",\"\")\r\n# Sum of all limits defined, in Cores\r\nor label_replace(sum(kube_pod_container_resource_limits{cluster=~\"$cluster\",namespace=~\".*\",pod=~\"${component:raw}\",pod=~\"$pod\",container=~\"$container\",resource=\"cpu\"}),\"_\",\"CPU Limits (milli-cores)\",\"\",\"\")*1000\r\n# CPU Throttling:\r\nor label_replace(100*(max(\r\n        rate(container_cpu_cfs_throttled_periods_total{cluster=~\"$cluster\",namespace=~\".*\",pod=~\"${component:raw}\",pod=~\"$pod\",container=~\"$container\"}[10m])\r\n        / rate(container_cpu_cfs_periods_total{cluster=~\"$cluster\",namespace=~\".*\",pod=~\"${component:raw}\",pod=~\"$pod\",container=~\"$container\"}[10m])\r\n    )),\"_\",\"CPU Max Throttled (%)\",\"\",\"\")\r\n",
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "CPU for [$container]",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_MANAGED_PROMETHEUS_JAJENS-AZMONWORKSPACE-TEST}"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "MB",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 80
+              },
+              {
+                "color": "orange",
+                "value": 90
+              },
+              {
+                "color": "red",
+                "value": 95
+              },
+              {
+                "color": "dark-red",
+                "value": 99
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Mem Working Bytes (GB)"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "yellow",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Mem Working Bytes (MB)"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Mem Max Usage vs Limit (%)"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "orange",
+                  "mode": "thresholds",
+                  "seriesBy": "max"
+                }
+              },
+              {
+                "id": "custom.axisPlacement",
+                "value": "right"
+              },
+              {
+                "id": "custom.axisColorMode",
+                "value": "series"
+              },
+              {
+                "id": "custom.axisLabel"
+              },
+              {
+                "id": "unit",
+                "value": "percent"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "Memory Limits .*"
+            },
+            "properties": [
+              {
+                "id": "custom.lineStyle",
+                "value": {
+                  "dash": [
+                    10,
+                    10
+                  ],
+                  "fill": "dash"
+                }
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "purple",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 12,
+        "y": 9
+      },
+      "id": 45,
+      "links": [
+        {
+          "targetBlank": true,
+          "title": "Open K8s / Compute Resources / Pod",
+          "url": "/d/6581e46e4e5c7ba40a07646395ef6738/kubernetes-compute-resources-pod?${__url_time_range}&${cluster:queryparam}&var-namespace=${podnamespace}&${pod:queryparam}"
+        }
+      ],
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "9.4.12",
+      "repeat": "container",
+      "repeatDirection": "v",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_MANAGED_PROMETHEUS_JAJENS-AZMONWORKSPACE-TEST}"
+          },
+          "editorMode": "code",
+          "expr": "# Memory Usage (MB version)\r\n(label_replace(sum(container_memory_working_set_bytes{cluster=~\"$cluster\",namespace=~\".*\",pod=~\"${component:raw}\",pod=~\"$pod\",container=~\"$container\"})/(1024*1024),\"_\",\"Mem Working Bytes (MB)\",\"\",\"\") #and label_replace(max_over_time(sum(container_memory_working_set_bytes{cluster=~\"$cluster\",namespace=~\".*\",pod=~\"${component:raw}\",container=~\"$container\"})[3d:])/(1024*1024) < 512,\"_\",\"Mem Working Bytes (MB)\",\"\",\"\")\r\n)\r\n# Memory Usage (GB version)\r\n#or (label_replace(sum(container_memory_working_set_bytes{cluster=~\"$cluster\",namespace=~\".*\",pod=~\"${component:raw}\",container=~\"$container\"})/(1024*1024*1024),\"_\",\"Mem Working Bytes (GB)\",\"\",\"\") and label_replace(quantile_over_time(0.95,sum(container_memory_working_set_bytes{cluster=~\"$cluster\",namespace=~\".*\",pod=~\"${component:raw}\",container=~\"$container\"})[3d:])/(1024*1024) >= 512,\"_\",\"Mem Working Bytes (GB)\",\"\",\"\"))\r\n### MB vs GB cut-off\r\n##or label_replace(quantile_over_time(0.95,sum(container_memory_working_set_bytes{cluster=~\"$cluster\",namespace=~\".*\",pod=~\"${component:raw}\",container=~\"$container\"})[3d:])/(1024*1024),\"_\",\"Mem Max Over Time\",\"\",\"\")\r\n# Sum of all limits defined, in Cores\r\nor (label_replace(sum(kube_pod_container_resource_limits{cluster=~\"$cluster\",namespace=~\".*\",pod=~\"${component:raw}\",pod=~\"$pod\",container=~\"$container\",resource=\"memory\"}),\"_\",\"Memory Limits (MB)\",\"\",\"\") / (1024*1024) #and label_replace(quantile_over_time(0.95,sum(container_memory_working_set_bytes{cluster=~\"$cluster\",namespace=~\".*\",pod=~\"${component:raw}\",container=~\"$container\"})[3d:])/(1024*1024) < 512,\"_\",\"Memory Limits (MB)\",\"\",\"\")\r\n)\r\n#or (label_replace(sum(kube_pod_container_resource_limits{cluster=~\"$cluster\",namespace=~\".*\",pod=~\"${component:raw}\",container=~\"$container\",resource=\"memory\"}),\"_\",\"Memory Limits (GB)\",\"\",\"\") / (1024*1024*1024) and label_replace(quantile_over_time(0.95,sum(container_memory_working_set_bytes{cluster=~\"$cluster\",namespace=~\".*\",pod=~\"${component:raw}\",container=~\"$container\"})[3d:])/(1024*1024) >= 512,\"_\",\"Memory Limits (GB)\",\"\",\"\"))\r\n# Max Mem % Usage:\r\nor label_replace(100*(max(\r\n    max_over_time((max by(container)(container_memory_working_set_bytes{cluster=~\"$cluster\",namespace=~\".*\",pod=~\"${component:raw}\",pod=~\"$pod\",container=~\"$container\"}))[10m:])\r\n    / max by(container)(kube_pod_container_resource_limits{cluster=~\"$cluster\",namespace=~\".*\",pod=~\"${component:raw}\",pod=~\"$pod\",container=~\"$container\",resource=\"memory\"})\r\n    )),\"_\",\"Mem Max Usage vs Limit (%)\",\"\",\"\")\r\n",
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Memory for [$container]",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_MANAGED_PROMETHEUS_JAJENS-AZMONWORKSPACE-TEST}"
+      },
+      "description": "",
+      "gridPos": {
+        "h": 2,
+        "w": 24,
+        "x": 0,
+        "y": 16
+      },
+      "id": 13,
+      "options": {
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "<div style=\"background-color:#595959; text-align: left\"> \n  <span style=\"color:white; font-size:18px\">&nbsp Logs</span>\n</div>\n",
+        "mode": "markdown"
+      },
+      "pluginVersion": "9.5.13",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_MANAGED_PROMETHEUS_JAJENS-AZMONWORKSPACE-TEST}"
+          },
+          "refId": "A"
+        }
+      ],
+      "type": "text"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 18
+      },
+      "id": 6,
+      "panels": [],
+      "title": "Kube Events",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "grafana-azure-monitor-datasource",
+        "uid": "${DS_AZURE_MONITOR}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "yellow",
+            "mode": "fixed"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Reason"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 120
+              },
+              {
+                "id": "custom.align",
+                "value": "center"
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "Failed": {
+                        "color": "red",
+                        "index": 0
+                      }
+                    },
+                    "type": "value"
+                  }
+                ]
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Count"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 80
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byType",
+              "options": "time"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 180
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "text",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Message"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "text",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Count"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "mode": "gradient",
+                  "type": "gauge"
+                }
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "continuous-BlPu"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 19
+      },
+      "id": 55,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "LastSeen"
+          }
+        ]
+      },
+      "pluginVersion": "9.5.13",
+      "targets": [
+        {
+          "azureLogAnalytics": {
+            "query": "KubeEvents\r\n| where TimeGenerated > $__timeFrom() and TimeGenerated  <= $__timeTo\r\n| where ClusterName == '$cluster'\r\n//| where Name matches regex '${component:raw}'\r\n| where Name matches regex '$pod'\r\n//| order by TimeGenerated desc\r\n| order by LastSeen desc, FirstSeen desc, TimeGenerated desc\r\n//| project-rename PodName = Name\r\n//| project PodName, Reason, Message, Count, FirstSeen, LastSeen\r\n| project  FirstSeen, LastSeen, Count, Reason, Message\r\n| take $logRowLimit",
+            "resources": [
+              "/subscriptions/af342bf1-1ace-41df-902c-47921400551b"
+            ],
+            "resultFormat": "table"
+          },
+          "azureMonitor": {
+            "allowedTimeGrainsMs": [],
+            "timeGrain": "auto"
+          },
+          "datasource": {
+            "type": "grafana-azure-monitor-datasource",
+            "uid": "${DS_AZURE_MONITOR}"
+          },
+          "queryType": "Azure Log Analytics",
+          "refId": "A"
+        }
+      ],
+      "title": "Kube Events entries (for [$pod] up to $logRowLimit events)",
+      "type": "table"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 27
+      },
+      "id": 2,
+      "panels": [],
+      "title": "Container Logs",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "grafana-azure-monitor-datasource",
+        "uid": "${DS_AZURE_MONITOR}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byType",
+              "options": "time"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 180
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "STD"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 30
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "ERR": {
+                        "color": "orange",
+                        "index": 0
+                      }
+                    },
+                    "type": "value"
+                  }
+                ]
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "text",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 13,
+        "w": 24,
+        "x": 0,
+        "y": 28
+      },
+      "id": 62,
+      "maxPerRow": 3,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "9.5.13",
+      "repeat": "container",
+      "repeatDirection": "h",
+      "targets": [
+        {
+          "azureLogAnalytics": {
+            "query": "let startTime = datetime(${__from:date});\r\nlet nodes = ContainerNodeInventory // ID computers in selected clusters:\r\n| where TimeGenerated >= startTime | summarize by Computer, _ResourceId\r\n| extend Cluster = substring(_ResourceId,strlen(_ResourceId)-indexof(reverse(_ResourceId),'/'))\r\n| project-reorder Cluster, Computer | where Cluster == '$cluster' | take 10 | project Computer; //, Cluster; // nodes;\r\nlet containerInv = ContainerInventory // Get ContainerIds and pod names\r\n| where TimeGenerated >= startTime | join kind=inner nodes on Computer | where ContainerHostname == '$pod'\r\n| summarize by ContainerHostname, Computer, ContainerID, Name | take 100 | project-rename Pod = ContainerHostname \r\n| extend ContainerName = replace_regex(Name, 'k8s_(.*)_${pod}_.*',@'\\1') \r\n| where ContainerName == '${container:raw}'\r\n| project Pod, ContainerName, ContainerID; // containerInv\r\nlet containerIds = containerInv | project ContainerID;\r\nContainerLog\r\n//| where TimeGenerated >= startTime \r\n| where TimeGenerated > $__timeFrom and TimeGenerated  <= $__timeTo\r\n| where Computer in (nodes)\r\n| where ContainerID in (containerIds)\r\n| join kind=inner hint.strategy=shuffle containerInv on ContainerID | project-away ContainerID1, ContainerID, TenantId, SourceSystem, Type, _ResourceId, TimeOfCommand\r\n//| join kind=inner nodes on Computer | project-away Computer1 | project-rename Node = Computer\r\n| extend STD = case(LogEntrySource == 'stdout', 'OUT', LogEntrySource == 'stderr', 'ERR', '???')\r\n//| project TimeGenerated, LogEntrySource, \r\n| order by TimeGenerated desc\r\n| project STD, LogEntry, TimeGenerated //, Node, Cluster\r\n| take $logRowLimit",
+            "resources": [
+              "/subscriptions/af342bf1-1ace-41df-902c-47921400551b"
+            ],
+            "resultFormat": "table"
+          },
+          "azureMonitor": {
+            "allowedTimeGrainsMs": [],
+            "timeGrain": "auto"
+          },
+          "datasource": {
+            "type": "grafana-azure-monitor-datasource",
+            "uid": "${DS_AZURE_MONITOR}"
+          },
+          "queryType": "Azure Log Analytics",
+          "refId": "A"
+        }
+      ],
+      "title": "Container logs (for [$container], latest $logRowLimit rows)",
+      "type": "table"
+    }
+  ],
+  "refresh": "",
+  "revision": 1,
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "selected": false,
+          "text": "Managed_Prometheus_jajens-azmonworkspace-test",
+          "value": "Managed_Prometheus_jajens-azmonworkspace-test"
+        },
+        "hide": 1,
+        "includeAll": false,
+        "multi": false,
+        "name": "prometheus",
+        "options": [],
+        "query": "prometheus",
+        "queryValue": "",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "type": "datasource"
+      },
+      {
+        "current": {},
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_MANAGED_PROMETHEUS_JAJENS-AZMONWORKSPACE-TEST}"
+        },
+        "definition": "kube_node_status_condition",
+        "hide": 0,
+        "includeAll": false,
+        "multi": false,
+        "name": "cluster",
+        "options": [],
+        "query": {
+          "query": "kube_node_status_condition",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 2,
+        "regex": "/.*cluster=\"([^\"]*).*/",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {},
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_MANAGED_PROMETHEUS_JAJENS-AZMONWORKSPACE-TEST}"
+        },
+        "definition": "kube_namespace_status_phase{cluster=~\"$cluster\", phase!~\"terminating\"}",
+        "hide": 0,
+        "includeAll": true,
+        "multi": true,
+        "name": "namespace",
+        "options": [],
+        "query": {
+          "query": "kube_namespace_status_phase{cluster=~\"$cluster\", phase!~\"terminating\"}",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 2,
+        "regex": "/.*namespace=\"([^\"]*).*/",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "allValue": ".*",
+        "current": {
+          "selected": true,
+          "text": "All",
+          "value": "^(.*)$"
+        },
+        "description": "Defines the service Component this report focuses on.",
+        "hide": 0,
+        "includeAll": false,
+        "multi": false,
+        "name": "component",
+        "options": [
+          {
+            "selected": true,
+            "text": "All",
+            "value": "^(.*)$"
+          },
+          {
+            "selected": false,
+            "text": "AKRI",
+            "value": "^(akri-).*"
+          },
+          {
+            "selected": false,
+            "text": "Bluefin",
+            "value": "^(bf-|bluefin-).*"
+          },
+          {
+            "selected": false,
+            "text": "E4I",
+            "value": "(^(opc-ua-|edge-application-supervisor).*|.*-opc-ua-.*)"
+          },
+          {
+            "selected": false,
+            "text": "E4K",
+            "value": "^(azedge-).*"
+          },
+          {
+            "selected": false,
+            "text": "Symphony",
+            "value": "^symphony-.*"
+          },
+          {
+            "selected": false,
+            "text": "AzMon",
+            "value": "^(ama-|azuremonitor).*"
+          },
+          {
+            "selected": false,
+            "text": "OBS",
+            "value": "^(obs|lok|flu|ote|pro|tem).*"
+          }
+        ],
+        "query": "All : ^(.*)$,AKRI : ^(akri-).*,Bluefin : ^(bf-|bluefin-).*,E4I : (^(opc-ua-|edge-application-supervisor).*|.*-opc-ua-.*),E4K : ^(azedge-).*,Symphony : ^symphony-.*,AzMon : ^(ama-|azuremonitor).*,OBS : ^(obs|lok|flu|ote|pro|tem).*",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
+      },
+      {
+        "current": {},
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_MANAGED_PROMETHEUS_JAJENS-AZMONWORKSPACE-TEST}"
+        },
+        "definition": "container_cpu_usage_seconds_total{container=\"\",cpu=\"total\",cluster=~\"$cluster\",namespace=~\"$namespace\",pod=~\"$component\"}",
+        "description": "The pod the report focuses on",
+        "hide": 0,
+        "includeAll": false,
+        "multi": false,
+        "name": "pod",
+        "options": [],
+        "query": {
+          "query": "container_cpu_usage_seconds_total{container=\"\",cpu=\"total\",cluster=~\"$cluster\",namespace=~\"$namespace\",pod=~\"$component\"}",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": "/.*pod=\"([^\"]*).*/",
+        "skipUrlSync": false,
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "current": {},
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_MANAGED_PROMETHEUS_JAJENS-AZMONWORKSPACE-TEST}"
+        },
+        "definition": "container_cpu_usage_seconds_total{container=\"\",cpu=\"total\",cluster=~\"$cluster\",namespace=~\"$namespace\",pod=~\"$component\",pod=~\"$pod\"}",
+        "description": "Used to drilldown into K8s reports that require single namespace value",
+        "hide": 2,
+        "includeAll": false,
+        "multi": false,
+        "name": "podnamespace",
+        "options": [],
+        "query": {
+          "query": "container_cpu_usage_seconds_total{container=\"\",cpu=\"total\",cluster=~\"$cluster\",namespace=~\"$namespace\",pod=~\"$component\",pod=~\"$pod\"}",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": "/.*namespace=\"([^\"]*).*/",
+        "skipUrlSync": false,
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "current": {},
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_MANAGED_PROMETHEUS_JAJENS-AZMONWORKSPACE-TEST}"
+        },
+        "definition": "kube_pod_container_info{cluster=~\"$cluster\",namespace=~\"$namespace\",pod=~\"$component\",pod=~\"$pod\"}",
+        "hide": 2,
+        "includeAll": true,
+        "multi": true,
+        "name": "container",
+        "options": [],
+        "query": {
+          "query": "kube_pod_container_info{cluster=~\"$cluster\",namespace=~\"$namespace\",pod=~\"$component\",pod=~\"$pod\"}",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": "/.*container=\"([^\"]*).*/",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": true,
+          "text": "10",
+          "value": "10"
+        },
+        "description": "How many rows to limit log queries to",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Log Row Limit",
+        "multi": false,
+        "name": "logRowLimit",
+        "options": [
+          {
+            "selected": true,
+            "text": "10",
+            "value": "10"
+          },
+          {
+            "selected": false,
+            "text": "50",
+            "value": "50"
+          },
+          {
+            "selected": false,
+            "text": "100",
+            "value": "100"
+          },
+          {
+            "selected": false,
+            "text": "500",
+            "value": "500"
+          },
+          {
+            "selected": false,
+            "text": "1000",
+            "value": "1000"
+          }
+        ],
+        "query": "10,50,100,500,1000",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-24h",
+    "to": "now"
+  },
+  "timepicker": {
+    "refresh_intervals": [
+      "1m",
+      "5m",
+      "15m",
+      "30m",
+      "1h",
+      "2h",
+      "1d"
+    ]
+  },
+  "timezone": "",
+  "title": "aio-health-infra-pod",
+  "uid": "wlCiLDq4k",
+  "version": 33,
+  "weekStart": ""
+}

@@ -12,8 +12,8 @@ RESOURCE_GROUP=<your resource group>
 CLUSTER_NAME=<your connected cluster name>
 TENANT_ID=<your tenant ID>
 AKV_SP_CLIENTID=<your AKV service principal client ID>
-AKV_SP_CLIENTSECRET=<your AKV service principal client secert>
-AKV_NAME=<you AKV name>
+AKV_SP_CLIENTSECRET=<your AKV service principal client secret>
+AKV_NAME=<your AKV name>
 
 PLACEHOLDER_SECRET_NAME=PlaceholderSecret
 AKV_PROVIDER_POLLING_INTERVAL=1h
