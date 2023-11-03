@@ -5,26 +5,15 @@ echo "##############################################################"
 echo "I'm rolebinding.sh"
 
 echo ""
-echo "Deleting rolebinding in namespace: $1..."
-kubectl delete rolebinding --all -n $1
+kubectl delete rolebinding --all -n alice-springs
+kubectl delete rolebinding --all -n alice-springs-solution
+kubectl delete rolebinding --all -n azure-iot-operations
+kubectl delete rolebinding --all -n azure-iot-operations-solution
+kubectl delete rolebinding --all -n symphony-k8s-system
+kubectl delete rolebinding --all -n custom-location-a
 
-echo ""
-echo "Deleting rolebinding in namespace: $2..."
-kubectl delete rolebinding --all -n $2
-
-echo ""
-echo "Deleting rolebinding in namespace: $3..."
-kubectl delete rolebinding --all -n $3
-
-echo ""
-echo "Deleting rolebinding in namespace: $4..."
-kubectl delete rolebinding --all -n $4
-
-# kubectl delete rolebinding $(kubectl get rolebinding -A | grep symphony-cert-manager) -n kube-system
 kubectl delete rolebinding symphony-cert-manager-cainjector:leaderelection -n kube-system
 kubectl delete rolebinding symphony-cert-manager:leaderelection -n kube-system
-
-# kubectl delete rolebinding $(kubectl get rolebinding -A | grep aio-cert-manager) -n kube-system
 kubectl delete rolebinding aio-cert-manager-cainjector:leaderelection -n kube-system
 kubectl delete rolebinding aio-cert-manager:leaderelection -n kube-system
 

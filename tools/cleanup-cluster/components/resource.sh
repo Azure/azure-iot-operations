@@ -6,32 +6,36 @@ echo "I'm resource.sh"
 
 timeoutSeconds=90
 
-# Custom location namespace
+# Custom Location namespace
 echo ""
-echo "Deleting all resources in namespace: $3..."
-kubectl delete all --all -n $3
-echo ""
-kubectl get all -n $3
+kubectl delete all --all -n custom-location-a
+kubectl get all -n custom-location-a
 
 # Symphony namespace
 echo ""
-echo "Deleting all resources in namespace: $4..."
 kubectl delete all --all -n $4
-echo ""
 kubectl get all -n $4
 
 # Alice Springs namespace
 echo ""
-echo "Deleting all resources in namespace: $2..."
 # Timeout 'terminating' stage
-timeout $timeoutSeconds kubectl delete all --all -n $2
-echo ""
-kubectl get all -n $2
+timeout $timeoutSeconds kubectl delete all --all -n alice-springs
+kubectl get all -n alice-springs
 
 # Alice Springs Solution namespace
 echo ""
-echo "Deleting all resources in namespace: $5..."
 # Timeout 'terminating' stage
-timeout $timeoutSeconds kubectl delete all --all -n $5
+timeout $timeoutSeconds kubectl delete all --all -n alice-springs-solution
+kubectl get all -n alice-springs-solution
+
+# AIO namespace
 echo ""
-kubectl get all -n $5
+# Timeout 'terminating' stage
+timeout $timeoutSeconds kubectl delete all --all -n azure-iot-operations
+kubectl get all -n azure-iot-operations
+
+# AIO Solution namespace
+echo ""
+# Timeout 'terminating' stage
+timeout $timeoutSeconds kubectl delete all --all -n azure-iot-operations-solution
+kubectl get all -n azure-iot-operations-solution
