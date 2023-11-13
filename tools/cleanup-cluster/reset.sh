@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 # NOTES:
 # This script is used for deleting Project Alice Springs resources
 # It assumes you deployed Project Alice Springs by following https://github.com/Azure/project-alice-springs, and you understand the variables you configured in the deployment

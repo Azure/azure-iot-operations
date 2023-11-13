@@ -77,3 +77,9 @@ third-party’s policies.
 
 ## Terms of Use
 Please see [Supplemental Terms of Use for Microsoft Azure Previews.](https://azure.microsoft.com/en-us/support/legal/preview-supplemental-terms/)
+
+## Contributing
+Please see [Contributing.](https://github.com/Azure/azure-iot-operations/blob/main/CONTRIBUTING.md)
+
+## Reporting Security Issues
+Please see [Security.](https://github.com/Azure/azure-iot-operations/blob/main/SECURITY.md)
