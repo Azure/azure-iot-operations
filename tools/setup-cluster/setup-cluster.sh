@@ -1,5 +1,8 @@
 #!/bin/sh
 
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 # exit when any command fails
 set -e
 
