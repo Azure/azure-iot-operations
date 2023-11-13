@@ -2,14 +2,16 @@
 
 ## Overview
 
-This repo contains the definition of Azure IoT Operations (AIO) and allows for
-AIO to be deployed to an Arc-enabled K8s cluster.
+This repo contains the deployment definition of Azure IoT Operations (AIO) and allows for
+AIO to be deployed to an Arc-enabled K8s cluster. This repository does not encourage pull requests, as the repo is 
+meant for publicly sharing the releases of AIO and not shared development of AIO.
 
-Please follow the Azure IoT Operations [Quickstart](https://alicesprings.ms/docs/quickstart/)
+Please follow the Azure IoT Operations [Quickstart](https://alicesprings.ms/docs/quickstart/).
 
 ## Forking the Repo
 
-If you want to fork this repo, there are some additional steps you will need to take to set up the fork.
+If you want to fork this repo and try deployment of AIO through GitOps, there are some additional steps you will 
+need to take to set up the fork.
 
 1. Set the `AZURE_CREDENTIALS` repository secret.
 
@@ -66,3 +68,12 @@ If you want to fork this repo, there are some additional steps you will need to 
     2. On the forked repo, select **Actions** and select **I understand my workflows, go ahead and enable them.**
 
     3. Run the **GitOps Deployment of Azure IoT Operations** GitHub Action. You'll need to provide both the `subscription` and `resource group` where your Arc-enabled cluster resource is and the path to the `environment parameters file` you created previously.
+
+## Trademarks
+This project may contain trademarks or logos for projects, products, or services. Authorized use of Microsoft trademarks or logos is 
+subject to and must follow Microsoft’s Trademark & Brand Guidelines. Use of Microsoft trademarks or logos in modified versions of this
+project must not cause confusion or imply Microsoft sponsorship. Any use of third-party trademarks or logos are subject to those 
+third-party’s policies.
+
+## Terms of Use
+Please see [Supplemental Terms of Use for Microsoft Azure Previews.](https://azure.microsoft.com/en-us/support/legal/preview-supplemental-terms/)
