@@ -6,7 +6,7 @@ This repo contains the deployment definition of Azure IoT Operations (AIO) and a
 AIO to be deployed to an Arc-enabled K8s cluster. This repository does not encourage pull requests, as the repo is 
 meant for publicly sharing the releases of AIO and not shared development of AIO.
 
-Please follow the Azure IoT Operations [Quickstart](https://alicesprings.ms/docs/quickstart/).
+Please see the [Azure IoT Operations Documentation](https://aka.ms/AIOdocs).
 
 ## Forking the Repo
 
