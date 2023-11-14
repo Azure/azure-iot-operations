@@ -1,4 +1,5 @@
-name: Create AIO Release
+name: Create Azure IoT Operations Release
+run-name: Create ${{ github.event.inputs.version }} Release
 on:
   workflow_dispatch:
     inputs: 
