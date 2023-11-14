@@ -1,4 +1,4 @@
-name: GitOps Deployment of Azure IoT Operations
+name: Deploy Azure IoT Operations
 run-name: Deploy to ${{ github.event.inputs.aioParamsPath }}
 on:
   workflow_dispatch:
