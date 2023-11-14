@@ -47,10 +47,11 @@ az k8s-extension create --cluster-name $CLUSTER_NAME --resource-group $RESOURCE_
 --configuration-settings secrets-store-csi-driver.enableSecretRotation=true secrets-store-csi-driver.rotationPollInterval=$AKV_PROVIDER_POLLING_INTERVAL secrets-store-csi-driver.syncSecret.enabled=false
 
 ##############################################################################
-# The below command will create the alice-springs namespace in your cluster. #
-# This is required for the SecretProviderClass custom resources as they must #
-# reside in the same namespace as the pods that will reference them. If you  #
-# already have created the namespaces, comment out the below commands.       #
+# The below command will create the azure-iot-operations namespace           #
+# in your cluster. This is required for the SecretProviderClass custom       #
+# resources as they must reside in the same namespace as the pods that will  #
+# reference them. If you already have created the namespaces, comment out    #
+# the below commands.                                                        #
 ##############################################################################
 echo "Creating the namespaces"
 kubectl create namespace $DEFAULT_NAMESPACE

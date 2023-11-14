@@ -4,20 +4,20 @@
 # Licensed under the MIT License.
 
 # NOTES:
-# This script is used for deleting Project Alice Springs resources
-# It assumes you deployed Project Alice Springs by following https://github.com/Azure/project-alice-springs, and you understand the variables you configured in the deployment
+# This script is used for deleting Azure IoT Operations resources
+# It assumes you deployed Azure IoT Operations by following https://github.com/Azure/project-alice-springs, and you understand the variables you configured in the deployment
 # Be very careful updating below variables, they should be the same as what you used in the deployment
 # Wrongly updating these values may delete resources you don't want to delete, or delete resources belong to others who share the same subscription
 # After deleting these resources, they're permanently gone and cannot be recovered
 
-# The subscription id where your Project Alice Springs resources are created
+# The subscription id where your Azure IoT Operations resources are created
 subscriptionId="<<SUBSCRIPTION_ID>>"
 
-# The resource group where your Project Alice Springs resources are located in above subscription
+# The resource group where your Azure IoT Operations resources are located in above subscription
 # You can find this value from Azure portal
 resourceGroupName="<<RESOURCE_GROUP_NAME>>"
 
-# The k8s cluster name that you connected to Azure Arc and deployed Project Alice Springs resources
+# The k8s cluster name that you connected to Azure Arc and deployed Azure IoT Operations resources
 # You can find this value from the resource group above
 k8sClusterName="<<K8S_CLUSTER_NAME>>"
 
