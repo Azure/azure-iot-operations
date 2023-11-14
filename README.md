@@ -67,7 +67,7 @@ need to take to set up the fork.
 
     2. On the forked repo, select **Actions** and select **I understand my workflows, go ahead and enable them.**
 
-    3. Run the **GitOps Deployment of Azure IoT Operations** GitHub Action. You'll need to provide both the `subscription` and `resource group` where your Arc-enabled cluster resource is and the path to the `environment parameters file` you created previously.
+    3. Run the **Deploy Azure IoT Operations** GitHub Action. You'll need to provide both the `subscription` and `resource group` where your Arc-enabled cluster resource is and the path to the `environment parameters file` you created previously.
 
 ## Trademarks
 This project may contain trademarks or logos for projects, products, or services. Authorized use of Microsoft trademarks or logos is 
