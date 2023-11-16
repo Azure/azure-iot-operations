@@ -28,7 +28,7 @@ need to take to set up the fork.
         in your fork. Repository secrets can be found under **Settings** > **Secrets and 
        variables** > **Actions**. To learn more, see [creating secrets for a repository](https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions#creating-secrets-for-a-repository).
 
-2. To be able to use secrets in AIO, follow the [AIO Out-of-Band Pre-Install Steps](https://microsoft.sharepoint.com/:w:/t/Bluefin/EWp9JzHXpkhIlcCpMv19hWQB3MWpuqLM03L1G4yPNmbm2Q?e=lunDFS) to create an AKV and a Service Principal with access to AKV.
+2. To be able to use secrets in AIO, follow [Manage Secrets](https://learn.microsoft.com/en-us/azure/iot-operations/deploy-iot-ops/howto-manage-secrets) to create an AKV and a Service Principal with access to AKV.
 
 3. Create and setup K8s Arc-enabled cluster.
 
