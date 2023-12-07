@@ -14,44 +14,32 @@ echo ""
 timeoutSeconds=40
 
 # AKRI
-kubectl delete crd instances.akri.sh
-kubectl delete crd configurations.akri.sh
+kubectl get crds -o name | grep ".akri.sh" | xargs -I {} timeout $timeoutSeconds kubectl delete {} 
 
 # ADR
-kubectl delete crd assets.deviceregistry.microsoft.com
-kubectl delete crd assetendpointprofiles.deviceregistry.microsoft.com
+kubectl get crds -o name | grep ".deviceregistry.microsoft.com" | xargs -I {} timeout $timeoutSeconds kubectl delete {} 
 
 # E4I
-kubectl delete crd applications.e4i.microsoft.com 
-kubectl delete crd assets.e4i.microsoft.com
-kubectl delete crd assettypes.e4i.microsoft.com
-kubectl delete crd modules.e4i.microsoft.com
-kubectl delete crd moduletypes.e4i.microsoft.com
+kubectl get crds -o name | grep ".e4i.microsoft.com" | xargs -I {} timeout $timeoutSeconds kubectl delete {} 
 
 # E4K
-kubectl get crds -o name | grep "az-edge.com" | xargs kubectl delete
-# MQ
-kubectl get crds -o name | grep "mq.iotoperations.azure.com" | xargs kubectl delete
+kubectl get crds -o name | grep ".az-edge.com" | xargs kubectl delete
 
 # Symphony
-timeout $timeoutSeconds kubectl delete crd instances.symphony.microsoft.com
-timeout $timeoutSeconds kubectl delete crd solutions.symphony.microsoft.com
-timeout $timeoutSeconds kubectl delete crd targets.symphony.microsoft.com 
-
-# Orchestrator
-timeout $timeoutSeconds kubectl delete crd instances.orchestrator.iotoperations.azure.com
-timeout $timeoutSeconds kubectl delete crd solutions.orchestrator.iotoperations.azure.com
-timeout $timeoutSeconds kubectl delete crd targets.orchestrator.iotoperations.azure.com
+kubectl get crds -o name | grep ".symphony.microsoft.com" | xargs -I {} timeout $timeoutSeconds kubectl delete {} 
 
 # Bluefin
-timeout $timeoutSeconds kubectl delete crd datasets.bluefin.az-bluefin.com
-timeout $timeoutSeconds kubectl delete crd pipelines.bluefin.az-bluefin.com
-timeout $timeoutSeconds kubectl delete crd instances.bluefin.az-bluefin.com
+kubectl get crds -o name | grep ".bluefin.az-bluefin.com" | xargs -I {} timeout $timeoutSeconds kubectl delete {} 
 
-# DataProcessor
-timeout $timeoutSeconds kubectl delete crd datasets.dataprocessor.iotoperations.azure.com
-timeout $timeoutSeconds kubectl delete crd pipelines.dataprocessor.iotoperations.azure.com
-timeout $timeoutSeconds kubectl delete crd instances.dataprocessor.iotoperations.azure.com
+# All IoT Operations CRDs
+# Known CRDs to be deleted: dataprocessor, mqs, ochestrator, mq, assettypes.opcuabroker, lnmz.layerednetworkmgmt
+kubectl get crds -o name | grep ".iotoperations.azure.com" | xargs -I {} timeout $timeoutSeconds kubectl delete {} 
+
+# All Cert Mangers
+kubectl get crds -o name | grep ".cert-manager.io" | xargs -I {} timeout $timeoutSeconds kubectl delete {} 
+
+# All Old IoT Operations CRDs
+kubectl get crds -o name | grep ".aio.com" | xargs -I {} timeout $timeoutSeconds kubectl delete {}
 
 echo ""
 kubectl get crd -A
