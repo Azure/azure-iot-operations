@@ -15,3 +15,18 @@
 - This tool assumes you do not have other workloads running on the same k8s cluster, if you do have workloads other than PAS, please do not use this tool, otherwise, you may delete components or resources unrelated to PAS.
 - `PAS` has been renamed to `AIO`, this tool will delete both old PAS and new AIO resources & components.
 - If you run into permission issues when deleting componenets inside the cluster, you probably did not specify `--admin` when getting credentials for your k8s cluster, please re-run `az aks get-credentials --resource-group rg --name n --admin`, make sure to append `--admin` flag.
+
+
+## Alternative to updating `reset.sh` 
+Set the corresponding environment variables:
+```bash
+export SUBSCRIPTION_ID="<<SUBSCRIPTION_ID>>"
+export RESOURCE_GROUP_NAME="<<RESOURCE_GROUP_NAME>>"
+export K8S_CLUSTER_NAME="<<K8S_CLUSTER_NAME>>"
+export K8S_CLUSTER_CONTEXT="<<K8S_CLUSTER_CONTEXT>>"
+```
+
+Then run the following command: (using `-s`)
+```bash
+export resetOption="-s" && cat reset.sh | sed -e "s/<<SUBSCRIPTION_ID>>/$SUBSCRIPTION_ID/g" -e "s/<<RESOURCE_GROUP_NAME>>/$RESOURCE_GROUP_NAME/g" -e "s/<<K8S_CLUSTER_NAME>>/$K8S_CLUSTER_NAME/g" -e "s/<<K8S_CLUSTER_CONTEXT>>/$K8S_CLUSTER_CONTEXT/g"| envsubst '$resetOption' | sh
+```

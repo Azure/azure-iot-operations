@@ -8,7 +8,7 @@ echo "##############################################################"
 echo "I'm login.sh"
 
 
-az login --output none
+az login --use-device-code --output none
 az account set --subscription $1
 
 echo ""

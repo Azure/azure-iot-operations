@@ -1,30 +1,28 @@
-#!/bin/sh
+# Prerequisites: Azure CLI, kubectl, openssl
 
-# exit when any command fails
-set -e
+$ErrorActionPreference='Stop'
 
 ##############################################################################
 # The below variables are used in the following commands. Please update them #
 # to reflect the details for your Azure subscription and your cluster.       #
 ##############################################################################
-SUBSCRIPTION=<your subscription ID>
-RESOURCE_GROUP=<your resource group>
-CLUSTER_NAME=<your connected cluster name>
-TENANT_ID=<your tenant ID>
-AKV_SP_CLIENTID=<your AKV service principal client ID>
-AKV_SP_CLIENTSECRET=<your AKV service principal client secret>
-AKV_NAME=<your AKV name>
+Set-Variable -Name "SUBSCRIPTION" -Value "<SUBSCRIPTION_ID>" -Option Constant
+Set-Variable -Name "RESOURCE_GROUP" -Value "<RESOURCE_GROUP>" -Option Constant
+Set-Variable -Name "CLUSTER_NAME" -Value "<CLUSTER_NAME>" -Option Constant
+Set-Variable -Name "TENANT_ID" -Value "<TENANT_ID>" -Option Constant
+Set-Variable -Name "AKV_SP_CLIENTID" -Value "<AKV_SP_CLIENTID>" -Option Constant
+Set-Variable -Name "AKV_SP_CLIENTSECRET" -Value "<AKV_SP_CLIENTSECRET>" -Option Constant
+Set-Variable -Name "AKV_NAME" -Value "<AKV_NAME>" -Option Constant
 
-PLACEHOLDER_SECRET_NAME=PlaceholderSecret
-AKV_PROVIDER_POLLING_INTERVAL=1h
-AKV_SECRET_PROVIDER_NAME=akvsecretsprovider
-DEFAULT_NAMESPACE=azure-iot-operations
+Set-Variable -Name "AKV_SECRET_PROVIDER_NAME" -Value "<AKV_SECRET_PROVIDER_NAME>" -Option Constant
+Set-Variable -Name "AKV_PROVIDER_POLLING_INTERVAL" -Value "1h" -Option Constant
+Set-Variable -Name "DEFAULT_NAMESPACE" -Value "azure-iot-operations" -Option Constant
 
 ##############################################################################
 # The below commands are used log in to your Azure account and subscription. #
 ##############################################################################
-echo "Logging into azure"
-az login
+Write-Host "Logging into azure"
+az login --use-device-code
 az account set --subscription $SUBSCRIPTION
 
 ##############################################################################
@@ -36,11 +34,11 @@ az account set --subscription $SUBSCRIPTION
 # configuration-setting to set the polling interval that you require for     #
 # secrets to be updated on the cluster.                                      #
 ##############################################################################
-echo "Adding the AKV Provider CSI Driver"
-az k8s-extension create --cluster-name $CLUSTER_NAME --resource-group $RESOURCE_GROUP \
---cluster-type connectedClusters \
---extension-type Microsoft.AzureKeyVaultSecretsProvider \
---name $AKV_SECRET_PROVIDER_NAME \
+Write-Host "Adding the AKV Provider CSI Driver"
+az k8s-extension create --cluster-name $CLUSTER_NAME --resource-group $RESOURCE_GROUP `
+--cluster-type connectedClusters `
+--extension-type Microsoft.AzureKeyVaultSecretsProvider `
+--name $AKV_SECRET_PROVIDER_NAME `
 --configuration-settings secrets-store-csi-driver.enableSecretRotation=true secrets-store-csi-driver.rotationPollInterval=$AKV_PROVIDER_POLLING_INTERVAL secrets-store-csi-driver.syncSecret.enabled=false
 
 ##############################################################################
@@ -49,12 +47,8 @@ az k8s-extension create --cluster-name $CLUSTER_NAME --resource-group $RESOURCE_
 # reside in the same namespace as the pods that will reference them. If you  #
 # already have created the namespaces, comment out the below commands.       #
 ##############################################################################
-echo "Creating the namespaces"
-if kubectl get namespace "$DEFAULT_NAMESPACE" &> /dev/null; then
-    echo "Namespace "$DEFAULT_NAMESPACE" already exists"
-else
-    kubectl create namespace $DEFAULT_NAMESPACE
-fi
+Write-Host "Creating the namespaces"
+kubectl create namespace $DEFAULT_NAMESPACE
 
 ##############################################################################
 # The below commands will add a k8s secret for the AKV service principal     #
@@ -63,19 +57,19 @@ fi
 #               !!! DO NOT CHANGE THE NAME OF THE SECRET !!!                 #
 #                                                                            #
 ##############################################################################
-echo "Adding AKV SP to secrets store in the namespaces"
+Write-Host "Adding AKV SP to secrets store in the namespaces"
 kubectl create secret generic aio-akv-sp --from-literal clientid="$AKV_SP_CLIENTID" --from-literal clientsecret="$AKV_SP_CLIENTSECRET" --namespace $DEFAULT_NAMESPACE --dry-run=client -o yaml | kubectl apply -f -
 kubectl label secret aio-akv-sp secrets-store.csi.k8s.io/used=true --namespace $DEFAULT_NAMESPACE
 
 ##############################################################################
 # The below command will create the four required SecretProviderClasses into #
-# the cluster, referencing the Placeholder Secret from AKV.                  #
+# the cluster, referencing the secrets from AKV.                  #
 #                                                                            #
 #    !!! DO NOT CHANGE THE NAMES OF ANY OF THE SECRETPROVIDERCLASSES !!!     #
 #                                                                            #
 ##############################################################################
-echo "Creating Azure IoT Operations Default SecretProviderClass"
-kubectl apply -f - <<EOF
+Write-Host "Creating Azure IoT Operations Default SecretProviderClass"
+$yaml = @"
 apiVersion: secrets-store.csi.x-k8s.io/v1
 kind: SecretProviderClass
 metadata:
@@ -89,14 +83,21 @@ spec:
     objects: |
       array:
         - |
-          objectName: $PLACEHOLDER_SECRET_NAME
+          objectName: E4KPassword
+          objectType: secret
+          objectVersion: ""
+        - |
+          objectName: E4KClientID
           objectType: secret
           objectVersion: ""
     tenantId: $TENANT_ID
-EOF
+"@
 
-echo "Creating Azure IoT Operations OPC-UA SecretProviderClasses"
-kubectl apply -f - <<EOF
+$yaml | kubectl apply -f -
+
+
+Write-Host "Creating Azure IoT Operations OPC-UA SecretProviderClasses"
+$yaml = @"
 apiVersion: secrets-store.csi.x-k8s.io/v1
 kind: SecretProviderClass
 metadata:
@@ -110,14 +111,20 @@ spec:
     objects: |
       array:
         - |
-          objectName: $PLACEHOLDER_SECRET_NAME
+          objectName: E4KPassword
+          objectType: secret
+          objectVersion: ""
+        - |
+          objectName: E4KClientID
           objectType: secret
           objectVersion: ""
     tenantId: $TENANT_ID
-EOF
+"@
+
+$yaml | kubectl apply -f -
 
 
-kubectl apply -f - <<EOF
+$yaml = @"
 apiVersion: secrets-store.csi.x-k8s.io/v1
 kind: SecretProviderClass
 metadata:
@@ -131,13 +138,19 @@ spec:
     objects: |
       array:
         - |
-          objectName: $PLACEHOLDER_SECRET_NAME
+          objectName: E4KPassword
+          objectType: secret
+          objectVersion: ""
+        - |
+          objectName: E4KClientID
           objectType: secret
           objectVersion: ""
     tenantId: $TENANT_ID
-EOF
+"@
 
-kubectl apply -f - <<EOF
+$yaml | kubectl apply -f -
+
+$yaml = @"
 apiVersion: secrets-store.csi.x-k8s.io/v1
 kind: SecretProviderClass
 metadata:
@@ -151,17 +164,23 @@ spec:
     objects: |
       array:
         - |
-          objectName: $PLACEHOLDER_SECRET_NAME
+          objectName: E4KPassword
+          objectType: secret
+          objectVersion: ""
+        - |
+          objectName: E4KClientID
           objectType: secret
           objectVersion: ""
     tenantId: $TENANT_ID
-EOF
+"@
+
+$yaml | kubectl apply -f -
 
 ##############################################################################
 # The below commands will create the test CA certificate used to encrypt     #
 # traffic in the cluster.                                                    #
 ##############################################################################
->ca.conf cat <<-EOF
+Set-Content -Path "ca.conf" -Value @"
 [ req ]
 distinguished_name = req_distinguished_name
 prompt = no
@@ -175,19 +194,11 @@ basicConstraints = critical, CA:TRUE
 keyUsage = keyCertSign
 subjectKeyIdentifier = hash
 authorityKeyIdentifier = keyid
-EOF
+"@
+
 openssl ecparam -name prime256v1 -genkey -noout -out ca-cert-key.pem
 openssl req -new -x509 -key ca-cert-key.pem -days 30 -config ca.conf -out ca-cert.pem
 rm ca.conf
 
-if kubectl get secret aio-ca-key-pair-test-only -n $DEFAULT_NAMESPACE &> /dev/null; then
-	echo "TLS Secret aio-ca-key-pair-test-only already exists"
-else
-	kubectl create secret tls aio-ca-key-pair-test-only --cert=./ca-cert.pem --key=./ca-cert-key.pem --namespace $DEFAULT_NAMESPACE	
-fi
-
-if kubectl get cm aio-ca-trust-bundle-test-only -n $DEFAULT_NAMESPACE &> /dev/null; then
-	echo "Certificate manager aio-ca-trust-bundle-test-only already exists"
-else
-	kubectl create cm aio-ca-trust-bundle-test-only --from-file=ca.crt=./ca-cert.pem --namespace $DEFAULT_NAMESPACE
-fi
+kubectl create secret tls aio-ca-key-pair-test-only --cert=./ca-cert.pem --key=./ca-cert-key.pem --namespace $DEFAULT_NAMESPACE
+kubectl create cm aio-ca-trust-bundle-test-only --from-file=ca.crt=./ca-cert.pem --namespace $DEFAULT_NAMESPACE
