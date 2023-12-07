@@ -69,6 +69,13 @@ sh ./components/crd.sh
 
 sh ./components/resource.sh
 sh ./components/force.sh
+
+sh ./components/validatingwebhookconfiguration.sh
+sh ./components/mutatingwebhookconfiguration.sh
+
+sh ./components/instance.sh   
+sh ./components/target.sh   
+
 sh ./components/namespace.sh
 
 sh ./components/role.sh 
@@ -77,13 +84,13 @@ sh ./components/rolebinding.sh
 sh ./components/clusterrole.sh
 sh ./components/clusterrolebinding.sh
 
-sh ./components/validatingwebhookconfiguration.sh
-sh ./components/mutatingwebhookconfiguration.sh
 
 sh ./components/statefulset.sh
 sh ./components/pvc.sh
 sh ./components/pv.sh
 sh ./components/sc.sh
+
+sh ./components/customlocationsettings.sh
 
 echo ""
 echo "Done!"

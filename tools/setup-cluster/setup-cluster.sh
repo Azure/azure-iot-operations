@@ -1,8 +1,5 @@
 #!/bin/sh
 
-# Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
-
 # exit when any command fails
 set -e
 
@@ -53,7 +50,11 @@ az k8s-extension create --cluster-name $CLUSTER_NAME --resource-group $RESOURCE_
 # already have created the namespaces, comment out the below commands.       #
 ##############################################################################
 echo "Creating the namespaces"
-kubectl create namespace $DEFAULT_NAMESPACE
+if kubectl get namespace "$DEFAULT_NAMESPACE" &> /dev/null; then
+    echo "Namespace "$DEFAULT_NAMESPACE" already exists"
+else
+    kubectl create namespace $DEFAULT_NAMESPACE
+fi
 
 ##############################################################################
 # The below commands will add a k8s secret for the AKV service principal     #
@@ -179,5 +180,14 @@ openssl ecparam -name prime256v1 -genkey -noout -out ca-cert-key.pem
 openssl req -new -x509 -key ca-cert-key.pem -days 30 -config ca.conf -out ca-cert.pem
 rm ca.conf
 
-kubectl create secret tls aio-ca-key-pair-test-only --cert=./ca-cert.pem --key=./ca-cert-key.pem --namespace $DEFAULT_NAMESPACE
-kubectl create cm aio-ca-trust-bundle-test-only --from-file=ca.crt=./ca-cert.pem --namespace $DEFAULT_NAMESPACE
+if kubectl get secret aio-ca-key-pair-test-only -n $DEFAULT_NAMESPACE &> /dev/null; then
+	echo "TLS Secret aio-ca-key-pair-test-only already exists"
+else
+	kubectl create secret tls aio-ca-key-pair-test-only --cert=./ca-cert.pem --key=./ca-cert-key.pem --namespace $DEFAULT_NAMESPACE	
+fi
+
+if kubectl get cm aio-ca-trust-bundle-test-only -n $DEFAULT_NAMESPACE &> /dev/null; then
+	echo "Certificate manager aio-ca-trust-bundle-test-only already exists"
+else
+	kubectl create cm aio-ca-trust-bundle-test-only --from-file=ca.crt=./ca-cert.pem --namespace $DEFAULT_NAMESPACE
+fi
