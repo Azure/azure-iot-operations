@@ -76,6 +76,7 @@ sh ./components/mutatingwebhookconfiguration.sh
 sh ./components/instance.sh   
 sh ./components/target.sh   
 
+sh ./components/opcuaserver.sh
 sh ./components/namespace.sh
 
 sh ./components/role.sh 

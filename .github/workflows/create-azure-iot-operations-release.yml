@@ -7,9 +7,35 @@ on:
         description: 'Version to publish'
         required: true
         type: string
-
+      isDraft:
+        description: 'Whether the release should be a draft release.'
+        required: true
+        type: boolean
+        default: true
+      releaseBranchEnabled:
+        description: 'Whether the release branch creation is enabled.'
+        required: true
+        type: boolean
+        default: false
+  workflow_call:
+    inputs: 
+      version:
+        description: 'Version to publish'
+        required: true
+        type: string
+      isDraft:
+        description: 'Whether the release should be a draft release.'
+        required: true
+        type: boolean
+        default: true
+      releaseBranchEnabled:
+        description: 'Whether the release branch creation is enabled.'
+        required: true
+        type: boolean
+        default: false
+        
 jobs:
-  Version:
+  ValidateRelease:
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.templateVersion.outputs.version }}
@@ -32,18 +58,22 @@ jobs:
         run: |-
           set -e
           # strip spaces from version
-          version=$(echo "${{ github.event.inputs.version }}" | tr -d '[:space:]')
+          version=$(echo "${{ inputs.version }}" | tr -d '[:space:]')
 
           if [[ -z "$version" ]]; then
             echo "::error::Valid version is required"
           fi
 
+          if [[ $version != v* ]]; then
+            echo "::error::Version must begin with 'v'"
+          fi
+
           echo "Set version to $version"
           echo "version=${version}" >> $GITHUB_OUTPUT
   
-  PreRelease:
+  CreateRelease:
     runs-on: ubuntu-latest
-    needs: Version
+    needs: ValidateRelease
     steps:
       - name: Checkout
         uses: actions/checkout@v1
@@ -81,24 +111,45 @@ jobs:
           set -e
 
           gh auth login --with-token <<< "${{ github.token }}"
-          url=$(gh release create "${{ needs.Version.outputs.version }}" \
-            --draft \
+          url=$(gh release create "${{ needs.ValidateRelease.outputs.version }}" \
             --latest \
-            --prerelease \
             --target "${{ github.ref }}" \
             --repo "${{ github.repository }}" \
-            --title "${{ needs.Version.outputs.version }}" \
+            --title "${{ needs.ValidateRelease.outputs.version }}" \
+            $( ${{ inputs.isDraft }} && echo "--draft" ) \
             $(echo "${{ steps.buildAssets.outputs.filelist }}" | tr "," " "))
+
           echo "url=$url" >> $GITHUB_OUTPUT
         
       - name: Summarize
         run: |-
           IFS=',' read -r -a files <<< "${{ steps.buildAssets.outputs.filelist }}"
 
-          echo "# PreRelease ${{ needs.Version.outputs.version }} created" >> $GITHUB_STEP_SUMMARY
+          echo "# Release ${{ needs.ValidateRelease.outputs.version }} created" >> $GITHUB_STEP_SUMMARY
           echo "A draft release has been created with the following assets:" >> $GITHUB_STEP_SUMMARY
           for file in "${files[@]}"; do
             echo "- $file" >> $GITHUB_STEP_SUMMARY
           done
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "The release can be found [here](${{ steps.createRelease.outputs.url }})" >> $GITHUB_STEP_SUMMARY
+  
+  CreateReleaseBranch:
+    runs-on: ubuntu-latest
+    needs: CreateRelease
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - name: Create Release Branch
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |-
+          set -e
+          git config --global user.email "actionbot@azure.com"
+          git config --global user.name "Azure IoT Operations Bot"
+          if [ ${{inputs.releaseBranchEnabled}} == true ]; then
+            git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}
+            git branch release/${{inputs.version}}
+            git push origin release/${{inputs.version}}
+          fi
+
+      

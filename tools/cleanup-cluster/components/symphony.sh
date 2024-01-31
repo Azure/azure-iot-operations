@@ -9,15 +9,6 @@ echo "I'm symphony.sh"
 
 timeoutSeconds=180
 
-# Delete symphony targets
-resourceType="microsoft.symphony/targets"
-resources="$(az resource list -g $1 --resource-type $resourceType -o tsv --query '[].id')"
-for id in $resources; do
-    echo ""
-    echo "Deleting target resource: $id..."
-    timeout $timeoutSeconds az resource delete -g $1 --resource-type $resourceType --ids $id --verbose
-done
-
 # Delete symphony instances
 resourceType="microsoft.symphony/instances"
 resources="$(az resource list -g $1 --resource-type $resourceType -o tsv --query '[].id')"
@@ -36,8 +27,8 @@ for id in $resources; do
     timeout $timeoutSeconds az resource delete -g $1 --resource-type $resourceType --ids $id --verbose
 done
 
-# Delete orchestrator targets
-resourceType="microsoft.iotoperationsorchestrator/targets"
+# Delete symphony targets
+resourceType="microsoft.symphony/targets"
 resources="$(az resource list -g $1 --resource-type $resourceType -o tsv --query '[].id')"
 for id in $resources; do
     echo ""
@@ -62,6 +53,16 @@ for id in $resources; do
     echo "Deleting solution resource: $id..."
     timeout $timeoutSeconds az resource delete -g $1 --resource-type $resourceType --ids $id --verbose
 done
+
+# Delete orchestrator targets
+resourceType="microsoft.iotoperationsorchestrator/targets"
+resources="$(az resource list -g $1 --resource-type $resourceType -o tsv --query '[].id')"
+for id in $resources; do
+    echo ""
+    echo "Deleting target resource: $id..."
+    timeout $timeoutSeconds az resource delete -g $1 --resource-type $resourceType --ids $id --verbose
+done
+
 
 echo ""
 echo "Listing all remaining resources in resource group: $1..."

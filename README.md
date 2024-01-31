@@ -6,7 +6,8 @@ This repo contains the deployment definition of Azure IoT Operations (AIO) and a
 AIO to be deployed to an Arc-enabled K8s cluster. This repository does not encourage pull requests, as the repo is 
 meant for publicly sharing the releases of AIO and not shared development of AIO.
 
-Please see the [Azure IoT Operations Documentation](https://aka.ms/AIOdocs).
+Please see the [Azure IoT Operations documentation](https://aka.ms/AIOdocs) for more information. To learn how to 
+deploy AIO using GitOps, see the [Deploy to cluster documentation](https://learn.microsoft.com/en-us/azure/iot-operations/deploy-iot-ops/howto-deploy-iot-operations?tabs=github#deploy-extensions).
 
 ## Forking the Repo
 
@@ -28,46 +29,22 @@ need to take to set up the fork.
         in your fork. Repository secrets can be found under **Settings** > **Secrets and 
        variables** > **Actions**. To learn more, see [creating secrets for a repository](https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions#creating-secrets-for-a-repository).
 
-2. To be able to use secrets in AIO, follow [Manage Secrets](https://learn.microsoft.com/en-us/azure/iot-operations/deploy-iot-ops/howto-manage-secrets) to create an AKV and a Service Principal with access to AKV.
+2. Enable GitHub actions on the fork.
 
-3. Create and setup K8s Arc-enabled cluster.
+    1. On the forked repo, select **Actions** and select **I understand my workflows, go ahead and enable them.**
 
-    1. If you don't have an existing K8s cluster, try [minikube](https://minikube.sigs.k8s.io/docs/).
+## Available Parameters 
 
-    2. Arc-enable your K8s cluster using the [az connectedk8s connect](https://learn.microsoft.com/cli/azure/connectedk8s#az-connectedk8s-connect) command.
+Various parameters can be specified when deploying AIO. The below table describes these parameters. For an example parameter file, see `environments/example.parameters.json`.
 
-        ```bash
-        az connectedk8s connect -n $CLUSTER_NAME -l $LOCATION -g $RESOURCE_GROUP --subscription $SUBSCRIPTION_ID
-        ```
-
-    3. Use the [az connectedk8s enable-features](https://learn.microsoft.com/cli/azure/connectedk8s?view=azure-cli-latest#az-connectedk8s-enable-features) command to enable custom location support on your cluster.
-
-        ```bash
-        az connectedk8s enable-features -n $CLUSTER_NAME -g $RESOURCE_GROUP --features cluster-connect custom-locations
-        ```
-
-    3. Run cluster setup script from `tools/setup-cluster/setup-cluster.sh`.
-
-        1. In setup-cluster.sh, update the variables at the top of the script to have the values for your Azure Subscription, Resources, and Cluster.
-
-4. Deploy Azure IoT Operations.
-
-    1. Create parameter file where environment configuration is specified for your AIO deployment. For an example, see `environments/example.parameters.json`.
-    
-        | **Parameter** | **Requirement** | **Type** | **Description** |
-        | ------------- |--|------------|-------------- |
-        | clusterName   | ***[Required]*** | `string` | The Arc-enabled cluster resource in Azure.  |
-        | clusterLocation | *[Optional]* | `string` |If the cluster resource's location is different than its resource group's location, the cluster location will need to be specified. Otherwise, this parameter will default to the location of the resource group.  |
-        | location      | *[Optional]*  | `string` | If the resource group's location is not a supported AIO region, this parameter can be used to override the location of the AIO resources. |
-        | dataProcessorSecrets | *[Optional]*<sup>1</sup>| `object` | Add the name of the SecretProviderClass and k8s AKV SP secret that were created from the `setup-cluster.sh`. This should be something like `aio-default-spc` and `aio-akv-sp`, respectively. <br><br>Example:<br> <pre>{<br>  "secretProviderClassName": "aio-default-spc",<br>  "servicePrincipalSecretRef": "aio-akv-sp"<br>}</pre>|
-        | mqSecrets | *[Optional]*<sup>1</sup>| `object` | Add the name of the SecretProviderClass and k8s AKV SP secret that were created from the `setup-cluster.sh`. This should be something like `aio-default-spc` and `aio-akv-sp`, respectively. <br><br>Example:<br> <pre>{<br>  "secretProviderClassName": "aio-default-spc",<br>  "servicePrincipalSecretRef": "aio-akv-sp"<br>}</pre>|
-        | opcUaBrokerSecrets | *[Optional]*<sup>1</sup>| `object` | Add the name of the k8s AKV SP secret that was created from the `setup-cluster.sh`. This should be something like `aio-akv-sp` and kind should be `csi`. <br><br>Example:<br> <pre>{<br>  "kind": "csi",<br> "csiServicePrincipalSecretRef": "aio-akv-sp"<br>}</pre>|
-        
-        > <sup>1</sup> This param is only necessary if you are using different values than the defaults specified in `setup-cluster.sh`.
-
-    2. On the forked repo, select **Actions** and select **I understand my workflows, go ahead and enable them.**
-
-    3. Run the **Deploy Azure IoT Operations** GitHub Action. You'll need to provide both the `subscription` and `resource group` where your Arc-enabled cluster resource is and the path to the `environment parameters file` you created previously.
+| **Parameter** | **Requirement** | **Type** | **Description** |
+| ------------- |--|------------|-------------- |
+| clusterName   | ***[Required]*** | `string` | The Arc-enabled cluster resource in Azure.  |
+| clusterLocation | *[Optional]* | `string` |If the cluster resource's location is different than its resource group's location, the cluster location will need to be specified. Otherwise, this parameter will default to the location of the resource group.  |
+| location      | *[Optional]*  | `string` | If the resource group's location is not a supported AIO region, this parameter can be used to override the location of the AIO resources. |
+| simulatePLC | *[Optional]*  | `boolean` | Flag to enable a simulated PLC. The default is false. |
+| opcuaDiscoveryEndpoint | *[Optional]*  | `string` | The OPC UA Discovery Endpoint used by Akri. The default is opc.tcp://<NOT_SET>:<NOT_SET>. |
+| deployResourceSyncRules | *[Optional]* | `boolean` | Flag to deploy the default resource sync rules for the AIO arc extensions. The default is `true`.|
 
 ## Trademarks
 This project may contain trademarks or logos for projects, products, or services. Authorized use of Microsoft trademarks or logos is 
