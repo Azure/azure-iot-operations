@@ -16,6 +16,8 @@ echo ""
 echo "Force deleting bad resources in namespace: alice-springs..."
 kubectl delete pod bluefin-runner-worker-0 --grace-period=0 --force --namespace alice-springs
 kubectl delete pod aio-dp-runner-worker-0 --grace-period=0 --force --namespace alice-springs
+kubectl delete pod bluefin-reader-worker-0 --grace-period=0 --force --namespace alice-springs
+kubectl delete pod aio-dp-reader-worker-0 --grace-period=0 --force --namespace alice-springs
 
 # Alice Springs Solution namespace
 echo ""
@@ -26,6 +28,8 @@ echo ""
 echo "Force deleting bad resources in namespace: alice-springs-solution..."
 kubectl delete pod bluefin-runner-worker-0 --grace-period=0 --force --namespace alice-springs-solution
 kubectl delete pod aio-dp-runner-worker-0 --grace-period=0 --force --namespace alice-springs-solution
+kubectl delete pod bluefin-reader-worker-0 --grace-period=0 --force --namespace alice-springs-solution
+kubectl delete pod aio-dp-reader-worker-0 --grace-period=0 --force --namespace alice-springs-solution
 
 # AIO namespace
 echo ""
@@ -36,13 +40,17 @@ echo ""
 echo "Force deleting bad resources in namespace: azure-iot-operations..."
 kubectl delete pod bluefin-runner-worker-0 --grace-period=0 --force --namespace azure-iot-operations
 kubectl delete pod aio-dp-runner-worker-0 --grace-period=0 --force --namespace azure-iot-operations
+kubectl delete pod bluefin-reader-worker-0 --grace-period=0 --force --namespace azure-iot-operations
+kubectl delete pod aio-dp-reader-worker-0 --grace-period=0 --force --namespace azure-iot-operations
 
 # AIO Solution namespace
 echo ""
 echo "Listing bad resources in namespace: azure-iot-operations-solution..."
-kubectl api-resources --verbs=list --namespaced -o name | xargs -n 1 kubectl get --show-kind --ignore-not-found -n alice-springs-solution
+kubectl api-resources --verbs=list --namespaced -o name | xargs -n 1 kubectl get --show-kind --ignore-not-found -n azure-iot-operations-solution
 
 echo ""
 echo "Force deleting bad resources in namespace: azure-iot-operations-solution..."
 kubectl delete pod bluefin-runner-worker-0 --grace-period=0 --force --namespace azure-iot-operations-solution
 kubectl delete pod aio-dp-runner-worker-0 --grace-period=0 --force --namespace azure-iot-operations-solution
+kubectl delete pod bluefin-reader-worker-0 --grace-period=0 --force --namespace azure-iot-operations-solution
+kubectl delete pod aio-dp-reader-worker-0 --grace-period=0 --force --namespace azure-iot-operations-solution
