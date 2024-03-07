@@ -110,7 +110,7 @@ jobs:
         run: |-
           set -e
 
-          gh auth login --with-token <<< "${{ secrets.AIO_REPO_TOKEN }}"
+          gh auth login --with-token <<< "${{ github.token }}"
           url=$(gh release create "${{ needs.ValidateRelease.outputs.version }}" \
             --latest \
             --target "${{ github.ref }}" \
@@ -141,13 +141,13 @@ jobs:
         uses: actions/checkout@v1
       - name: Create Release Branch
         env:
-          GITHUB_TOKEN: ${{ secrets.AIO_REPO_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |-
           set -e
           git config --global user.email "actionbot@azure.com"
           git config --global user.name "Azure IoT Operations Bot"
           if [ ${{inputs.releaseBranchEnabled}} == true ]; then
-            git remote set-url origin https://x-access-token:${AIO_REPO_TOKEN}@github.com/${{ github.repository }}
+            git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}
             git branch release/${{inputs.version}}
             git push origin release/${{inputs.version}}
           fi
