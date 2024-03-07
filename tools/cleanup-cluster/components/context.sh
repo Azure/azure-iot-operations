@@ -19,10 +19,12 @@ echo ""
 echo "Your current k8s context is:"
 kubectl config current-context
 
-echo ""
-echo "Please STOP here if the current k8s context is NOT correct!"
+if [ "$2" != "--yes" ]; then
+    echo ""
+    echo "Please STOP here if the current k8s context is NOT correct!"
 
-echo ""
-echo "Continue?"
-echo "Press ENTER to continue or press Ctrl+C to exit..."
-read input
+    echo ""
+    echo "Continue?"
+    echo "Press ENTER to continue or press Ctrl+C to exit..."
+    read input
+fi
