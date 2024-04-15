@@ -4855,7 +4855,7 @@
           "azureLogAnalytics": {
             "query": "KubeEvents\r\n| where TimeGenerated > $__timeFrom() and TimeGenerated <= $__timeTo()\r\n| where ClusterName == '$cluster'\r\n| where Name matches regex '${component:raw}'\r\n//| order by TimeGenerated desc\r\n| order by LastSeen desc, FirstSeen desc, TimeGenerated desc\r\n| project-rename PodName = Name\r\n| project FirstSeen, LastSeen, Count, PodName, Reason, Message\r\n| take 10",
             "resources": [
-              "/subscriptions/af342bf1-1ace-41df-902c-47921400551b"
+              "/subscriptions/<Placeholder_SubID>"
             ],
             "resultFormat": "table"
           },
@@ -5347,7 +5347,7 @@
           "azureLogAnalytics": {
             "query": "ContainerLogV2\r\n| where TimeGenerated >= $__timeFrom() and TimeGenerated <= $__timeTo()\r\n| where _ResourceId contains '$cluster'\r\n| where ContainerName contains \"dp\"\r\n| order by TimeGenerated desc\r\n| project TimeGenerated, PodName, ContainerName, LogSource, LogMessage\r\n| take 100",
             "resources": [
-              "/subscriptions/af342bf1-1ace-41df-902c-47921400551b"
+              "/subscriptions/<Placeholder_SubID>"
             ],
             "resultFormat": "table"
           },

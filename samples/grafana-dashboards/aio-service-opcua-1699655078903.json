@@ -519,7 +519,7 @@
           "azureLogAnalytics": {
             "query": "ContainerLogV2\r\n| where TimeGenerated >= $__timeFrom() and TimeGenerated <= $__timeTo()\r\n| where _ResourceId contains '$cluster'\r\n| where ContainerName == 'aio-opc-supervisor'\r\n| where LogSource == 'stdout'\r\n| where LogMessage startswith '<4>'\r\n| order by TimeGenerated desc\r\n| project TimeGenerated, LogMessage, ContainerName, PodName",
             "resources": [
-              "/subscriptions/af342bf1-1ace-41df-902c-47921400551b"
+              "/subscriptions/<Placeholder_SubID>"
             ]
           },
           "azureMonitor": {
@@ -1093,7 +1093,7 @@
           "azureLogAnalytics": {
             "query": "ContainerLogV2\r\n| where TimeGenerated >= $__timeFrom() and TimeGenerated <= $__timeTo()\r\n| where _ResourceId contains '$cluster'\r\n| where ContainerName matches regex '(^(opc-ua-).*|.*-opc-ua-.*)'\r\n| where LogSource == 'stdout'\r\n| where LogMessage startswith '<4>'\r\n| order by TimeGenerated desc\r\n| project TimeGenerated, LogMessage, PodName, ContainerName\r\n| take 100",
             "resources": [
-              "/subscriptions/af342bf1-1ace-41df-902c-47921400551b"
+              "/subscriptions/<Placeholder_SubID>"
             ]
           },
           "azureMonitor": {
