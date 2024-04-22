@@ -1667,7 +1667,7 @@
           "azureLogAnalytics": {
             "query": "KubeEvents\r\n| where TimeGenerated > $__timeFrom() and TimeGenerated  <= $__timeTo\r\n| where ClusterName == '$cluster'\r\n//| where Name matches regex '${component:raw}'\r\n| where Name matches regex '$pod'\r\n//| order by TimeGenerated desc\r\n| order by LastSeen desc, FirstSeen desc, TimeGenerated desc\r\n//| project-rename PodName = Name\r\n//| project PodName, Reason, Message, Count, FirstSeen, LastSeen\r\n| project  FirstSeen, LastSeen, Count, Reason, Message\r\n| take $logRowLimit",
             "resources": [
-              "/subscriptions/af342bf1-1ace-41df-902c-47921400551b"
+              "/subscriptions/<Placeholder_SubID>"
             ],
             "resultFormat": "table"
           },
@@ -1814,7 +1814,7 @@
           "azureLogAnalytics": {
             "query": "let startTime = datetime(${__from:date});\r\nlet nodes = ContainerNodeInventory // ID computers in selected clusters:\r\n| where TimeGenerated >= startTime | summarize by Computer, _ResourceId\r\n| extend Cluster = substring(_ResourceId,strlen(_ResourceId)-indexof(reverse(_ResourceId),'/'))\r\n| project-reorder Cluster, Computer | where Cluster == '$cluster' | take 10 | project Computer; //, Cluster; // nodes;\r\nlet containerInv = ContainerInventory // Get ContainerIds and pod names\r\n| where TimeGenerated >= startTime | join kind=inner nodes on Computer | where ContainerHostname == '$pod'\r\n| summarize by ContainerHostname, Computer, ContainerID, Name | take 100 | project-rename Pod = ContainerHostname \r\n| extend ContainerName = replace_regex(Name, 'k8s_(.*)_${pod}_.*',@'\\1') \r\n| where ContainerName == '${container:raw}'\r\n| project Pod, ContainerName, ContainerID; // containerInv\r\nlet containerIds = containerInv | project ContainerID;\r\nContainerLog\r\n//| where TimeGenerated >= startTime \r\n| where TimeGenerated > $__timeFrom and TimeGenerated  <= $__timeTo\r\n| where Computer in (nodes)\r\n| where ContainerID in (containerIds)\r\n| join kind=inner hint.strategy=shuffle containerInv on ContainerID | project-away ContainerID1, ContainerID, TenantId, SourceSystem, Type, _ResourceId, TimeOfCommand\r\n//| join kind=inner nodes on Computer | project-away Computer1 | project-rename Node = Computer\r\n| extend STD = case(LogEntrySource == 'stdout', 'OUT', LogEntrySource == 'stderr', 'ERR', '???')\r\n//| project TimeGenerated, LogEntrySource, \r\n| order by TimeGenerated desc\r\n| project STD, LogEntry, TimeGenerated //, Node, Cluster\r\n| take $logRowLimit",
             "resources": [
-              "/subscriptions/af342bf1-1ace-41df-902c-47921400551b"
+              "/subscriptions/<Placeholder_SubID>"
             ],
             "resultFormat": "table"
           },
