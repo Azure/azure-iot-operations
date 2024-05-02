@@ -8,7 +8,7 @@ echo "##############################################################"
 echo "I'm helm.sh"
 
 echo ""
-echo "Uninstall all Alice Springs' helm deployments in current k8s cluster..."
+echo "Uninstall all AIO helm deployments in current k8s cluster..."
 echo ""
 
 # Check if the first argument is provided
@@ -18,33 +18,11 @@ else
     namespace="$1"
 fi
 
-helm uninstall adr -n $namespace
-helm uninstall akri -n $namespace
 
-helm uninstall bluefin -n $namespace
-helm uninstall bf-instance -n $namespace
-
-helm uninstall processor -n $namespace
-helm uninstall processor-instance -n $namespace
-
-helm uninstall opc-ua-broker -n $namespace
-helm uninstall assets -n $namespace
-
-helm uninstall e4in -n $namespace
-
-helm uninstall e4i -n $namespace
-helm uninstall e4i-assets -n $namespace
-helm uninstall e4i-opcua-connector -n $namespace
-
-helm uninstall e4k -n $namespace
-helm uninstall e4k-high-availability-broker -n $namespace
-helm uninstall mq -n $namespace
-
-helm uninstall observability -n $namespace
-helm uninstall project-alice-springs -n $namespace
-
-helm uninstall orca-opc-plc-operator -n $namespace
-helm uninstall telegraf -n $namespace
+helm list -n $namespace -o json | jq -r '.[] | .name' | while read -r helm_release; do
+    echo "helm uninstall $helm_release in namespace $namespace..."
+    helm uninstall $helm_release -n $namespace --wait --timeout 1m0s
+done
 
 echo ""
 helm list -A -a
