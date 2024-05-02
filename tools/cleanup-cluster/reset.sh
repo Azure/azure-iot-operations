@@ -94,9 +94,13 @@ case $resetOption in
 
     -s|--symphony)
         echo "Deleting Alice Springs cloud resources and everything inside k8s cluster..."
+        sh ./components/mq.sh $resourcegroup
+        if [ $? -eq 1 ]; then
+            exit 1
+        fi
         sh ./components/symphony.sh $resourcegroup 
-        sh ./components/customlocation.sh $resourcegroup
         sh ./components/bluefin.sh $resourcegroup
+        sh ./components/customlocation.sh $resourcegroup
         sh ./components/extension.sh $resourcegroup $cluster
         ;;
 
@@ -110,8 +114,6 @@ sh ./components/helm.sh $namespace
 sh ./components/resource.sh
 sh ./components/opcuaserver.sh
 
-sh ./components/force.sh
-
 sh ./components/validatingwebhookconfiguration.sh
 sh ./components/mutatingwebhookconfiguration.sh
 
@@ -124,6 +126,7 @@ sh ./components/clusterrole.sh
 sh ./components/clusterrolebinding.sh
 
 sh ./components/statefulset.sh
+sh ./components/force.sh
 sh ./components/pvc.sh
 sh ./components/pv.sh
 sh ./components/sc.sh
@@ -131,6 +134,9 @@ sh ./components/customlocationsettings.sh
 sh ./components/crd.sh
 
 sh ./components/namespace.sh
+if [ $? -eq 1 ]; then
+    exit 1
+fi
 
 echo ""
 echo "Done!"

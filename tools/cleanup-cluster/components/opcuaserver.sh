@@ -32,3 +32,9 @@ kubectl delete pipeline --all
 
 echo ""
 kubectl get pipeline -A
+
+echo ""
+echo "Deleting stuck opc-connectors pods"
+kubectl delete deployment aio-opc-opc.tcp-1 -n azure-iot-operations --ignore-not-found
+kubectl delete deployment aio-opc-opc.tcp-2 -n azure-iot-operations --ignore-not-found
+kubectl delete pods -l "app.kubernetes.io/name=aio-opc-opcua-connector" -n azure-iot-operations --ignore-not-found --force --grace-period=0

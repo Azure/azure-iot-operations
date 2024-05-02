@@ -48,8 +48,8 @@ jobs:
             exit 1
           fi
 
-          if [[ "${{ github.ref }}" != "refs/heads/main" ]]; then
-            echo "::error::This workflow should only be run on the main branch"
+          if [[ "${{ github.ref }}" != "refs/heads/main" ]] && [[ "${{ github.ref }}" != "refs/heads/release"* ]]; then
+            echo "::error::This workflow should only be run on the main and release branch"
             exit 1
           fi
           
@@ -155,5 +155,3 @@ jobs:
             git branch release/${{inputs.version}}
             git push origin release/${{inputs.version}}
           fi
-
-      

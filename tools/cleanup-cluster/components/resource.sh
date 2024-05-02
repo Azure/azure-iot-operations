@@ -14,11 +14,6 @@ echo ""
 kubectl delete all --all -n custom-location-a
 kubectl get all -n custom-location-a
 
-# Symphony namespace
-echo ""
-kubectl delete all --all -n $4
-kubectl get all -n $4
-
 # Alice Springs namespace
 echo ""
 # Timeout 'terminating' stage
