@@ -19,6 +19,16 @@ param scrapeInterval string = 'PT1M'
 @description('Region where the resources should be created')
 param location string = resourceGroup().location
 
+// Rules for AIO Quality KPI metrics for the cluster
+module aioQualityKpiRecordingRules '../../samples/aio-quality-kpis/cluster-recordingRules.bicep' = {
+  name: 'aioQualityKpiRecordingRules'
+  params: {
+    clusterId: clusterId
+    azureMonitorId: azureMonitorId
+    location: location
+  }
+}
+
 // Rule for recording metrics pertaining to each node in the cluster.
 resource nodeRecordingRule 'Microsoft.AlertsManagement/prometheusRuleGroups@2023-03-01' = {
   name: '${clusterName}-NodeRecordingRuleGroup'

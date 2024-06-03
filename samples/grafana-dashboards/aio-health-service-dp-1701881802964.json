@@ -1505,7 +1505,7 @@
             },
             "indexByName": {},
             "renameByName": {
-              "opcua-pipeline-agg": ""
+              "/subscriptions/2bd4119a-4d8d-4090-9183-f9e516c21723/resourcegroups/dev-e2e-mq-1/providers/microsoft.iotoperationsdataprocessor/instances/dev-e2e-mq-1-processor/pipelines/opcua-pipeline-agg": ""
             }
           }
         },
@@ -5228,7 +5228,7 @@
           "azureLogAnalytics": {
             "query": "KubeEvents\r\n| where TimeGenerated > $__timeFrom() and TimeGenerated <= $__timeTo()\r\n| where ClusterName == '$cluster'\r\n| where Name matches regex '${component:raw}'\r\n//| order by TimeGenerated desc\r\n| order by LastSeen desc, FirstSeen desc, TimeGenerated desc\r\n| project-rename PodName = Name\r\n| project FirstSeen, LastSeen, Count, PodName, Reason, Message\r\n| take 10",
             "resources": [
-              "/subscriptions/<Placeholder_SubID>"
+              "/subscriptions/af342bf1-1ace-41df-902c-47921400551b"
             ],
             "resultFormat": "table"
           },
@@ -5732,7 +5732,7 @@
           "azureLogAnalytics": {
             "query": "ContainerLogV2\r\n| where TimeGenerated >= $__timeFrom() and TimeGenerated <= $__timeTo()\r\n| where _ResourceId contains '$cluster'\r\n| where ContainerName == \"manager\"\r\n| where PodName contains \"aio-dp-operator\"\r\n| where LogMessage contains \"trace_id\"\r\n| extend log = parse_json(LogMessage)\r\n| extend attributes = parse_json(log[\"attributes\"])\r\n| extend attributes=bag_remove_keys(attributes, dynamic(['name', 'code.namespace', 'code.function']))\r\n| project log[\"timestamp\"], log[\"name\"], log[\"status_code\"], log[\"status_message\"], attributes",
             "resources": [
-              "/subscriptions/<Placeholder_SubID>"
+              "/subscriptions/af342bf1-1ace-41df-902c-47921400551b"
             ],
             "resultFormat": "table"
           },

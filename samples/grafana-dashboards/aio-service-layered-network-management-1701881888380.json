@@ -1397,7 +1397,7 @@
           "azureLogAnalytics": {
             "query": "KubeEvents\r\n| where TimeGenerated > $__timeFrom() and TimeGenerated  <= $__timeTo\r\n| where ClusterName == '$cluster'\r\n| order by LastSeen desc, FirstSeen desc, TimeGenerated desc\r\n| project-rename PodName = Name\r\n| project FirstSeen, LastSeen, Count, PodName, Reason, Message\r\n| take 10",
             "resources": [
-              "/subscriptions/<Placeholder_SubID>"
+              "/subscriptions/af342bf1-1ace-41df-902c-47921400551b"
             ],
             "resultFormat": "table"
           },
