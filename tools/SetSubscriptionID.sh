@@ -5,7 +5,7 @@ directory="../samples/grafana-dashboards"
 
 # Set the placeholder string
 # <Placeholder_SubID>
-placeholder="af342bf1-1ace-41df-902c-47921400551b"
+placeholder="<Placeholder_SubID>"
 
 # Prompt the user to enter the new string
 read -p "Enter the new string: " newString
