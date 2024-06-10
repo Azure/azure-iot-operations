@@ -48,8 +48,8 @@ jobs:
             exit 1
           fi
 
-          if [[ "${{ github.ref }}" != "refs/heads/main" ]] && [[ "${{ github.ref }}" != "refs/heads/release"* ]]; then
-            echo "::error::This workflow should only be run on the main and release branch"
+          if [[ "${{ github.ref }}" != "refs/heads/main" ]]; then
+            echo "::error::This workflow should only be run on the main branch"
             exit 1
           fi
           
@@ -112,7 +112,7 @@ jobs:
         run: |-
           set -e
 
-          gh auth login --with-token <<< "${{ github.token }}"
+          gh auth login --with-token <<< "${{ secrets.GITHUB_TOKEN }}"
           url=$(gh release create "${{ needs.ValidateRelease.outputs.version }}" \
             --latest \
             --target "${{ github.ref }}" \

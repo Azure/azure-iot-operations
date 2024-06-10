@@ -2,10 +2,10 @@
 setlocal enabledelayedexpansion
 
 rem Set the directory path where the files are located
-set "directory=../samples/grafana-dashboards/"
+set "directory=..\samples\grafana-dashboards\"
 
 rem Set the placeholder string
-set "placeholder=<Placeholder_subID>"
+set "placeholder=<Placeholder_SubID>"
 
 rem Prompt the user to enter the new string
 set /p "newString=Enter the new string: "

@@ -12,7 +12,7 @@ on:
         required: true
         type: string
       aioParamsPath:
-        description: 'The path to the environment parameters file for the AIO deployment. (e.g., environments/example.parameters.json)'
+        description: 'The path to the environment parameters file for the AIO deployment. (e.g. environments/example.parameters.json)'
         required: true
         type: string
 jobs:
@@ -37,7 +37,7 @@ jobs:
               echo "ERROR: Could not find the AIO template to deploy."
               exit 1
             fi
-            
+
             az deployment group create \
               --resource-group ${{ github.event.inputs.clusterResourceGroup }} \
               --subscription ${{ github.event.inputs.clusterSubscription }} \
