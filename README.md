@@ -43,7 +43,6 @@ Various parameters can be specified when deploying AIO. The below table describe
 | clusterLocation | *[Optional]* | `string` |If the cluster resource's location is different than its resource group's location, the cluster location will need to be specified. Otherwise, this parameter will default to the location of the resource group.  |
 | location      | *[Optional]*  | `string` | If the resource group's location is not a supported AIO region, this parameter can be used to override the location of the AIO resources. |
 | simulatePLC | *[Optional]*  | `boolean` | Flag to enable a simulated PLC. The default is false. |
-| opcuaDiscoveryEndpoint | *[Optional]*  | `string` | The OPC UA Discovery Endpoint used by Akri. The default is opc.tcp://<NOT_SET>:<NOT_SET>. |
 | deployResourceSyncRules | *[Optional]* | `boolean` | Flag to deploy the default resource sync rules for the AIO arc extensions. The default is `true`.|
 
 ## Trademarks
