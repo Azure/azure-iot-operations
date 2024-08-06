@@ -8,7 +8,7 @@
       "templateHash": "4280796466662861999"
     },
     "description": "This template deploys Azure IoT Operations.",
-    "aziotopsCliVersion": "0.6.0a2"
+    "aziotopsCliVersion": "0.6.0b1"
   },
   "parameters": {
     "clusterName": {
