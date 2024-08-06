@@ -1,0 +1,340 @@
+#!meta
+
+{"kernelInfo":{"defaultKernelName":"csharp","items":[{"aliases":[],"name":"csharp"},{"aliases":[],"languageName":"pwsh","name":"pwsh"}]}}
+
+#!markdown
+
+# Media Connector mRPC API test
+
+## Pre-requisites
+
+This script assumes that you have mosquitto_pub installed
+
+## Initialize variables
+
+Set the development environment variables that this notebook uses. You can edit the [media-connector-vars.ps1](./media-connector-vars.ps1) file to customize these values:
+
+#!pwsh
+
+. ".\media-connector-vars.ps1"
+
+#!markdown
+
+# Deploy the demo configuration
+
+This demo configuration sets up an asset endpoint profile (AEP) and an asset. The AEP points to a public HTTP video stream. The asset points to the AEP. The asset configures three data points:
+
+#!pwsh
+
+kubectl apply -n $aioConnectorsNamespace -f aep-msft-azure-retail-hls-1.yaml
+
+#!pwsh
+
+kubectl apply -n $aioConnectorsNamespace -f asset-msft-azure-retail-hls-1.yaml
+
+#!markdown
+
+# Run mRPC API tests on the demo configuration
+
+mRPC is an MQTTv5 based RPC protocol. It uses MQTT as the transport layer and JSON as the payload. You can use any standard MQTTv5 client to interact with the mRPC API.
+
+#!markdown
+
+Set the MQTT broker IP address and port. The default values are for the MQTT broker deployed in the same namespace as the media connector:
+
+#!pwsh
+
+$mosquittoIngressJson = kubectl get -n aio-connectors services/mosquitto-public -o jsonpath='{.status.loadBalancer.ingress}'
+Write-Host "mosquittoIngressJson:" $mosquittoIngressJson
+$mqttIpAddress = ($mosquittoIngressJson | ConvertFrom-Json).ip
+if ($mqttIpAddress -eq $null) {
+    $mqttIpAddress = ($mosquittoIngressJson | ConvertFrom-Json).hostname
+}
+Write-Host "mqttIpAddress:" $mqttIpAddress
+
+$mqttPort=1883
+Write-Host "mqttPort:" $mqttPort
+
+#!markdown
+
+## mRPC ping the endpoint
+
+#!pwsh
+
+$mrpcTopic = "aio-connectors/endpoint-operations/aep-msft-azure-retail-hls-1/ping"
+Write-Host "mrpcTopic:" $mrpcTopic
+
+$mrpcResponseTopic = "$mrpcTopic/response"
+Write-Host "mrpcResponseTopic:" $mrpcResponseTopic
+
+$mrpcPayload = "{}"
+Write-Host "mrpcPayload:" $mrpcPayload
+
+mosquitto_pub -h $mqttIpAddress -p $mqttPort -q 1 -V mqttv5 -t $mrpcTopic -D PUBLISH response-topic $mrpcResponseTopic -m $mrpcPayload
+
+#!markdown
+
+You can view the ping response (the payload is "pong!") on the MQTT topic aio-brokers/endpoint-operations/aep-msft-azure-retail-hls-1/ping/response.
+
+Use your favorite MQTT client to subscribe to the topic.
+
+#!markdown
+
+Alternatively, you can check the media connector logs to view the ping request and response:
+
+#!pwsh
+
+kubectl logs -n $aioConnectorsNamespace -l app.kubernetes.io/component=aio-opc-rtsp-1 --all-containers --ignore-errors --tail=25
+
+#!markdown
+
+## mRPC ping the asset
+
+#!pwsh
+
+$mrpcTopic = "aio-connectors/asset-operations/asset-msft-azure-retail-hls-1/ping"
+Write-Host "mrpcTopic:" $mrpcTopic
+
+$mrpcResponseTopic = "$mrpcTopic/response"
+Write-Host "mrpcResponseTopic:" $mrpcResponseTopic
+
+$mrpcPayload = "{}"
+Write-Host "mrpcPayload:" $mrpcPayload
+
+mosquitto_pub -h $mqttIpAddress -p $mqttPort -q 1 -V mqttv5 -t $mrpcTopic -D PUBLISH response-topic $mrpcResponseTopic -m $mrpcPayload
+
+#!markdown
+
+You can view the ping response (the payload is "pong!") on the MQTT topic aio-brokers/endpoint-operations/asset-msft-azure-retail-hls-1/ping/response.
+
+Use your favorite MQTT client to subscribe to the topic.
+
+#!markdown
+
+Alternatively, you can check the media connector logs to view the ping request and response:
+
+#!pwsh
+
+kubectl logs -n $aioConnectorsNamespace -l app.kubernetes.io/component=aio-opc-rtsp-1 --all-containers --ignore-errors --tail=25
+
+#!markdown
+
+## Control the snapshot-to-mqtt task in the asset
+
+#!markdown
+
+Start the snapshot-to-mqtt task in the asset:
+
+#!pwsh
+
+$mrpcTopic = "aio-connectors/asset-operations/asset-msft-azure-retail-hls-1/start-task"
+Write-Host "mrpcTopic:" $mrpcTopic
+
+$mrpcResponseTopic = "$mrpcTopic/response"
+Write-Host "mrpcResponseTopic:" $mrpcResponseTopic
+
+$mrpcPayloadFile = "mrpc-payload-start-task-snapshot-to-mqtt.json"
+Write-Host "mrpcPayloadFile:" $mrpcPayloadFile
+
+mosquitto_pub -h $mqttIpAddress -p $mqttPort -q 1 -V mqttv5 -t $mrpcTopic -D PUBLISH response-topic $mrpcResponseTopic -f $mrpcPayloadFile
+
+#!markdown
+
+You can check the pod log to see the task status:
+
+#!pwsh
+
+kubectl logs -n $aioConnectorsNamespace -l app.kubernetes.io/component=aio-opc-rtsp-1 --all-containers --ignore-errors --tail=25
+
+#!markdown
+
+Stop the snapshot-to-mqtt task in the asset:
+
+#!pwsh
+
+$mrpcTopic = "aio-connectors/asset-operations/asset-msft-azure-retail-hls-1/stop-task"
+Write-Host "mrpcTopic:" $mrpcTopic
+
+$mrpcResponseTopic = "$mrpcTopic/response"
+Write-Host "mrpcResponseTopic:" $mrpcResponseTopic
+
+$mrpcPayloadFile = "mrpc-payload-stop-task-snapshot-to-mqtt.json"
+Write-Host "mrpcPayloadFile:" $mrpcPayloadFile
+
+mosquitto_pub -h $mqttIpAddress -p $mqttPort -q 1 -V mqttv5 -t $mrpcTopic -D PUBLISH response-topic $mrpcResponseTopic -f $mrpcPayloadFile
+
+#!markdown
+
+You can check the pod log to see the task status:
+
+#!pwsh
+
+kubectl logs -n $aioConnectorsNamespace -l app.kubernetes.io/component=aio-opc-rtsp-1 --all-containers --ignore-errors --tail=25
+
+#!markdown
+
+## Control the snapshot-to-fs task in the asset
+
+#!markdown
+
+Start the snapshot-to-fs task in the asset:
+
+#!pwsh
+
+$mrpcTopic = "aio-connectors/asset-operations/asset-msft-azure-retail-hls-1/start-task"
+Write-Host "mrpcTopic:" $mrpcTopic
+
+$mrpcResponseTopic = "$mrpcTopic/response"
+Write-Host "mrpcResponseTopic:" $mrpcResponseTopic
+
+$mrpcPayloadFile = "mrpc-payload-start-task-snapshot-to-fs.json"
+Write-Host "mrpcPayloadFile:" $mrpcPayloadFile
+
+mosquitto_pub -h $mqttIpAddress -p $mqttPort -q 1 -V mqttv5 -t $mrpcTopic -D PUBLISH response-topic $mrpcResponseTopic -f $mrpcPayloadFile
+
+#!markdown
+
+You can check the pod log to see the task status:
+
+#!pwsh
+
+kubectl logs -n $aioConnectorsNamespace -l app.kubernetes.io/component=aio-opc-rtsp-1 --all-containers --ignore-errors --tail=25
+
+#!markdown
+
+Stop the snapshot-to-fs task in the asset:
+
+#!pwsh
+
+$mrpcTopic = "aio-connectors/asset-operations/asset-msft-azure-retail-hls-1/stop-task"
+Write-Host "mrpcTopic:" $mrpcTopic
+
+$mrpcResponseTopic = "$mrpcTopic/response"
+Write-Host "mrpcResponseTopic:" $mrpcResponseTopic
+
+$mrpcPayloadFile = "mrpc-payload-stop-task-snapshot-to-fs.json"
+Write-Host "mrpcPayloadFile:" $mrpcPayloadFile
+
+mosquitto_pub -h $mqttIpAddress -p $mqttPort -q 1 -V mqttv5 -t $mrpcTopic -D PUBLISH response-topic $mrpcResponseTopic -f $mrpcPayloadFile
+
+#!markdown
+
+You can check the pod log to see the task status:
+
+#!pwsh
+
+kubectl logs -n $aioConnectorsNamespace -l app.kubernetes.io/component=aio-opc-rtsp-1 --all-containers --ignore-errors --tail=25
+
+#!markdown
+
+You can list the files in the pod to view the snapshot files that the snapshot-to-fs created:
+
+#!pwsh
+
+$podName = kubectl get pods -n $aioConnectorsNamespace -l app.kubernetes.io/component=aio-opc-rtsp-1 --output=jsonpath='{.items[*].metadata.name}'
+Write-Host "podName:" $podName
+kubectl exec $podName -n $aioConnectorsNamespace -- find /tmp/aio-connectors/data/asset-msft-azure-retail-hls-1
+
+#!markdown
+
+## Control the stream-to-rtsp task in the asset
+
+#!markdown
+
+Start the stream-to-rtsp task in the asset:
+
+#!pwsh
+
+$mrpcTopic = "aio-connectors/asset-operations/asset-msft-azure-retail-hls-1/start-task"
+Write-Host "mrpcTopic:" $mrpcTopic
+
+$mrpcResponseTopic = "$mrpcTopic/response"
+Write-Host "mrpcResponseTopic:" $mrpcResponseTopic
+
+$mrpcPayloadFile = "mrpc-payload-start-task-stream-to-rtsp.json"
+Write-Host "mrpcPayloadFile:" $mrpcPayloadFile
+
+mosquitto_pub -h $mqttIpAddress -p $mqttPort -q 1 -V mqttv5 -t $mrpcTopic -D PUBLISH response-topic $mrpcResponseTopic -f $mrpcPayloadFile
+
+#!markdown
+
+You can check the pod log to see the task status:
+
+#!pwsh
+
+kubectl logs -n $aioConnectorsNamespace -l app.kubernetes.io/component=aio-opc-rtsp-1 --all-containers --ignore-errors --tail=25
+
+#!markdown
+
+Stop the stream-to-rtsp task in the asset:
+
+#!pwsh
+
+$mrpcTopic = "aio-connectors/asset-operations/asset-msft-azure-retail-hls-1/stop-task"
+Write-Host "mrpcTopic:" $mrpcTopic
+
+$mrpcResponseTopic = "$mrpcTopic/response"
+Write-Host "mrpcResponseTopic:" $mrpcResponseTopic
+
+$mrpcPayloadFile = "mrpc-payload-stop-task-stream-to-rtsp.json"
+Write-Host "mrpcPayloadFile:" $mrpcPayloadFile
+
+mosquitto_pub -h $mqttIpAddress -p $mqttPort -q 1 -V mqttv5 -t $mrpcTopic -D PUBLISH response-topic $mrpcResponseTopic -f $mrpcPayloadFile
+
+#!markdown
+
+You can check the pod log to see the task status:
+
+#!pwsh
+
+kubectl logs -n $aioConnectorsNamespace -l app.kubernetes.io/component=aio-opc-rtsp-1 --all-containers --ignore-errors --tail=25
+
+#!markdown
+
+Get the public address of the media server:
+
+#!pwsh
+
+$mediaServerJson = kubectl get -n media-server services/media-server-public -o jsonpath='{.status.loadBalancer.ingress}'
+$mediaServerIpAddress = ($mediaServerJson | ConvertFrom-Json).ip
+if ($mediaServerIpAddress -eq $null) {
+    $mediaServerIpAddress = ($mediaServerJson | ConvertFrom-Json).hostname
+}
+Write-Host "mediaServerIpAddress:" $mediaServerIpAddress
+
+#!markdown
+
+To see the links that you can use to access the stream media, run the following code block:
+
+#!csharp
+
+using System.IO;
+
+#!set --value @pwsh:mediaServerIpAddress --name mediaServerIpAddress
+
+var markdown = @"
+
+## Example commands and links to streams
+
+You can open the stream in different formats and with a variety of clients such as ffmpeg, vlc, web browsers:
+
+**RTSP:**
+- ffplay rtsp://mediaServerIpAddress:8554/aio-connectors/data/asset-msft-azure-retail-hls-1
+- vlc --network-caching=50 rtsp://mediaServerIpAddress:8554/aio-connectors/data/asset-msft-azure-retail-hls-1
+
+**RTMP:**
+- ffplay rtmp://mediaServerIpAddress/aio-connectors/data/asset-msft-azure-retail-hls-1
+
+**SRT:**
+- ffplay srt://mediaServerIpAddress$mediaServerIpAddress:8890?streamid=read:aio-connectors/data/asset-msft-azure-retail-hls-1
+- vlc --network-caching=50 srt://mediaServerIpAddress:8890?streamid=read:aio-connectors/data/asset-msft-azure-retail-hls-1
+
+**HLS:**
+- ffplay http://mediaServerIpAddress:8888/aio-connectors/data/asset-msft-azure-retail-hls-1/index.m3u8
+- start http://mediaServerIpAddress:8888/aio-connectors/data/asset-msft-azure-retail-hls-1/
+
+";
+
+markdown = markdown.Replace("mediaServerIpAddress", mediaServerIpAddress);
+
+markdown.DisplayAs("text/markdown");

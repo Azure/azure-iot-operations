@@ -1,0 +1,51 @@
+graph LR
+    Examp[Example AEP/Asset]
+    MB[Media Broker]
+    Cam[Camera]
+    style Cam stroke-dasharray: 5 5
+    MS_SRC[Media Source]
+    style MS_SRC stroke-dasharray: 5 5
+    MS_SRV[Media Server - Server]
+    MP[Media Pusher]
+    style MP stroke-dasharray: 5 5
+    WS[Web Server]
+    style WS stroke-dasharray: 5 5
+    FS[File System]
+    ESA[Edge Storage Accelerator]
+    style ESA stroke-dasharray: 5 5
+    MQ[MQ]
+    subgraph Cloud
+    FABRIC[Fabric]
+    AZ_STORAGE[Azure Storage]
+    VI_CLOUD[Video Indexer Cloud]
+    end
+    style Cloud stroke-dasharray: 5 5
+    style FABRIC stroke-dasharray: 5 5
+    style AZ_STORAGE stroke-dasharray: 5 5
+    style VI_CLOUD stroke-dasharray: 5 5
+    VI_EDGE[Video Indexer Edge]
+    style VI_EDGE stroke-dasharray: 5 5
+    VLC[VLC]
+    FFplay[FFplay]
+    WB[Web Browser]
+    Examp -- "HTTP" --> MB
+    Cam o-. "RTSP, RTCP, MPEG-TS, ..." .-o MB
+    MS_SRC o-. "RTSP, RTCP, MPEG-TS, SRT, ..." .-o MB
+    MP -. "RTSP, RTCP, MPEG-TS, SRT, ..." .-> MS_SRC
+    WS o-. "HTTP/HTTPS" .-o MB
+    MB -- Snapshots --> FS
+    FS -. "Files" .-> ESA
+    MB -- Clips --> FS
+    FS -. "Files" .-> ESA
+    MB -- Telemetry --> MQ
+    MB -- Snapshots --> MQ
+    MQ -. "Messages" .-> FABRIC
+    MB -- Streams --> MS_SRV
+    MS_SRV o-. RTSP .-o VI_EDGE
+    MS_SRV o-. HLS .-o VI_EDGE
+    MS_SRV o-- "RTSP, RTCP, SRT, HLS" --o FFplay
+    MS_SRV o-- "RTSP, RTCP, SRT" --o VLC
+    MS_SRV o-- "HLS" --o WB
+    ESA -. "Files" .-> AZ_STORAGE
+    AZ_STORAGE -. "Files" .-> VI_CLOUD
+    MB -. RTSP .-> VI_EDGE

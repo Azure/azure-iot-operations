@@ -1,0 +1,161 @@
+#!meta
+
+{"kernelInfo":{"defaultKernelName":"pwsh","items":[{"aliases":[],"languageName":"pwsh","name":"pwsh"}]}}
+
+#!markdown
+
+# Media connector setup for a stand-alone environment
+
+Run the following commands to create a stand-alone media connector environment.
+
+This stand-alone environment is useful for testing and development purposes.
+
+The script assumes that you've configured kubectl to access the cluster and that you have the necessary permissions to create the resources.
+
+You can use the aks-cluster.dib polyglot notebook to create a suitable AKS cluster and configure kubectl.
+
+The stand-alone environment includes the following components:
+- Media connector
+- Azure IoT Operations supervisor
+- Mosquitto MQTT connector
+- Media server
+
+You can also deploy the media connector to an Azure IoT Operations environment that uses _Azure IoT MQ_ as the MQTT broker. This scenario is beyond the scope of this notebook.
+
+#!markdown
+
+## Initialize variables
+
+Set the development environment variables that this notebook uses. You can edit the [media-connector-vars.ps1](./media-connector-vars.ps1) file to customize these values:
+
+#!pwsh
+
+. ".\media-connector-vars.ps1"
+
+#!markdown
+
+## Create the Azure IoT Operations connectors namespace
+
+The Azure IoT Operations connectors namespace is where the media connector will be deployed:
+
+#!pwsh
+
+kubectl create namespace $aioConnectorsNamespace --dry-run=client -o yaml | kubectl apply -f -
+
+#!markdown
+
+## Update the Helm repositories
+
+The following script updates the Helm repositories to make sure that the latest versions of the charts are available:
+
+#!pwsh
+
+helm repo add jetstack https://charts.jetstack.io
+
+#!pwsh
+
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts/
+
+#!pwsh
+
+helm repo update
+
+#!markdown
+
+## Deploy the cert-manager Helm chart
+
+Deploy the cert-manager Helm chart to the runtime namespace:
+
+#!pwsh
+
+helm upgrade -i cert-manager jetstack/cert-manager `
+--namespace cert-manager `
+--create-namespace `
+--set installCRDs=true `
+--wait
+
+#!markdown
+
+## Deploy the trust-manager Helm chart
+
+Deploy the trust-manager Helm chart to the runtime namespace:
+
+#!pwsh
+
+helm upgrade -i trust-manager jetstack/trust-manager `
+--namespace cert-manager `
+--create-namespace `
+--set app.trust.namespace=$aioConnectorsNamespace `
+--wait
+
+#!markdown
+
+## Deploy the monitoring helm chart
+
+Deploy the monitoring Helm chart to the runtime namespace:
+
+#!pwsh
+
+helm dependency build ./monitoring
+
+#!pwsh
+
+helm upgrade -i monitoring ./monitoring `
+--namespace $monitoringNamespace `
+--create-namespace `
+--wait
+
+#!markdown
+
+Expose the OTEL collector, for easier access outside the cluster during testing:
+
+#!pwsh
+
+kubectl expose deployment otel-collector --namespace $monitoringNamespace --type=LoadBalancer --name=otel-collector-public --port=4317 --target-port=4317
+
+#!markdown
+
+## Deploy the media connector Helm chart:
+
+#!pwsh
+
+helm upgrade -i opcuabroker-runtime oci://aioconnectorsprod.azurecr.io/opcuabroker/helmchart/microsoft-iotoperations-opcuabroker `
+--version $aioRuntimeVersion `
+--namespace $aioConnectorsNamespace `
+--create-namespace `
+--set opcUaConnector.highAvailability=false `
+--set deployOwnMqttBroker=true `
+--set mqttBroker.address=$mqttAddress `
+--set opcUaConnector.highAvailability=false `
+--set mediaConnector.registry=$mediaConnectorImageRegistryServer `
+--set mediaConnector.imageRepository=$mediaConnectorImageRepository `
+--set mediaConnector.tag=$mediaConnectorImageTag `
+--set mediaConnector.additionalConfigurationSchema=$mediaConnectorConfigurationSchema `
+--set openTelemetry.enabled="true" `
+--set openTelemetry.endpoints.default.uri=$otelCollectorEndpoint `
+--set openTelemetry.endpoints.default.protocol=grpc `
+--set secrets.kind=k8s `
+--set logging.logLevel=Debug `
+--set image.pullSecrets[0].name=regcred `
+--set opcUaConnector.highAvailability=false `
+--wait
+
+#!markdown
+
+## Verify the deployment
+
+#!pwsh
+
+kubectl get deployment -n $aioConnectorsNamespace
+
+#!markdown
+
+## Deploy the media server
+
+Deploy the media server Helm chart to the runtime namespace. The media server receives media streams from the media connector and makes the streams available to the clients:
+
+#!pwsh
+
+Push-Location -Path ".\media-server"
+. ".\media-server-deploy.ps1"
+Pop-Location

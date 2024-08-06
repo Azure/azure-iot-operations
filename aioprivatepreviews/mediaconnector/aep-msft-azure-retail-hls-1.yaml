@@ -1,0 +1,18 @@
+apiVersion: deviceregistry.microsoft.com/v1beta1
+kind: AssetEndpointProfile
+metadata:
+  name: aep-msft-azure-retail-hls-1
+spec:
+  additionalConfiguration: |-
+    {
+      "$schema": "https://aiobrokers.blob.core.windows.net/aio-media-connector/1.0.0.json"
+    }
+  targetAddress: http://s7d2.scene7.com/is/content/microsoftcorp/CLO24-Azure-Retail-16x9
+  transportAuthentication:
+    ownCertificates: []
+  userAuthentication:
+    mode: Anonymous
+    usernamePasswordCredentials:
+      usernameReference: ""
+      passwordReference: ""
+  uuid: 1ce383eb-2a06-4be5-afc1-b79a14dccedb

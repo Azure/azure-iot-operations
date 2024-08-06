@@ -1,0 +1,51 @@
+apiVersion: deviceregistry.microsoft.com/v1beta1
+kind: Asset
+metadata:
+  name: asset-msft-azure-retail-hls-1
+spec:
+  displayName: Microsoft Azure Corporate Video
+  description: Microsoft Azure Corporate Video
+  assetEndpointProfileUri: aep-msft-azure-retail-hls-1
+  dataPoints:
+    - dataSource: snapshot-to-mqtt
+      capabilityId: snapshot-to-mqtt
+      name: snapshot-to-mqtt
+      dataPointConfiguration: |-
+        {
+          "autostart": "false",
+          "fps": "1",
+          "format": "jpeg",
+          "realtime": "true",
+          "loop": "true"
+        }
+    - dataSource: snapshot-to-fs
+      capabilityId: snapshot-to-fs
+      name: snapshot-to-fs
+      dataPointConfiguration: |-
+        {
+          "autostart": "false",
+          "fps": "1",
+          "format": "jpeg",
+          "realtime": "true",
+          "loop": "true"
+        }
+    - dataSource: clip-to-fs
+      capabilityId: clip-to-fs
+      name: clip-to-fs
+      dataPointConfiguration: |-
+        {
+          "autostart": "false",
+          "format": "mkv",
+          "duration": "60",
+          "realtime": "true",
+          "loop": "true"
+        }
+    - dataSource: stream-to-rtsp
+      capabilityId: stream-to-rtsp
+      name: stream-to-rtsp
+      dataPointConfiguration: |-
+        {
+          "autostart": "false",
+          "realtime": "true",
+          "loop": "true"
+        }
