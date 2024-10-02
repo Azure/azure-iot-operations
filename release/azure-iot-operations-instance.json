@@ -1,0 +1,640 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "languageVersion": "2.0",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.30.23.60470",
+      "templateHash": "6194687573320740755"
+    }
+  },
+  "definitions": {
+    "_1.AdvancedConfig": {
+      "type": "object",
+      "properties": {
+        "platform": {
+          "type": "object",
+          "properties": {
+            "version": {
+              "type": "string",
+              "nullable": true
+            },
+            "train": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          "nullable": true
+        },
+        "aio": {
+          "type": "object",
+          "properties": {
+            "version": {
+              "type": "string",
+              "nullable": true
+            },
+            "train": {
+              "type": "string",
+              "nullable": true
+            },
+            "configurationSettingsOverride": {
+              "type": "object",
+              "nullable": true
+            }
+          },
+          "nullable": true
+        },
+        "secretSyncController": {
+          "type": "object",
+          "properties": {
+            "version": {
+              "type": "string",
+              "nullable": true
+            },
+            "train": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          "nullable": true
+        },
+        "observability": {
+          "type": "object",
+          "properties": {
+            "otelCollectorAddress": {
+              "type": "string",
+              "nullable": true
+            },
+            "otelExportIntervalSeconds": {
+              "type": "int",
+              "nullable": true
+            }
+          },
+          "nullable": true
+        },
+        "openServiceMesh": {
+          "type": "object",
+          "properties": {
+            "version": {
+              "type": "string",
+              "nullable": true
+            },
+            "train": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          "nullable": true
+        },
+        "edgeStorageAccelerator": {
+          "type": "object",
+          "properties": {
+            "version": {
+              "type": "string",
+              "nullable": true
+            },
+            "train": {
+              "type": "string",
+              "nullable": true
+            },
+            "diskStorageClass": {
+              "type": "string",
+              "nullable": true
+            },
+            "faultToleranceEnabled": {
+              "type": "bool",
+              "nullable": true
+            }
+          },
+          "nullable": true
+        },
+        "resourceSuffix": {
+          "type": "string",
+          "nullable": true
+        }
+      },
+      "metadata": {
+        "__bicep_imported_from!": {
+          "sourceTemplate": "types.bicep"
+        }
+      }
+    },
+    "_1.BrokerConfig": {
+      "type": "object",
+      "properties": {
+        "frontendReplicas": {
+          "type": "int",
+          "nullable": true,
+          "minValue": 1,
+          "maxValue": 16,
+          "metadata": {
+            "description": "Number of AIO Broker frontend replicas. The default is 2."
+          }
+        },
+        "frontendWorkers": {
+          "type": "int",
+          "nullable": true,
+          "minValue": 1,
+          "maxValue": 16,
+          "metadata": {
+            "description": "Number of AIO Broker frontend workers. The default is 2."
+          }
+        },
+        "backendRedundancyFactor": {
+          "type": "int",
+          "nullable": true,
+          "minValue": 1,
+          "maxValue": 5,
+          "metadata": {
+            "description": "The AIO Broker backend redundancy factory. The default is 2."
+          }
+        },
+        "backendWorkers": {
+          "type": "int",
+          "nullable": true,
+          "minValue": 1,
+          "maxValue": 16,
+          "metadata": {
+            "description": "Number of AIO Broker backend workers. The default is 2."
+          }
+        },
+        "backendPartitions": {
+          "type": "int",
+          "nullable": true,
+          "minValue": 1,
+          "maxValue": 16,
+          "metadata": {
+            "description": "Number of AIO Broker backend partitions. The default is 2."
+          }
+        },
+        "memoryProfile": {
+          "type": "string",
+          "allowedValues": [
+            "High",
+            "Low",
+            "Medium",
+            "Tiny"
+          ],
+          "nullable": true,
+          "metadata": {
+            "description": "The AIO Broker memory profile. The default is \"Medium\"."
+          }
+        },
+        "serviceType": {
+          "type": "string",
+          "allowedValues": [
+            "ClusterIp",
+            "LoadBalancer",
+            "NodePort"
+          ],
+          "nullable": true,
+          "metadata": {
+            "description": "The AIO Broker service type. The default is \"ClusterIp\"."
+          }
+        }
+      },
+      "metadata": {
+        "__bicep_imported_from!": {
+          "sourceTemplate": "types.bicep"
+        }
+      }
+    },
+    "_1.CustomerManaged": {
+      "type": "object",
+      "properties": {
+        "source": {
+          "type": "string",
+          "allowedValues": [
+            "CustomerManaged"
+          ]
+        },
+        "settings": {
+          "$ref": "#/definitions/_1.TrustBundleSettings"
+        }
+      },
+      "metadata": {
+        "__bicep_imported_from!": {
+          "sourceTemplate": "types.bicep"
+        }
+      }
+    },
+    "_1.SelfSigned": {
+      "type": "object",
+      "properties": {
+        "source": {
+          "type": "string",
+          "allowedValues": [
+            "SelfSigned"
+          ]
+        }
+      },
+      "metadata": {
+        "__bicep_imported_from!": {
+          "sourceTemplate": "types.bicep"
+        }
+      }
+    },
+    "_1.TrustBundleSettings": {
+      "type": "object",
+      "properties": {
+        "issuerName": {
+          "type": "string"
+        },
+        "issuerKind": {
+          "type": "string",
+          "allowedValues": [
+            "ClusterIssuer",
+            "Issuer"
+          ]
+        },
+        "configMapName": {
+          "type": "string"
+        },
+        "configMapKey": {
+          "type": "string"
+        }
+      },
+      "metadata": {
+        "__bicep_imported_from!": {
+          "sourceTemplate": "types.bicep"
+        }
+      }
+    },
+    "_1.TrustConfig": {
+      "type": "object",
+      "discriminator": {
+        "propertyName": "source",
+        "mapping": {
+          "SelfSigned": {
+            "$ref": "#/definitions/_1.SelfSigned"
+          },
+          "CustomerManaged": {
+            "$ref": "#/definitions/_1.CustomerManaged"
+          }
+        }
+      },
+      "metadata": {
+        "__bicep_imported_from!": {
+          "sourceTemplate": "types.bicep"
+        }
+      }
+    }
+  },
+  "parameters": {
+    "clusterName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the existing arc-enabled cluster where AIO will be deployed."
+      }
+    },
+    "clusterNamespace": {
+      "type": "string",
+      "defaultValue": "azure-iot-operations",
+      "metadata": {
+        "description": "The namespace on the cluster to deploy to."
+      }
+    },
+    "clusterLocation": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "allowedValues": [
+        "eastus",
+        "eastus2",
+        "westus",
+        "westus2",
+        "westus3",
+        "westeurope",
+        "northeurope",
+        "eastus2euap"
+      ],
+      "metadata": {
+        "description": "Location of the existing arc-enabled cluster where AIO will be deployed."
+      }
+    },
+    "customLocationName": {
+      "type": "string",
+      "defaultValue": "[format('location-{0}', coalesce(tryGet(parameters('advancedConfig'), 'resourceSuffix'), take(uniqueString(resourceGroup().id, parameters('clusterName'), parameters('clusterNamespace')), 5)))]",
+      "metadata": {
+        "description": "Name of the custom location where AIO will be deployed."
+      }
+    },
+    "clExtentionIds": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "metadata": {
+        "description": "List of cluster extension IDs for the custom location."
+      }
+    },
+    "deployResourceSyncRules": {
+      "type": "bool",
+      "defaultValue": false,
+      "metadata": {
+        "description": "Flag to enable resource sync rules. The default is true."
+      }
+    },
+    "userAssignedIdentity": {
+      "type": "string",
+      "nullable": true,
+      "metadata": {
+        "description": "User assigned identity resource id to assign to the AIO instance."
+      }
+    },
+    "schemaRegistryId": {
+      "type": "string",
+      "metadata": {
+        "description": "Schema Registry Id used to reference the namespace to be passed in to the to be passed to Instance."
+      }
+    },
+    "brokerConfig": {
+      "$ref": "#/definitions/_1.BrokerConfig",
+      "nullable": true,
+      "metadata": {
+        "description": "Configuration for the AIO Broker services deployed for AIO"
+      }
+    },
+    "trustConfig": {
+      "$ref": "#/definitions/_1.TrustConfig",
+      "defaultValue": {
+        "source": "SelfSigned"
+      },
+      "metadata": {
+        "description": "Trust bundle config for AIO."
+      }
+    },
+    "defaultDataflowinstanceCount": {
+      "type": "int",
+      "defaultValue": 1,
+      "metadata": {
+        "description": "Instance count for the default dataflow profile. The default is 1."
+      }
+    },
+    "advancedConfig": {
+      "$ref": "#/definitions/_1.AdvancedConfig",
+      "defaultValue": {},
+      "metadata": {
+        "description": "Advanced Configuration for development"
+      }
+    }
+  },
+  "variables": {
+    "MQTT_SETTINGS": {
+      "brokerListenerServiceName": "aio-broker",
+      "brokerListenerPort": 18883,
+      "serviceAccountAudience": "aio-internal",
+      "selfSignedIssuerName": "[format('{0}-aio-certificate-issuer', parameters('clusterNamespace'))]",
+      "selfSignedConfigMapName": "[format('{0}-aio-ca-trust-bundle', parameters('clusterNamespace'))]"
+    },
+    "BROKER_CONFIG": {
+      "frontendReplicas": "[coalesce(tryGet(parameters('brokerConfig'), 'frontendReplicas'), 2)]",
+      "frontendWorkers": "[coalesce(tryGet(parameters('brokerConfig'), 'frontendWorkers'), 2)]",
+      "backendRedundancyFactor": "[coalesce(tryGet(parameters('brokerConfig'), 'backendRedundancyFactor'), 2)]",
+      "backendWorkers": "[coalesce(tryGet(parameters('brokerConfig'), 'backendWorkers'), 2)]",
+      "backendPartitions": "[coalesce(tryGet(parameters('brokerConfig'), 'backendPartitions'), 2)]",
+      "memoryProfile": "[coalesce(tryGet(parameters('brokerConfig'), 'memoryProfile'), 'Medium')]",
+      "serviceType": "[coalesce(tryGet(parameters('brokerConfig'), 'serviceType'), 'ClusterIp')]"
+    }
+  },
+  "resources": {
+    "cluster": {
+      "existing": true,
+      "type": "Microsoft.Kubernetes/connectedClusters",
+      "apiVersion": "2021-03-01",
+      "name": "[parameters('clusterName')]"
+    },
+    "customLocation": {
+      "type": "Microsoft.ExtendedLocation/customLocations",
+      "apiVersion": "2021-08-31-preview",
+      "name": "[parameters('customLocationName')]",
+      "location": "[parameters('clusterLocation')]",
+      "properties": {
+        "hostResourceId": "[resourceId('Microsoft.Kubernetes/connectedClusters', parameters('clusterName'))]",
+        "namespace": "[parameters('clusterNamespace')]",
+        "displayName": "[parameters('customLocationName')]",
+        "clusterExtensionIds": "[parameters('clExtentionIds')]"
+      },
+      "dependsOn": [
+        "cluster"
+      ]
+    },
+    "broker_syncRule": {
+      "condition": "[parameters('deployResourceSyncRules')]",
+      "type": "Microsoft.ExtendedLocation/customLocations/resourceSyncRules",
+      "apiVersion": "2021-08-31-preview",
+      "name": "[format('{0}/{1}', parameters('customLocationName'), format('{0}-broker-sync', parameters('customLocationName')))]",
+      "location": "[parameters('clusterLocation')]",
+      "properties": {
+        "priority": 400,
+        "selector": {
+          "matchLabels": {
+            "management.azure.com/provider-name": "microsoft.iotoperations"
+          }
+        },
+        "targetResourceGroup": "[resourceGroup().id]"
+      },
+      "dependsOn": [
+        "customLocation"
+      ]
+    },
+    "deviceRegistry_syncRule": {
+      "condition": "[parameters('deployResourceSyncRules')]",
+      "type": "Microsoft.ExtendedLocation/customLocations/resourceSyncRules",
+      "apiVersion": "2021-08-31-preview",
+      "name": "[format('{0}/{1}', parameters('customLocationName'), format('{0}-adr-sync', parameters('customLocationName')))]",
+      "location": "[parameters('clusterLocation')]",
+      "properties": {
+        "priority": 200,
+        "selector": {
+          "matchLabels": {
+            "management.azure.com/provider-name": "Microsoft.DeviceRegistry"
+          }
+        },
+        "targetResourceGroup": "[resourceGroup().id]"
+      },
+      "dependsOn": [
+        "broker_syncRule",
+        "customLocation"
+      ]
+    },
+    "aioInstance": {
+      "type": "Microsoft.IoTOperations/instances",
+      "apiVersion": "2024-08-15-preview",
+      "name": "[format('aio-{0}', coalesce(tryGet(parameters('advancedConfig'), 'resourceSuffix'), take(uniqueString(resourceGroup().id, parameters('clusterName'), parameters('clusterNamespace')), 5)))]",
+      "location": "[parameters('clusterLocation')]",
+      "extendedLocation": {
+        "name": "[resourceId('Microsoft.ExtendedLocation/customLocations', parameters('customLocationName'))]",
+        "type": "CustomLocation"
+      },
+      "identity": "[if(empty(parameters('userAssignedIdentity')), createObject('type', 'None'), createObject('type', 'UserAssigned', 'userAssignedIdentities', createObject(format('{0}', parameters('userAssignedIdentity')), createObject())))]",
+      "properties": {
+        "description": "An AIO instance.",
+        "schemaRegistryNamespace": "[reference(parameters('schemaRegistryId'), '2024-07-01-preview').namespace]"
+      },
+      "dependsOn": [
+        "customLocation"
+      ]
+    },
+    "broker": {
+      "type": "Microsoft.IoTOperations/instances/brokers",
+      "apiVersion": "2024-08-15-preview",
+      "name": "[format('{0}/{1}', format('aio-{0}', coalesce(tryGet(parameters('advancedConfig'), 'resourceSuffix'), take(uniqueString(resourceGroup().id, parameters('clusterName'), parameters('clusterNamespace')), 5))), 'default')]",
+      "extendedLocation": {
+        "name": "[resourceId('Microsoft.ExtendedLocation/customLocations', parameters('customLocationName'))]",
+        "type": "CustomLocation"
+      },
+      "properties": {
+        "memoryProfile": "[variables('BROKER_CONFIG').memoryProfile]",
+        "generateResourceLimits": {
+          "cpu": "Disabled"
+        },
+        "cardinality": {
+          "backendChain": {
+            "partitions": "[variables('BROKER_CONFIG').backendPartitions]",
+            "workers": "[variables('BROKER_CONFIG').backendWorkers]",
+            "redundancyFactor": "[variables('BROKER_CONFIG').backendRedundancyFactor]"
+          },
+          "frontend": {
+            "replicas": "[variables('BROKER_CONFIG').frontendReplicas]",
+            "workers": "[variables('BROKER_CONFIG').frontendWorkers]"
+          }
+        }
+      },
+      "dependsOn": [
+        "aioInstance",
+        "customLocation"
+      ]
+    },
+    "broker_authn": {
+      "type": "Microsoft.IoTOperations/instances/brokers/authentications",
+      "apiVersion": "2024-08-15-preview",
+      "name": "[format('{0}/{1}/{2}', format('aio-{0}', coalesce(tryGet(parameters('advancedConfig'), 'resourceSuffix'), take(uniqueString(resourceGroup().id, parameters('clusterName'), parameters('clusterNamespace')), 5))), 'default', 'default')]",
+      "extendedLocation": {
+        "name": "[resourceId('Microsoft.ExtendedLocation/customLocations', parameters('customLocationName'))]",
+        "type": "CustomLocation"
+      },
+      "properties": {
+        "authenticationMethods": [
+          {
+            "method": "ServiceAccountToken",
+            "serviceAccountTokenSettings": {
+              "audiences": [
+                "[variables('MQTT_SETTINGS').serviceAccountAudience]"
+              ]
+            }
+          }
+        ]
+      },
+      "dependsOn": [
+        "broker",
+        "customLocation"
+      ]
+    },
+    "broker_listener": {
+      "type": "Microsoft.IoTOperations/instances/brokers/listeners",
+      "apiVersion": "2024-08-15-preview",
+      "name": "[format('{0}/{1}/{2}', format('aio-{0}', coalesce(tryGet(parameters('advancedConfig'), 'resourceSuffix'), take(uniqueString(resourceGroup().id, parameters('clusterName'), parameters('clusterNamespace')), 5))), 'default', 'default')]",
+      "extendedLocation": {
+        "name": "[resourceId('Microsoft.ExtendedLocation/customLocations', parameters('customLocationName'))]",
+        "type": "CustomLocation"
+      },
+      "properties": {
+        "serviceType": "[variables('BROKER_CONFIG').serviceType]",
+        "serviceName": "[variables('MQTT_SETTINGS').brokerListenerServiceName]",
+        "ports": [
+          {
+            "authenticationRef": "default",
+            "port": "[variables('MQTT_SETTINGS').brokerListenerPort]",
+            "tls": {
+              "mode": "Automatic",
+              "certManagerCertificateSpec": {
+                "issuerRef": {
+                  "name": "[if(equals(parameters('trustConfig').source, 'CustomerManaged'), parameters('trustConfig').settings.issuerName, variables('MQTT_SETTINGS').selfSignedIssuerName)]",
+                  "kind": "[if(equals(parameters('trustConfig').source, 'CustomerManaged'), parameters('trustConfig').settings.issuerKind, 'ClusterIssuer')]",
+                  "group": "cert-manager.io"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "dependsOn": [
+        "broker",
+        "broker_authn",
+        "customLocation"
+      ]
+    },
+    "dataflow_profile": {
+      "type": "Microsoft.IoTOperations/instances/dataflowProfiles",
+      "apiVersion": "2024-08-15-preview",
+      "name": "[format('{0}/{1}', format('aio-{0}', coalesce(tryGet(parameters('advancedConfig'), 'resourceSuffix'), take(uniqueString(resourceGroup().id, parameters('clusterName'), parameters('clusterNamespace')), 5))), 'default')]",
+      "extendedLocation": {
+        "name": "[resourceId('Microsoft.ExtendedLocation/customLocations', parameters('customLocationName'))]",
+        "type": "CustomLocation"
+      },
+      "properties": {
+        "instanceCount": "[parameters('defaultDataflowinstanceCount')]"
+      },
+      "dependsOn": [
+        "aioInstance",
+        "customLocation"
+      ]
+    },
+    "dataflow_endpoint": {
+      "type": "Microsoft.IoTOperations/instances/dataflowEndpoints",
+      "apiVersion": "2024-08-15-preview",
+      "name": "[format('{0}/{1}', format('aio-{0}', coalesce(tryGet(parameters('advancedConfig'), 'resourceSuffix'), take(uniqueString(resourceGroup().id, parameters('clusterName'), parameters('clusterNamespace')), 5))), 'default')]",
+      "extendedLocation": {
+        "name": "[resourceId('Microsoft.ExtendedLocation/customLocations', parameters('customLocationName'))]",
+        "type": "CustomLocation"
+      },
+      "properties": {
+        "endpointType": "Mqtt",
+        "mqttSettings": {
+          "host": "[format('{0}:{1}', variables('MQTT_SETTINGS').brokerListenerServiceName, variables('MQTT_SETTINGS').brokerListenerPort)]",
+          "authentication": {
+            "method": "ServiceAccountToken",
+            "serviceAccountTokenSettings": {
+              "audience": "[variables('MQTT_SETTINGS').serviceAccountAudience]"
+            }
+          },
+          "tls": {
+            "mode": "Enabled",
+            "trustedCaCertificateConfigMapRef": "[if(equals(parameters('trustConfig').source, 'CustomerManaged'), parameters('trustConfig').settings.configMapName, variables('MQTT_SETTINGS').selfSignedConfigMapName)]"
+          }
+        }
+      },
+      "dependsOn": [
+        "aioInstance",
+        "customLocation"
+      ]
+    }
+  },
+  "outputs": {
+    "aio": {
+      "type": "object",
+      "value": {
+        "name": "[format('aio-{0}', coalesce(tryGet(parameters('advancedConfig'), 'resourceSuffix'), take(uniqueString(resourceGroup().id, parameters('clusterName'), parameters('clusterNamespace')), 5)))]",
+        "broker": {
+          "name": "default",
+          "listener": "default",
+          "authn": "default",
+          "settings": "[variables('BROKER_CONFIG')]"
+        }
+      }
+    },
+    "customLocation": {
+      "type": "object",
+      "value": {
+        "id": "[resourceId('Microsoft.ExtendedLocation/customLocations', parameters('customLocationName'))]",
+        "name": "[parameters('customLocationName')]",
+        "resourceSyncRulesEnabled": "[parameters('deployResourceSyncRules')]",
+        "resourceSyncRules": [
+          "[format('{0}-adr-sync', parameters('customLocationName'))]",
+          "[format('{0}-broker-sync', parameters('customLocationName'))]"
+        ]
+      }
+    }
+  }
+}
