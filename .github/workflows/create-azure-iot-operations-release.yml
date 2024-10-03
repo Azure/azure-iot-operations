@@ -157,13 +157,3 @@ jobs:
             git branch release/${{inputs.version}}
             git push origin release/${{inputs.version}}
           fi
-
-  UpdateAutobot:
-    permissions:
-      contents: write
-      id-token: write
-    uses: ./.github/workflows/update-autobot-aio-version.yml
-    needs: [CreateRelease, CreateReleaseBranch]
-    secrets: inherit
-    with:
-      aio_version_uri: "https://github.com/${{ github.repository }}/releases/tag/${{ needs.CalculateVersionString.outputs.version }}"
