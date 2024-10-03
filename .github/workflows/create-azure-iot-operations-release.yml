@@ -48,8 +48,8 @@ jobs:
             exit 1
           fi
 
-          if [[ "${{ github.ref }}" != "refs/heads/main" ]]; then
-            echo "::error::This workflow should only be run on the main branch"
+          if [[ "${{ github.ref }}" != "refs/heads/main" ]] && [[ "${{ github.ref }}" != "refs/heads/release"* ]]; then
+            echo "::error::This workflow should only be run on the main and release branch"
             exit 1
           fi
           
@@ -92,16 +92,18 @@ jobs:
             files+=("grafana-dashboard.zip")
           fi
 
-          if [[ -f dev/azure-iot-operations.bicep ]]; then
-            az bicep build -f dev/azure-iot-operations.bicep
-            files+=("dev/azure-iot-operations.json")
-          elif [[ -f release/azure-iot-operations.json ]]; then
-            files+=("release/azure-iot-operations.json")
+          if [[ -f dev/azure-iot-operations-enablement.bicep ]]; then
+            az bicep build -f dev/azure-iot-operations-enablement.bicep
+            files+=("dev/azure-iot-operations-enablement.json")
+          elif [[ -f release/azure-iot-operations-enablement.json ]]; then
+            files+=("release/azure-iot-operations-enablement.json")
           fi
 
-          if [[ -f .integration-lab/int-deployment.bicep ]]; then
-            az bicep build -f .integration-lab/int-deployment.bicep
-            files+=(".integration-lab/int-deployment.json")
+          if [[ -f dev/azure-iot-operations-instance.bicep ]]; then
+            az bicep build -f dev/azure-iot-operations-instance.bicep
+            files+=("dev/azure-iot-operations-instance.json")
+          elif [[ -f release/azure-iot-operations-instance.json ]]; then
+            files+=("release/azure-iot-operations-instance.json")
           fi
           
           filelist=$(IFS=,; echo "${files[*]}")
@@ -155,3 +157,13 @@ jobs:
             git branch release/${{inputs.version}}
             git push origin release/${{inputs.version}}
           fi
+
+  UpdateAutobot:
+    permissions:
+      contents: write
+      id-token: write
+    uses: ./.github/workflows/update-autobot-aio-version.yml
+    needs: [CreateRelease, CreateReleaseBranch]
+    secrets: inherit
+    with:
+      aio_version_uri: "https://github.com/${{ github.repository }}/releases/tag/${{ needs.CalculateVersionString.outputs.version }}"
