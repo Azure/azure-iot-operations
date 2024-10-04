@@ -22,8 +22,9 @@ Please see [Supplemental Terms of Use for Microsoft Azure Previews.](https://azu
 Please see [Contributing.](https://github.com/Azure/azure-iot-operations/blob/main/CONTRIBUTING.md)
 
 ## Feedback and Questions
-For product feedback, provide feedback at [feedback.azure.com](https://feedback.azure.com/d365community/forum/20152d6e-6a76-ee11-8179-000d3a1abe9e)
-For any questions, get help at [Microsoft Q&A Azure IoT Operations](https://learn.microsoft.com/en-us/answers/tags/464/azure-iot-operations)
+For product feedback, provide feedback at [feedback.azure.com](https://feedback.azure.com/d365community/forum/20152d6e-6a76-ee11-8179-000d3a1abe9e).
+
+For any questions, get help at [Microsoft Q&A Azure IoT Operations](https://learn.microsoft.com/en-us/answers/tags/464/azure-iot-operations).
 
 ## Reporting Security Issues
 Please see [Security.](https://github.com/Azure/azure-iot-operations/blob/main/SECURITY.md)
