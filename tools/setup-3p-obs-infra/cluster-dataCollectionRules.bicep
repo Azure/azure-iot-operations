@@ -8,8 +8,8 @@ param clusterName string
 
 @description('Prefix to apply to all monitor resources')
 @minLength(1)
-@maxLength(50)
-param prefix string = '${clusterName}-obs-${substring(uniqueString(resourceGroup().id), 0, 3)}'
+@maxLength(18)
+param prefix string = '${clusterName}-${substring(uniqueString(resourceGroup().id), 0, 3)}'
 
 @description('Region where the Azure Monitor is located')
 param azureMonitorLocation string
