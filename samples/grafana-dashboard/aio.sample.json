@@ -1,0 +1,2265 @@
+{
+  "__inputs": [
+    {
+      "name": "DS_MANAGED_PROMETHEUS_INSTANCE",
+      "label": "Managed_Prometheus_Instance",
+      "description": "",
+      "type": "datasource",
+      "pluginId": "prometheus",
+      "pluginName": "Prometheus"
+    }
+  ],
+  "__elements": {},
+  "__requires": [
+    {
+      "type": "grafana",
+      "id": "grafana",
+      "name": "Grafana",
+      "version": "10.4.7"
+    },
+    {
+      "type": "datasource",
+      "id": "prometheus",
+      "name": "Prometheus",
+      "version": "1.0.0"
+    },
+    {
+      "type": "panel",
+      "id": "state-timeline",
+      "name": "State timeline",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "text",
+      "name": "Text",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "timeseries",
+      "name": "Time series",
+      "version": ""
+    }
+  ],
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "description": "Sample dashboard for viewing Azure IoT Operations health and usage",
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [],
+  "panels": [
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_MANAGED_PROMETHEUS_INSTANCE}"
+      },
+      "description": "",
+      "gridPos": {
+        "h": 2,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 160,
+      "maxPerRow": 12,
+      "options": {
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "<div style=\"background-color:black; text-align: center\"> \n  <span style=\"color:#C1C9D1; font-size:16px\">[$cluster]</span>\n</div>\n\n",
+        "mode": "markdown"
+      },
+      "pluginVersion": "10.4.7",
+      "repeat": "cluster",
+      "repeatDirection": "h",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_MANAGED_PROMETHEUS_INSTANCE}"
+          },
+          "refId": "A"
+        }
+      ],
+      "type": "text"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_MANAGED_PROMETHEUS_INSTANCE}"
+      },
+      "description": "",
+      "gridPos": {
+        "h": 2,
+        "w": 24,
+        "x": 0,
+        "y": 2
+      },
+      "id": 18,
+      "maxPerRow": 12,
+      "options": {
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "<div style=\"background-color:#C1C9D1; text-align: center\"> \n  <span style=\"color:black; font-size:16px\">AIO Health Model</span>\n</div>\n\n",
+        "mode": "markdown"
+      },
+      "pluginVersion": "10.4.7",
+      "repeat": "cluster",
+      "repeatDirection": "h",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_MANAGED_PROMETHEUS_INSTANCE}"
+          },
+          "refId": "A"
+        }
+      ],
+      "type": "text"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_MANAGED_PROMETHEUS_INSTANCE}"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "fillOpacity": 82,
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineWidth": 0,
+            "spanNulls": false
+          },
+          "links": [],
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#505050",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 0
+              },
+              {
+                "color": "green",
+                "value": 1
+              },
+              {
+                "color": "#505050",
+                "value": 404
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 24,
+        "x": 0,
+        "y": 4
+      },
+      "id": 1,
+      "maxPerRow": 12,
+      "options": {
+        "alignValue": "left",
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "mergeValues": true,
+        "rowHeight": 0.72,
+        "showValue": "never",
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "repeat": "cluster",
+      "repeatDirection": "h",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_MANAGED_PROMETHEUS_INSTANCE}"
+          },
+          "editorMode": "code",
+          "expr": "label_replace(min(\r\n  # NEW Broker\r\n  label_replace(min(\r\n    0 * sgn(sum(rate(aio_broker_authentication_failures{cluster=\"$cluster\", instance=~\"$namespace\"}[2m])) > 0) or\r\n    1 * sgn(sum(rate(aio_broker_authentication_failures{cluster=\"$cluster\", instance=~\"$namespace\"}[2m])) ) or\r\n    vector(0)>0)\r\n    ,\"_\",\"Authentication failures\",\"\",\"\") or\r\n  label_replace(min(\r\n    0 * sgn(sum(rate(aio_broker_authorization_deny{cluster=\"$cluster\", instance=~\"$namespace\"}[2m])) > 0) or\r\n    1 * sgn(sum(rate(aio_broker_authorization_deny{cluster=\"$cluster\", instance=~\"$namespace\"}[2m])) ) or\r\n    vector(0)>0)\r\n    ,\"_\",\"Authorization failures\",\"\",\"\") or        \r\n  label_replace(min(\r\n    0 * sgn(sum(rate(aio_broker_backpressure_packets_rejected{cluster=\"$cluster\", instance=~\"$namespace\"}[2m])) > 0) or\r\n    1 * sgn(sum(rate(aio_broker_backpressure_packets_rejected{cluster=\"$cluster\", instance=~\"$namespace\"}[2m])) ) or\r\n    vector(0)>0)\r\n    ,\"_\",\"Backpressure\",\"\",\"\") or\r\n  label_replace(min(\r\n    0 * sgn(sum(rate(aio_broker_qos0_messages_dropped{pod_type=\"BE\",cluster=\"$cluster\", instance=~\"$namespace\"}[2m])) > 0) or\r\n    1 * sgn(sum(rate(aio_broker_qos0_messages_dropped{pod_type=\"BE\",cluster=\"$cluster\", instance=~\"$namespace\"}[2m])) ) or\r\n    vector(0)>0)\r\n    ,\"_\",\"Dropped QoS0 Msgs\",\"\",\"\") or\r\n  label_replace(\r\n    0 * max(kube_pod_status_phase{cluster=\"$cluster\", namespace=~\"$namespace\", pod=~\"aio-broker-upgrade-status-job.*\", phase=~\"failed\"} == 1) or\r\n    1 * max(kube_job_status_succeeded{cluster=\"$cluster\", namespace=~\"$namespace\", job_name=~\"aio-broker-upgrade-status-job.*\"} == 1) or vector(404)\r\n    ,\"_\",\"Upgrade failures\",\"\",\"\") or  \r\n  # Old Broker (MQ)\r\n  label_replace(min(\r\n    0 * sgn(sum(rate(aio_mq_authentication_failures{cluster=\"$cluster\", instance=~\"$namespace\"}[2m])) > 0) or\r\n    1 * sgn(sum(rate(aio_mq_authentication_failures{cluster=\"$cluster\", instance=~\"$namespace\"}[2m])) ) or\r\n    vector(0)>0)\r\n    ,\"_\",\"Authentication failures\",\"\",\"\") or\r\n  label_replace(min(\r\n    0 * sgn(sum(rate(aio_mq_authorization_deny{cluster=\"$cluster\", instance=~\"$namespace\"}[2m])) > 0) or\r\n    1 * sgn(sum(rate(aio_mq_authorization_deny{cluster=\"$cluster\", instance=~\"$namespace\"}[2m])) ) or\r\n    vector(0)>0)\r\n    ,\"_\",\"Authorization failures\",\"\",\"\") or        \r\n  label_replace(min(\r\n    0 * sgn(sum(rate(aio_mq_backpressure_packets_rejected{cluster=\"$cluster\", instance=~\"$namespace\"}[2m])) > 0) or\r\n    1 * sgn(sum(rate(aio_mq_backpressure_packets_rejected{cluster=\"$cluster\", instance=~\"$namespace\"}[2m])) ) or\r\n    vector(0)>0)\r\n    ,\"_\",\"Backpressure\",\"\",\"\") or\r\n  label_replace(min(\r\n    0 * sgn(sum(rate(aio_mq_qos0_messages_dropped{pod_type=\"BE\",cluster=\"$cluster\", instance=~\"$namespace\"}[2m])) > 0) or\r\n    1 * sgn(sum(rate(aio_mq_qos0_messages_dropped{pod_type=\"BE\",cluster=\"$cluster\", instance=~\"$namespace\"}[2m])) ) or\r\n    vector(0)>0)\r\n    ,\"_\",\"Dropped QoS0 Msgs\",\"\",\"\") or\r\n  vector(404) # Tail; not shown\r\n),\"_\",\"Broker\",\"\",\"\")",
+          "hide": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "Broker"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_MANAGED_PROMETHEUS_INSTANCE}"
+          },
+          "editorMode": "code",
+          "expr": "label_replace(min(\r\n    0 * sgn(count (0 <\r\n        rate(aio_opc_mqtt_message_publishing_duration_count{\r\n            cluster=\"$cluster\",aio_opc_mqtt_publish_result!~\"(success|nomatchingsubscribers)\"\r\n        }[5m:1m])\r\n    )) or\r\n    0 * sgn(count (0 <\r\n        rate(aio_opc_session_connect_duration_count{\r\n            cluster=\"$cluster\",aio_opc_module_type=\"opcua-connector\",aio_opc_connect_result!=\"success\"\r\n        }[5m:1m])\r\n    )) or\r\n    sgn(0 < count( # Healthy activity\r\n        rate(aio_opc_mqtt_message_publishing_duration_count{\r\n            cluster=\"$cluster\",aio_opc_mqtt_publish_result=~\"(success|nomatchingsubscribers)\"\r\n        }[5m:1m]))\r\n    ) or\r\n    vector(0)>0 or vector(404)\r\n),\"_\",\"Connectors\",\"\",\"\")",
+          "hide": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "Connectors"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_MANAGED_PROMETHEUS_INSTANCE}"
+          },
+          "editorMode": "code",
+          "expr": "label_replace(min(\r\n    0 * (count(0 < rate(aio_dataflow_errors{cluster='$cluster'}[5m:1m]))) or # Errors\r\n    1 * sgn(count(0 < rate(aio_dataflow_messages_sent{cluster='$cluster'}[5m:1m]))) or # Activity\r\n    vector(0) > 0 or vector(404)\r\n),\"_\",\"Dataflows\",\"\",\"\") ",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "Dataflows"
+        }
+      ],
+      "title": "AIO Service Health [$cluster]",
+      "transparent": true,
+      "type": "state-timeline"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_MANAGED_PROMETHEUS_INSTANCE}"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "links": [],
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#505050",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 0
+              },
+              {
+                "color": "green",
+                "value": 1
+              },
+              {
+                "color": "#505050",
+                "value": 404
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 24,
+        "x": 0,
+        "y": 8
+      },
+      "id": 11,
+      "maxPerRow": 12,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "repeat": "cluster",
+      "repeatDirection": "h",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_MANAGED_PROMETHEUS_INSTANCE}"
+          },
+          "editorMode": "code",
+          "expr": "# NEW BROKER:\r\nsum by(_)(label_replace(\r\n        0 < increase(aio_broker_authentication_failures{cluster=\"$cluster\",namespace=~\"$namespace\"}[5m:1m])\r\n    ,'_','Broker:authn_failure','','')) or\r\nsum by(_)(label_replace(\r\n        0 < increase(aio_broker_authorization_deny{cluster=\"$cluster\",namespace=~\"$namespace\"}[5m:1m])\r\n    ,'_','Broker:authz_deny','','')) or\r\nsum by(_)(label_replace(\r\n        0 < increase(aio_broker_backpressure_packets_rejected{cluster=\"$cluster\",namespace=~\"$namespace\"}[5m:1m])\r\n    ,'_','Broker:backpressure_rejected','','')) or\r\nsum by(_)(label_replace(\r\n        0 < increase(aio_broker_qos0_messages_dropped{cluster=\"$cluster\",namespace=~\"$namespace\"}[5m:1m])\r\n    ,'_','Broker:qos0_msgs_dropped','','')) or\r\n# OLD BROKER:\r\nsum by(_)(label_replace(\r\n        0 < increase(aio_mq_authentication_failures{cluster=\"$cluster\",namespace=~\"$namespace\"}[5m:1m])\r\n    ,'_','Broker:authn_failure','','')) or\r\nsum by(_)(label_replace(\r\n        0 < increase(aio_mq_authorization_deny{cluster=\"$cluster\",namespace=~\"$namespace\"}[5m:1m])\r\n    ,'_','Broker:authz_deny','','')) or\r\nsum by(_)(label_replace(\r\n        0 < increase(aio_mq_backpressure_packets_rejected{cluster=\"$cluster\",namespace=~\"$namespace\"}[5m:1m])\r\n    ,'_','Broker:backpressure_rejected','','')) or\r\nsum by(_)(label_replace(\r\n        0 < increase(aio_mq_qos0_messages_dropped{cluster=\"$cluster\",namespace=~\"$namespace\"}[5m:1m])\r\n    ,'_','Broker:qos0_msgs_dropped','','')) or\r\nvector(0)>0 #",
+          "hide": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "Broker"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_MANAGED_PROMETHEUS_INSTANCE}"
+          },
+          "editorMode": "code",
+          "expr": "sum by(_)(label_replace(\r\n        increase(aio_opc_mqtt_message_publishing_duration_count{\r\n            cluster=\"$cluster\",aio_opc_mqtt_publish_result!~\"(success|nomatchingsubscribers)\"\r\n        }[5m:1m])\r\n    ,'_','Connector:publishError:$1','aio_opc_mqtt_publish_result','(.*)')) or\r\nsum by (_)(label_replace(\r\n        increase(aio_opc_session_connect_duration_count{\r\n            cluster=\"$cluster\",aio_opc_module_type=\"opcua-connector\",aio_opc_connect_result!=\"success\"\r\n        }[5m:1m])\r\n    ,'_','Connector:connectError:$1','aio_opc_connect_result','(.*)')) or\r\nvector(0)>0 ",
+          "hide": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "Connectors"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_MANAGED_PROMETHEUS_INSTANCE}"
+          },
+          "editorMode": "code",
+          "expr": "sum by (_)(\r\n    label_replace(increase(aio_dataflow_errors{cluster='$cluster'}[5m:1m]),'_','Dataflows:$1','errorcode','(.*)')\r\n)\r\n",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "Dataflows"
+        }
+      ],
+      "title": "Service Errors [$cluster]",
+      "transparent": true,
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_MANAGED_PROMETHEUS_INSTANCE}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "fillOpacity": 70,
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineWidth": 0,
+            "spanNulls": false
+          },
+          "links": [],
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#505050",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 0
+              },
+              {
+                "color": "yellow",
+                "value": 0.5
+              },
+              {
+                "color": "green",
+                "value": 1
+              },
+              {
+                "color": "#505050",
+                "value": 404
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 24,
+        "x": 0,
+        "y": 14
+      },
+      "id": 4,
+      "maxPerRow": 12,
+      "options": {
+        "alignValue": "left",
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "mergeValues": false,
+        "rowHeight": 0.9,
+        "showValue": "never",
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "repeat": "cluster",
+      "repeatDirection": "h",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_MANAGED_PROMETHEUS_INSTANCE}"
+          },
+          "editorMode": "code",
+          "expr": "## Workload Readiness health\r\n############################\r\nlabel_replace(min(\r\navg(label_join( # Workload ready percents (for deployment, daemonset, and statefulset)\r\n    label_replace(label_join(\r\n        kube_deployment_status_replicas_ready{cluster=\"$cluster\",namespace=~\"$namespace\"} or\r\n        kube_daemonset_status_number_ready{cluster=\"$cluster\",namespace=~\"$namespacem\"} or\r\n        kube_statefulset_status_replicas_ready{cluster=\"$cluster\",namespace=~\"$namespace\"}\r\n        ,\"workloadName\", \"\", \"deployment\", \"daemonset\", \"statefulset\")\r\n        ,\"workloadType\", \"$1\", \"__name__\", \"kube_(.*)_status_.*\")\r\n  / label_replace(label_join(\r\n        kube_daemonset_status_desired_number_scheduled{cluster=\"$cluster\",namespace=~\"$namespace\"} or\r\n        kube_deployment_spec_replicas{cluster=\"$cluster\",namespace=~\"$namespace\"} or\r\n        kube_statefulset_status_replicas{cluster=\"$cluster\",namespace=~\"$namespace\"}\r\n        ,\"workloadName\", \"\", \"deployment\", \"daemonset\", \"statefulset\")\r\n        ,\"workloadType\", \"$1\", \"__name__\", \"kube_(.*)_(status|spec)_.*\")\r\n  ,\"workload\", \":\", \"workloadType\", \"workloadName\")\r\n) by (workload) >=0 \r\n) or vector(404),\"_\",\"AIO Workload Readiness\",\"\",\"\")",
+          "hide": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_MANAGED_PROMETHEUS_INSTANCE}"
+          },
+          "editorMode": "code",
+          "expr": "## Container Restart Health:\r\n############################\r\nlabel_replace(\r\n  sgn(sum_over_time(sum(rate(\r\n    kube_pod_container_status_restarts_total{cluster=\"$cluster\",namespace=~\"$namespace\"}[10m:1m]\r\n    )*60)[1h:]) > 5) * 0.0 # RED: Cumulative restarts over X(5) time greater than Y(1h)\r\n  or sgn(max(\r\n    kube_pod_container_status_restarts_total{cluster=\"$cluster\",namespace=~\"$namespace\"}\r\n    + 1 >= 0))\r\n  ,\"_\",\"AIO Container Restarts\",\"\",\"\")\r\n",
+          "hide": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_MANAGED_PROMETHEUS_INSTANCE}"
+          },
+          "editorMode": "code",
+          "expr": "## Container CPU top-level health\r\n################################\r\nlabel_replace(\r\nmin(sgn( # Check for throttling > N indicating container is exceeding its CPU limits\r\n      rate(container_cpu_cfs_throttled_periods_total{cluster=\"$cluster\",namespace=~\"$namespace\",container!=\"\"}[10m]) \r\n    / rate(container_cpu_cfs_periods_total{cluster=\"$cluster\",namespace=~\"$namespace\",container!=\"\"}[10m])\r\n    >= 0.80)\r\n    ) \r\n    * 0.0\r\nor\r\nmin(\r\n    sgn(min(kube_pod_container_resource_limits{cluster=\"$cluster\",namespace=~\"$namespace\",container!=\"\",resource=\"cpu\"}) by (namespace,container))\r\n    )\r\n,\"_\",\"AIO Container CPU\",\"\",\"\")",
+          "hide": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "C"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_MANAGED_PROMETHEUS_INSTANCE}"
+          },
+          "editorMode": "code",
+          "expr": "## Container Memory Health:\r\n###########################\r\nlabel_replace(\r\nmin( # Look for high memory utilization\r\n    0.0 * sgn((\r\n        max(container_memory_working_set_bytes{cluster=\"$cluster\",namespace=~\"$namespace\",container!=\"\"}) by (namespace,container)\r\n      / min(kube_pod_container_resource_limits{cluster=\"$cluster\",namespace=~\"$namespace\",container!=\"\",resource=\"memory\"}) by (namespace, container)\r\n    ) >= .95) or # show health state of 0 if container memory utilization >= 95%\r\n    vector(0)>0\r\n)\r\nor\r\nmin(\r\n    sgn(min(kube_pod_container_resource_limits{cluster=\"$cluster\",namespace=~\"$namespace\",container!=\"\",resource=\"memory\"}) by (namespace,container))\r\n)\r\n,\"_\",\"AIO Container Memory\",\"\",\"\")",
+          "hide": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "D"
+        }
+      ],
+      "title": "AIO Kubernetes Workload Health [$cluster]",
+      "transparent": true,
+      "type": "state-timeline"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_MANAGED_PROMETHEUS_INSTANCE}"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "axisSoftMax": 80,
+            "barAlignment": 0,
+            "drawStyle": "bars",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "normal"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "links": [],
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#505050",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 0
+              },
+              {
+                "color": "green",
+                "value": 1
+              },
+              {
+                "color": "#505050",
+                "value": 404
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Mem Working Bytes (MB)"
+            },
+            "properties": [
+              {
+                "id": "custom.axisPlacement",
+                "value": "right"
+              },
+              {
+                "id": "unit",
+                "value": "decmbytes"
+              },
+              {
+                "id": "custom.drawStyle",
+                "value": "line"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "CPU Usage (milli-cores)"
+            },
+            "properties": [
+              {
+                "id": "custom.axisPlacement",
+                "value": "hidden"
+              },
+              {
+                "id": "custom.drawStyle",
+                "value": "line"
+              },
+              {
+                "id": "custom.scaleDistribution",
+                "value": {
+                  "log": 10,
+                  "type": "log"
+                }
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "yellow",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Ready"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "NOT-Ready"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "red",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Restarts"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "dark-orange",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 24,
+        "x": 0,
+        "y": 18
+      },
+      "id": 115,
+      "maxPerRow": 12,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "repeat": "cluster",
+      "repeatDirection": "h",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_MANAGED_PROMETHEUS_INSTANCE}"
+          },
+          "editorMode": "code",
+          "expr": "label_replace(sum (\r\n    label_replace(label_join(\r\n        kube_daemonset_status_number_ready{cluster=\"$cluster\",namespace=~\"$namespace\",daemonset=~\".*\"} or\r\n        kube_deployment_status_replicas_ready{cluster=\"$cluster\",namespace=~\"$namespace\",deployment=~\".*\"} or\r\n        kube_statefulset_status_replicas_ready{cluster=\"$cluster\",namespace=~\"$namespace\",statefulset=~\".*\"}\r\n        ,\"workloadName\", \"\", \"deployment\", \"daemonset\", \"replicaset\", \"statefulset\")\r\n        ,\"workloadType\", \"$1\", \"__name__\", \"kube_(.*)_status_.*\")\r\n),\"_\",\"Ready\",\"\",\"\")",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_MANAGED_PROMETHEUS_INSTANCE}"
+          },
+          "editorMode": "code",
+          "expr": "label_replace(\r\n    sum(\r\n        kube_daemonset_status_desired_number_scheduled{cluster=\"$cluster\",namespace=~\"$namespace\",daemonset=~\".*\"} or\r\n        kube_deployment_spec_replicas{cluster=\"$cluster\",namespace=~\"$namespace\",deployment=~\".*\"} or\r\n        kube_statefulset_status_replicas{cluster=\"$cluster\",namespace=~\"$namespace\",statefulset=~\".*\"}\r\n    ) - sum (\r\n    label_replace(label_join(\r\n        kube_daemonset_status_number_ready{cluster=\"$cluster\",namespace=~\"$namespace\",daemonset=~\".*\"} or\r\n        kube_deployment_status_replicas_ready{cluster=\"$cluster\",namespace=~\"$namespace\",deployment=~\".*\"} or\r\n        kube_statefulset_status_replicas_ready{cluster=\"$cluster\",namespace=~\"$namespace\",statefulset=~\".*\"}\r\n        ,\"workloadName\", \"\", \"deployment\", \"daemonset\", \"replicaset\", \"statefulset\")\r\n        ,\"workloadType\", \"$1\", \"__name__\", \"kube_(.*)_status_.*\")\r\n),\"_\",\"NOT-Ready\",\"\",\"\")",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_MANAGED_PROMETHEUS_INSTANCE}"
+          },
+          "editorMode": "code",
+          "expr": "# Container Restarts\r\nlabel_replace(ceil(sum(increase(kube_pod_container_status_restarts_total{cluster=\"$cluster\",namespace=~\"$namespace\",pod=~\".*\"}[$__rate_interval]))),\"_\",\"Restarts\",\"\",\"\") > 0",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "C"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_MANAGED_PROMETHEUS_INSTANCE}"
+          },
+          "editorMode": "code",
+          "expr": "(label_replace(sum(rate(container_cpu_usage_seconds_total{cluster=\"$cluster\",namespace=~\"$namespace\",pod=~\".*\",container!=\"\"}[$__rate_interval]))*1000,\"_\",\"CPU Usage (milli-cores)\",\"\",\"\") )\r\n",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "D"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_MANAGED_PROMETHEUS_INSTANCE}"
+          },
+          "editorMode": "code",
+          "expr": "(label_replace(sum(container_memory_working_set_bytes{cluster=\"$cluster\",namespace=~\"$namespace\",pod=~\".*\",container!=\"\"})/(1024*1024),\"_\",\"Mem Working Bytes (MB)\",\"\",\"\") )\r\n",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "E"
+        }
+      ],
+      "title": "AIO K8s Workload Details [$cluster]",
+      "transparent": true,
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_MANAGED_PROMETHEUS_INSTANCE}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "fillOpacity": 70,
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineWidth": 0,
+            "spanNulls": false
+          },
+          "links": [],
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#808080",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 0
+              },
+              {
+                "color": "yellow",
+                "value": 0.5
+              },
+              {
+                "color": "green",
+                "value": 1
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 24,
+        "x": 0,
+        "y": 25
+      },
+      "id": 94,
+      "maxPerRow": 12,
+      "options": {
+        "alignValue": "left",
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "mergeValues": false,
+        "rowHeight": 0.9,
+        "showValue": "never",
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "repeat": "cluster",
+      "repeatDirection": "h",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_MANAGED_PROMETHEUS_INSTANCE}"
+          },
+          "editorMode": "code",
+          "expr": "# Node Health Status\r\n####################\r\nlabel_replace(\r\n  sum(\r\n    max by (node) (kube_node_status_condition{cluster=\"$cluster\",condition=\"ready\",status=\"false\"} > 0) * 0 or\r\n    max by (node) (kube_node_status_condition{cluster=\"$cluster\",condition=\"ready\",status=\"true\"} > 0) * 1\r\n  ) / sum(kube_node_info{cluster=\"$cluster\"})\r\n  ,\"_\",\"Node Readiness\",\"\",\"\")",
+          "hide": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_MANAGED_PROMETHEUS_INSTANCE}"
+          },
+          "editorMode": "code",
+          "expr": "#############################\r\n# Node CPU Health\r\nlabel_replace(min(\r\n# BEGIN inner query\r\nmin by(_)(label_replace(vector(0)>0\r\n    or 0.0 * sgn(\r\n        100 - ((avg by (instance) (rate(node_cpu_seconds_total{cluster=\"$cluster\",mode=\"idle\"}[5m])) \r\n              + avg by (instance) (rate(node_cpu_seconds_total{cluster=\"$cluster\",mode=\"iowait\"}[5m]))\r\n        ) * 100) > 90)\r\n    or 1.0 * sgn(sum by (instance)(node_cpu_seconds_total{cluster=\"$cluster\"} > 0))\r\n    or -1 * sgn(max by (instance) (label_replace(kube_node_info{cluster=\"$cluster\"},\"instance\",\"$1\",\"node\",\"(.*)\")))\r\n    ,\"_\",\"$1\",\"instance\",\"(.*)\"))\r\n# END inner query\r\n),\"_\",\"Node CPU\", \"\",\"\")",
+          "hide": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_MANAGED_PROMETHEUS_INSTANCE}"
+          },
+          "editorMode": "code",
+          "expr": "#############################\r\n# Node Memory Health\r\nlabel_replace(min(\r\n# BEGIN inner query\r\nmin by(_)(label_replace(vector(0)>0\r\n    or 0.0 * sgn(\r\n        (100 * sum by (instance)(node_memory_MemTotal_bytes{cluster=\"$cluster\"} - (node_memory_MemFree_bytes{cluster=\"$cluster\"} + node_memory_Buffers_bytes{cluster=\"$cluster\"} + node_memory_Cached_bytes{cluster=\"$cluster\"})) / sum by(instance) (node_memory_MemTotal_bytes{cluster=\"$cluster\"})) > 90)\r\n    or 1.0 * sgn(sum by (instance)(node_memory_MemTotal_bytes{cluster=\"$cluster\"} > 0))\r\n    or -1 * sgn(max by (instance) (label_replace(kube_node_info{cluster=\"$cluster\"},\"instance\",\"$1\",\"node\",\"(.*)\")))\r\n,\"_\",\"$1\",\"instance\",\"(.*)\"))\r\n# END inner query\r\n),\"_\",\"Node Memory\", \"\",\"\")",
+          "hide": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "C"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_MANAGED_PROMETHEUS_INSTANCE}"
+          },
+          "editorMode": "code",
+          "expr": "#############################\r\n# Disk Usage Health\r\nlabel_replace(min(\r\n# BEGIN inner query\r\nmin by(node)(label_replace(vector(0)>0\r\n  or 0.0 * sgn(max by(instance) (100 - (100 * node_filesystem_avail_bytes{cluster=\"$cluster\"} \r\n            / node_filesystem_size_bytes{cluster=\"$cluster\"}) > 10) > 90)\r\n  or 1.0 * sgn(max by(instance) (100 - (100 * node_filesystem_avail_bytes{cluster=\"$cluster\"} \r\n            / node_filesystem_size_bytes{cluster=\"$cluster\"})))\r\n,\"node\",\"$1\",\"instance\",\"(.*)\"))\r\nor max by (node) (kube_node_info{cluster=\"$cluster\"}) * -1 # Baseline by node\r\n# END inner query\r\n),\"_\",\"Node Disk\", \"\",\"\")",
+          "hide": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "D"
+        }
+      ],
+      "title": "Kubernetes Node Health [$cluster]",
+      "transparent": true,
+      "type": "state-timeline"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_MANAGED_PROMETHEUS_INSTANCE}"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisGridShow": true,
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "axisSoftMax": 100,
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "scheme",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "dark-green"
+              },
+              {
+                "color": "dark-green",
+                "value": 10
+              },
+              {
+                "color": "green",
+                "value": 20
+              },
+              {
+                "color": "light-green",
+                "value": 30
+              },
+              {
+                "color": "super-light-yellow",
+                "value": 40
+              },
+              {
+                "color": "light-yellow",
+                "value": 50
+              },
+              {
+                "color": "dark-yellow",
+                "value": 60
+              },
+              {
+                "color": "orange",
+                "value": 70
+              },
+              {
+                "color": "dark-orange",
+                "value": 80
+              },
+              {
+                "color": "red",
+                "value": 90
+              },
+              {
+                "color": "dark-red",
+                "value": 95
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 24,
+        "x": 0,
+        "y": 29
+      },
+      "id": 207,
+      "maxPerRow": 12,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "repeat": "cluster",
+      "repeatDirection": "h",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_MANAGED_PROMETHEUS_INSTANCE}"
+          },
+          "editorMode": "code",
+          "expr": "#############################\r\n# Node CPU Usage Pecent\r\nmax by (node) (label_replace(\r\n  100 - ((avg by (instance) (rate(node_cpu_seconds_total{cluster=\"$cluster\",mode=\"idle\"}[5m])) \r\n        + avg by (instance) (rate(node_cpu_seconds_total{cluster=\"$cluster\",mode=\"iowait\"}[5m]))\r\n  ) * 100)\r\n  #* on (instance) group_left(node) label_replace(max by(internal_ip,node) (kube_node_info),\"instance\",\"$1:9100\",\"internal_ip\",\"(.*)\") # Node Info\r\n  ,\"node\",\"$1\",\"instance\",\"(.*)\")\r\n)\r\n",
+          "legendFormat": "{{node}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Node CPU Utilization [$cluster]",
+      "transparent": true,
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_MANAGED_PROMETHEUS_INSTANCE}"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisGridShow": true,
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "axisSoftMax": 100,
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "scheme",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "dark-green"
+              },
+              {
+                "color": "dark-green",
+                "value": 10
+              },
+              {
+                "color": "green",
+                "value": 20
+              },
+              {
+                "color": "light-green",
+                "value": 30
+              },
+              {
+                "color": "super-light-yellow",
+                "value": 40
+              },
+              {
+                "color": "light-yellow",
+                "value": 50
+              },
+              {
+                "color": "dark-yellow",
+                "value": 60
+              },
+              {
+                "color": "orange",
+                "value": 70
+              },
+              {
+                "color": "dark-orange",
+                "value": 80
+              },
+              {
+                "color": "red",
+                "value": 90
+              },
+              {
+                "color": "dark-red",
+                "value": 95
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 24,
+        "x": 0,
+        "y": 29
+      },
+      "id": 207,
+      "maxPerRow": 12,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "repeat": "cluster",
+      "repeatDirection": "h",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_MANAGED_PROMETHEUS_INSTANCE}"
+          },
+          "editorMode": "code",
+          "expr": "#############################\r\n# Node Memory Usage Pecent\r\n  min by (node) (label_replace(\r\n    (100 * sum by (instance)\r\n      (node_memory_MemTotal_bytes{cluster=\"$cluster\"} \r\n      - node_memory_MemFree_bytes{cluster=\"$cluster\"} \r\n      - node_memory_Buffers_bytes{cluster=\"$cluster\"} \r\n      - node_memory_Cached_bytes{cluster=\"$cluster\"}) \r\n    / sum by(instance) (node_memory_MemTotal_bytes{cluster=\"$cluster\"}))\r\n    #* on (instance) group_left(node) label_replace(\r\n    #  max by(internal_ip,node) (kube_node_info),\"instance\",\"$1:9100\",\"internal_ip\",\"(.*)\") # Node Info\r\n      ,\"node\",\"$1\",\"instance\",\"(.*)\")\r\n  )\r\n",
+          "legendFormat": "{{node}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Node Memory Utilization [$cluster]",
+      "transparent": true,
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_MANAGED_PROMETHEUS_INSTANCE}"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisGridShow": true,
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "axisSoftMax": 100,
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "scheme",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "dark-green"
+              },
+              {
+                "color": "dark-green",
+                "value": 10
+              },
+              {
+                "color": "green",
+                "value": 20
+              },
+              {
+                "color": "light-green",
+                "value": 30
+              },
+              {
+                "color": "super-light-yellow",
+                "value": 40
+              },
+              {
+                "color": "light-yellow",
+                "value": 50
+              },
+              {
+                "color": "dark-yellow",
+                "value": 60
+              },
+              {
+                "color": "orange",
+                "value": 70
+              },
+              {
+                "color": "dark-orange",
+                "value": 80
+              },
+              {
+                "color": "red",
+                "value": 90
+              },
+              {
+                "color": "dark-red",
+                "value": 95
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 24,
+        "x": 0,
+        "y": 29
+      },
+      "id": 207,
+      "maxPerRow": 12,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "repeat": "cluster",
+      "repeatDirection": "h",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_MANAGED_PROMETHEUS_INSTANCE}"
+          },
+          "editorMode": "code",
+          "expr": "#############################\r\n# Disk Usage\r\nmax by (node,device) (label_replace(\r\n  #min by(instance,device) (100 - (100 * node_filesystem_free_bytes{cluster=\"$cluster\"} / node_filesystem_size_bytes{cluster=\"$cluster\"}) > 5)\r\n  min by(instance,device) (100 - (100 * node_filesystem_avail_bytes{cluster=\"$cluster\"} / node_filesystem_size_bytes{cluster=\"$cluster\"}) > 10)\r\n    #* on (instance) group_left(node) label_replace(max by(internal_ip,node) (kube_node_info),\"instance\",\"$1:9100\",\"internal_ip\",\"(.*)\") # Node Info\r\n      ,\"node\",\"$1\",\"instance\",\"(.*)\")\r\n)\r\n#or label_replace(vector(60),\"threshold\",\"redline\",\"\",\"\")\r\n",
+          "hide": false,
+          "legendFormat": "{{node}}({{device}})",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_MANAGED_PROMETHEUS_INSTANCE}"
+          },
+          "editorMode": "code",
+          "expr": " ",
+          "hide": true,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "B"
+        }
+      ],
+      "title": "Node Disk Capacity [$cluster]",
+      "transparent": true,
+      "type": "timeseries"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 32
+      },
+      "id": 25,
+      "panels": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_MANAGED_PROMETHEUS_INSTANCE}"
+          },
+          "description": "",
+          "gridPos": {
+            "h": 2,
+            "w": 24,
+            "x": 0,
+            "y": 38
+          },
+          "id": 19,
+          "maxPerRow": 12,
+          "options": {
+            "code": {
+              "language": "plaintext",
+              "showLineNumbers": false,
+              "showMiniMap": false
+            },
+            "content": "<div style=\"background-color:#C1C9D1; text-align: center\"> \n  <span style=\"color:black; font-size:16px\">Connectors</span>\n</div>\n\n",
+            "mode": "markdown"
+          },
+          "pluginVersion": "10.4.7",
+          "repeat": "cluster",
+          "repeatDirection": "h",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_MANAGED_PROMETHEUS_INSTANCE}"
+              },
+              "refId": "A"
+            }
+          ],
+          "type": "text"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_MANAGED_PROMETHEUS_INSTANCE}"
+          },
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "links": [],
+              "mappings": [],
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "#505050",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 0
+                  },
+                  {
+                    "color": "green",
+                    "value": 1
+                  },
+                  {
+                    "color": "#505050",
+                    "value": 404
+                  }
+                ]
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "datapoints"
+                },
+                "properties": [
+                  {
+                    "id": "custom.axisPlacement",
+                    "value": "right"
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 5,
+            "w": 24,
+            "x": 0,
+            "y": 40
+          },
+          "id": 75,
+          "maxPerRow": 12,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "none"
+            }
+          },
+          "repeat": "cluster",
+          "repeatDirection": "h",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_MANAGED_PROMETHEUS_INSTANCE}"
+              },
+              "editorMode": "code",
+              "expr": "sum by(_)(\r\n    label_replace(\r\n        aio_opc_asset_count{cluster='$cluster'}\r\n    ,'_','assets','','')\r\n)",
+              "hide": false,
+              "instant": false,
+              "legendFormat": "__auto",
+              "range": true,
+              "refId": "A"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_MANAGED_PROMETHEUS_INSTANCE}"
+              },
+              "editorMode": "code",
+              "expr": "sum by(_)(\r\n    label_replace(\r\n        aio_opc_asset_datapoint_count{cluster='$cluster'}\r\n    ,'_','datapoints','','')\r\n)",
+              "hide": false,
+              "instant": false,
+              "legendFormat": "__auto",
+              "range": true,
+              "refId": "B"
+            }
+          ],
+          "title": "Connector (OPC-UA) Assets and DataPoints [$cluster]",
+          "transparent": true,
+          "type": "timeseries"
+        }
+      ],
+      "title": " ",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 33
+      },
+      "id": 24,
+      "panels": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_MANAGED_PROMETHEUS_INSTANCE}"
+          },
+          "description": "",
+          "gridPos": {
+            "h": 2,
+            "w": 24,
+            "x": 0,
+            "y": 39
+          },
+          "id": 20,
+          "maxPerRow": 12,
+          "options": {
+            "code": {
+              "language": "plaintext",
+              "showLineNumbers": false,
+              "showMiniMap": false
+            },
+            "content": "<div style=\"background-color:#C1C9D1; text-align: center\"> \n  <span style=\"color:black; font-size:16px\">Broker</span>\n</div>\n\n",
+            "mode": "markdown"
+          },
+          "pluginVersion": "10.4.7",
+          "repeat": "cluster",
+          "repeatDirection": "h",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_MANAGED_PROMETHEUS_INSTANCE}"
+              },
+              "refId": "A"
+            }
+          ],
+          "type": "text"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_MANAGED_PROMETHEUS_INSTANCE}"
+          },
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "links": [],
+              "mappings": [],
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "#505050",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 0
+                  },
+                  {
+                    "color": "green",
+                    "value": 1
+                  },
+                  {
+                    "color": "#505050",
+                    "value": 404
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 5,
+            "w": 24,
+            "x": 0,
+            "y": 41
+          },
+          "id": 40,
+          "maxPerRow": 12,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "repeat": "cluster",
+          "repeatDirection": "h",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_MANAGED_PROMETHEUS_INSTANCE}"
+              },
+              "editorMode": "code",
+              "expr": "sum by(_)(\r\n    label_replace(\r\n        aio_broker_connected_sessions{cluster='$cluster'}\r\n    ,'_','sessions','','')\r\n)",
+              "hide": false,
+              "instant": false,
+              "legendFormat": "__auto",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "Broker Connected Sessions [$cluster]",
+          "transparent": true,
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_MANAGED_PROMETHEUS_INSTANCE}"
+          },
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "links": [],
+              "mappings": [],
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "#505050",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 0
+                  },
+                  {
+                    "color": "green",
+                    "value": 1
+                  },
+                  {
+                    "color": "#505050",
+                    "value": 404
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 5,
+            "w": 24,
+            "x": 0,
+            "y": 46
+          },
+          "id": 55,
+          "maxPerRow": 12,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "repeat": "cluster",
+          "repeatDirection": "h",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_MANAGED_PROMETHEUS_INSTANCE}"
+              },
+              "editorMode": "code",
+              "expr": "sum by(_)(\r\n    label_replace(\r\n        increase(aio_broker_publishes_received{cluster='$cluster',category!=''}[$__rate_interval])\r\n    ,'_',' $1','category','(.*)')\r\n)",
+              "hide": false,
+              "instant": false,
+              "legendFormat": "__auto",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "Broker Publishes Received by Category [$cluster]",
+          "transparent": true,
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_MANAGED_PROMETHEUS_INSTANCE}"
+          },
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "links": [],
+              "mappings": [],
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "#505050",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 0
+                  },
+                  {
+                    "color": "green",
+                    "value": 1
+                  },
+                  {
+                    "color": "#505050",
+                    "value": 404
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 5,
+            "w": 24,
+            "x": 0,
+            "y": 51
+          },
+          "id": 56,
+          "maxPerRow": 12,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "repeat": "cluster",
+          "repeatDirection": "h",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_MANAGED_PROMETHEUS_INSTANCE}"
+              },
+              "editorMode": "code",
+              "expr": "sum by(_)(\r\n    label_replace(\r\n        increase(aio_broker_publishes_sent{cluster='$cluster',category!=''}[$__rate_interval])\r\n    ,'_',' $1','category','(.*)')\r\n)",
+              "hide": false,
+              "instant": false,
+              "legendFormat": "__auto",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "Broker Publishes Sent by Category [$cluster]",
+          "transparent": true,
+          "type": "timeseries"
+        }
+      ],
+      "title": " ",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 34
+      },
+      "id": 23,
+      "panels": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_MANAGED_PROMETHEUS_INSTANCE}"
+          },
+          "description": "",
+          "gridPos": {
+            "h": 2,
+            "w": 24,
+            "x": 0,
+            "y": 13
+          },
+          "id": 21,
+          "maxPerRow": 12,
+          "options": {
+            "code": {
+              "language": "plaintext",
+              "showLineNumbers": false,
+              "showMiniMap": false
+            },
+            "content": "<div style=\"background-color:#C1C9D1; text-align: center\"> \n  <span style=\"color:black; font-size:16px\">Dataflows</span>\n</div>\n\n",
+            "mode": "markdown"
+          },
+          "pluginVersion": "10.4.7",
+          "repeat": "cluster",
+          "repeatDirection": "h",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_MANAGED_PROMETHEUS_INSTANCE}"
+              },
+              "refId": "A"
+            }
+          ],
+          "type": "text"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_MANAGED_PROMETHEUS_INSTANCE}"
+          },
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "links": [],
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "#505050",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 0
+                  },
+                  {
+                    "color": "green",
+                    "value": 1
+                  },
+                  {
+                    "color": "#505050",
+                    "value": 404
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 5,
+            "w": 24,
+            "x": 0,
+            "y": 15
+          },
+          "id": 22,
+          "maxPerRow": 12,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "repeat": "cluster",
+          "repeatDirection": "h",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_MANAGED_PROMETHEUS_INSTANCE}"
+              },
+              "editorMode": "code",
+              "expr": "sum by(_)(\r\n    label_replace(label_join(\r\n        increase(aio_dataflow_messages_received{cluster='$cluster'}[5m:1m]),\r\n    '_',',','endpointtype','dataflowid'),'_','received ($1) $2','_','^(.*),(.*)$')\r\n)",
+              "hide": false,
+              "instant": false,
+              "legendFormat": "__auto",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "Dataflows Messages Received by EndPointType and DataflowId [$cluster]",
+          "transparent": true,
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_MANAGED_PROMETHEUS_INSTANCE}"
+          },
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "links": [],
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "#505050",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 0
+                  },
+                  {
+                    "color": "green",
+                    "value": 1
+                  },
+                  {
+                    "color": "#505050",
+                    "value": 404
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 5,
+            "w": 24,
+            "x": 0,
+            "y": 20
+          },
+          "id": 27,
+          "maxPerRow": 12,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "repeat": "cluster",
+          "repeatDirection": "h",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_MANAGED_PROMETHEUS_INSTANCE}"
+              },
+              "editorMode": "code",
+              "expr": "sum by(_)(\r\n    label_replace(label_join(\r\n        increase(aio_dataflow_messages_sent{cluster='$cluster'}[5m:1m]),\r\n    '_',',','endpointtype','dataflowid'),'_','sent ($1) $2','_','^(.*),(.*)$')\r\n)",
+              "hide": false,
+              "instant": false,
+              "legendFormat": "__auto",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "Dataflows Messages Sent by EndPointType and DataflowId [$cluster]",
+          "transparent": true,
+          "type": "timeseries"
+        }
+      ],
+      "title": " ",
+      "type": "row"
+    }
+  ],
+  "schemaVersion": 39,
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "selected": false,
+          "text": "Managed_Prometheus_Instance",
+          "value": "promfacbb5"
+        },
+        "hide": 2,
+        "includeAll": false,
+        "multi": false,
+        "name": "prometheus",
+        "options": [],
+        "query": "prometheus",
+        "queryValue": "",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "type": "datasource"
+      },
+      {
+        "current": {},
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_MANAGED_PROMETHEUS_INSTANCE}"
+        },
+        "definition": "query_result(max by(cluster)(max_over_time(up{job=\"kube-state-metrics\"}[$__range])))",
+        "description": "Azure IoT Operations cluster(s) to view",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Cluster",
+        "multi": true,
+        "name": "cluster",
+        "options": [],
+        "query": {
+          "qryType": 3,
+          "query": "query_result(max by(cluster)(max_over_time(up{job=\"kube-state-metrics\"}[$__range])))",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 2,
+        "regex": "/.*cluster=\"([^\"]*).*/",
+        "skipUrlSync": false,
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "azure-iot-operations",
+          "value": "azure-iot-operations"
+        },
+        "hide": 2,
+        "includeAll": false,
+        "multi": false,
+        "name": "namespace",
+        "options": [
+          {
+            "selected": true,
+            "text": "azure-iot-operations",
+            "value": "azure-iot-operations"
+          }
+        ],
+        "query": "azure-iot-operations",
+        "skipUrlSync": false,
+        "type": "custom"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "AIO Sample Dashboard",
+  "uid": "de1sdpihgmjggd",
+  "version": 4,
+  "weekStart": ""
+}
