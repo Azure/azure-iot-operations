@@ -1,8 +1,8 @@
 {
   "__inputs": [
     {
-      "name": "DS_MANAGED_PROMETHEUS_JAJENS-AZMONWORKSPACE-TEST",
-      "label": "Managed_Prometheus_jajens-azmonworkspace-test",
+      "name": "DS_Managed_Prometheus_Instance",
+      "label": "Managed_Prometheus_Instance",
       "description": "",
       "type": "datasource",
       "pluginId": "prometheus",
@@ -25,8 +25,8 @@
     },
     {
       "type": "panel",
-      "id": "table",
-      "name": "Table",
+      "id": "text",
+      "name": "Text",
       "version": ""
     },
     {
@@ -67,10 +67,35 @@
   "panels": [
     {
       "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_MANAGED_PROMETHEUS_JAJENS-AZMONWORKSPACE-TEST}"
+        "type": "datasource",
+        "uid": "grafana"
       },
-      "description": "Publish health represents the health of the E4K broker. It is calculated as an average value of replication correctness for each route",
+      "description": "",
+      "gridPos": {
+        "h": 3,
+        "w": 13,
+        "x": 0,
+        "y": 0
+      },
+      "id": 15,
+      "options": {
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "# End-to-end metrics\n\nEnd-to-end metrics include publish, subscribe and payload check operations, all measured in a single metric.",
+        "mode": "markdown"
+      },
+      "pluginVersion": "9.5.13",
+      "type": "text"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_Managed_Prometheus_Instance}"
+      },
+      "description": "End-to-end health is unhealthy (<100%) if number of lost messages is != 0",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -121,7 +146,7 @@
                 "value": null
               },
               {
-                "color": "orange",
+                "color": "#EAB839",
                 "value": 80
               },
               {
@@ -138,7 +163,7 @@
         "h": 9,
         "w": 13,
         "x": 0,
-        "y": 0
+        "y": 3
       },
       "id": 2,
       "options": {
@@ -169,12 +194,12 @@
           ],
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_MANAGED_PROMETHEUS_JAJENS-AZMONWORKSPACE-TEST}"
+            "uid": "${DS_Managed_Prometheus_Instance}"
           },
           "editorMode": "code",
-          "expr": "avg(aio_mq_subscribe_route_replication_correctness{cluster=\"$cluster\", instance=~\"$namespace\"})",
+          "expr": "1 - min(\r\n    0 * sgn(\r\n        sum(aio_mq_payload_check_total_messages_lost{cluster=\"$cluster\", instance=~\"$namespace\"})\r\n    <= 0) or\r\n    1 * sgn(\r\n        sum(aio_mq_payload_check_total_messages_lost{cluster=\"$cluster\", instance=~\"$namespace\"})\r\n    > 0)) or vector(0)",
           "filters": [],
-          "format": "table",
+          "format": "time_series",
           "global_query_id": "",
           "legendFormat": "Health",
           "range": true,
@@ -182,146 +207,13 @@
           "root_selector": ""
         }
       ],
-      "title": "Subscribe Health [%] (Avg)",
+      "title": "End-to-end health [%] [Avg]",
       "type": "timeseries"
     },
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_MANAGED_PROMETHEUS_JAJENS-AZMONWORKSPACE-TEST}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "custom": {
-            "align": "auto",
-            "cellOptions": {
-              "mode": "basic",
-              "type": "color-background"
-            },
-            "inspect": false
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "transparent",
-                "value": null
-              }
-            ]
-          },
-          "unit": "percentunit"
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "route"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 902
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Value (mean)"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 109
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Value (last)"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 101
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 6,
-        "w": 13,
-        "x": 0,
-        "y": 9
-      },
-      "id": 10,
-      "options": {
-        "cellHeight": "sm",
-        "footer": {
-          "countRows": false,
-          "fields": "",
-          "reducer": [
-            "sum"
-          ],
-          "show": false
-        },
-        "showHeader": true,
-        "sortBy": []
-      },
-      "pluginVersion": "9.5.13",
-      "targets": [
-        {
-          "columns": [],
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_MANAGED_PROMETHEUS_JAJENS-AZMONWORKSPACE-TEST}"
-          },
-          "editorMode": "code",
-          "exemplar": false,
-          "expr": "aio_mq_subscribe_route_replication_correctness{cluster=\"$cluster\", instance=~\"$namespace\"}",
-          "filters": [],
-          "format": "table",
-          "global_query_id": "",
-          "instant": false,
-          "legendFormat": "__auto",
-          "range": true,
-          "refId": "A",
-          "root_selector": ""
-        }
-      ],
-      "title": "Subscribe Health [%] (Avg) per route",
-      "transformations": [
-        {
-          "id": "groupBy",
-          "options": {
-            "fields": {
-              "Value": {
-                "aggregations": [
-                  "last",
-                  "mean"
-                ],
-                "operation": "aggregate"
-              },
-              "route": {
-                "aggregations": [],
-                "operation": "groupby"
-              }
-            }
-          }
-        }
-      ],
-      "type": "table"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_MANAGED_PROMETHEUS_JAJENS-AZMONWORKSPACE-TEST}"
+        "uid": "${DS_Managed_Prometheus_Instance}"
       },
       "fieldConfig": {
         "defaults": {
@@ -377,7 +269,7 @@
         "h": 8,
         "w": 6,
         "x": 0,
-        "y": 15
+        "y": 12
       },
       "id": 12,
       "options": {
@@ -408,10 +300,10 @@
           ],
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_MANAGED_PROMETHEUS_JAJENS-AZMONWORKSPACE-TEST}"
+            "uid": "${DS_Managed_Prometheus_Instance}"
           },
           "editorMode": "code",
-          "expr": "aio_mq_subscribe_latency_mu_ms{cluster=\"$cluster\", instance=~\"$namespace\"}",
+          "expr": "aio_mq_payload_check_latency_mu_ms{cluster=\"$cluster\", instance=~\"$namespace\"}",
           "filters": [],
           "format": "timeseries",
           "global_query_id": "",
@@ -422,13 +314,13 @@
           "root_selector": ""
         }
       ],
-      "title": "Avg subscribe latency [ms] (99th pctl)",
+      "title": "Avg end-to-end latency [ms] (99th pctl)",
       "type": "timeseries"
     },
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_MANAGED_PROMETHEUS_JAJENS-AZMONWORKSPACE-TEST}"
+        "uid": "${DS_Managed_Prometheus_Instance}"
       },
       "fieldConfig": {
         "defaults": {
@@ -484,7 +376,7 @@
         "h": 8,
         "w": 7,
         "x": 6,
-        "y": 15
+        "y": 12
       },
       "id": 14,
       "options": {
@@ -515,10 +407,10 @@
           ],
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_MANAGED_PROMETHEUS_JAJENS-AZMONWORKSPACE-TEST}"
+            "uid": "${DS_Managed_Prometheus_Instance}"
           },
           "editorMode": "code",
-          "expr": "aio_mq_subscribe_latency_sigma_ms{cluster=\"$cluster\", instance=~\"$namespace\"}",
+          "expr": "aio_mq_payload_check_latency_sigma_ms{cluster=\"$cluster\", instance=~\"$namespace\"}",
           "filters": [],
           "format": "timeseries",
           "global_query_id": "",
@@ -528,13 +420,13 @@
           "root_selector": ""
         }
       ],
-      "title": "Std dev subscribe latency [ms] (99th pctl)",
+      "title": "Std dev end-to-end latency [ms] (99th pctl)",
       "type": "timeseries"
     },
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_MANAGED_PROMETHEUS_JAJENS-AZMONWORKSPACE-TEST}"
+        "uid": "${DS_Managed_Prometheus_Instance}"
       },
       "fieldConfig": {
         "defaults": {
@@ -671,7 +563,7 @@
         "h": 11,
         "w": 13,
         "x": 0,
-        "y": 23
+        "y": 20
       },
       "id": 3,
       "options": {
@@ -739,10 +631,10 @@
           "computed_columns": [],
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_MANAGED_PROMETHEUS_JAJENS-AZMONWORKSPACE-TEST}"
+            "uid": "${DS_Managed_Prometheus_Instance}"
           },
           "editorMode": "code",
-          "expr": "aio_mq_subscribe_latency_mu_ms{cluster=\"$cluster\", instance=~\"$namespace\"}",
+          "expr": "aio_mq_payload_check_latency_mu_ms{cluster=\"$cluster\", instance=~\"$namespace\"}",
           "filters": [],
           "format": "timeseries",
           "global_query_id": "",
@@ -755,10 +647,10 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_MANAGED_PROMETHEUS_JAJENS-AZMONWORKSPACE-TEST}"
+            "uid": "${DS_Managed_Prometheus_Instance}"
           },
           "editorMode": "code",
-          "expr": "aio_mq_subscribe_latency_mu_ms{cluster=\"$cluster\", instance=~\"$namespace\"} - aio_mq_subscribe_latency_sigma_ms{cluster=\"$cluster\", instance=~\"$namespace\"}",
+          "expr": "aio_mq_payload_check_latency_mu_ms{cluster=\"$cluster\", instance=~\"$namespace\"} - aio_mq_payload_check_latency_sigma_ms{cluster=\"$cluster\", instance=~\"$namespace\"}",
           "hide": false,
           "legendFormat": "1 Std Dev",
           "range": true,
@@ -767,10 +659,10 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_MANAGED_PROMETHEUS_JAJENS-AZMONWORKSPACE-TEST}"
+            "uid": "${DS_Managed_Prometheus_Instance}"
           },
           "editorMode": "code",
-          "expr": "aio_mq_subscribe_latency_mu_ms{cluster=\"$cluster\", instance=~\"$namespace\"} - 2*aio_mq_subscribe_latency_sigma_ms{cluster=\"$cluster\", instance=~\"$namespace\"}",
+          "expr": "aio_mq_payload_check_latency_mu_ms{cluster=\"$cluster\", instance=~\"$namespace\"} - 2*aio_mq_payload_check_latency_sigma_ms{cluster=\"$cluster\", instance=~\"$namespace\"}",
           "hide": false,
           "legendFormat": "2 Std Dev",
           "range": true,
@@ -779,10 +671,10 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_MANAGED_PROMETHEUS_JAJENS-AZMONWORKSPACE-TEST}"
+            "uid": "${DS_Managed_Prometheus_Instance}"
           },
           "editorMode": "code",
-          "expr": "aio_mq_subscribe_latency_mu_ms{cluster=\"$cluster\", instance=~\"$namespace\"} - 3*aio_mq_subscribe_latency_sigma_ms{cluster=\"$cluster\", instance=~\"$namespace\"}",
+          "expr": "aio_mq_payload_check_latency_mu_ms{cluster=\"$cluster\", instance=~\"$namespace\"} - 3*aio_mq_payload_check_latency_sigma_ms{cluster=\"$cluster\", instance=~\"$namespace\"}",
           "hide": false,
           "legendFormat": "LCL",
           "range": true,
@@ -791,10 +683,10 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_MANAGED_PROMETHEUS_JAJENS-AZMONWORKSPACE-TEST}"
+            "uid": "${DS_Managed_Prometheus_Instance}"
           },
           "editorMode": "code",
-          "expr": "aio_mq_subscribe_latency_mu_ms{cluster=\"$cluster\", instance=~\"$namespace\"} + aio_mq_subscribe_latency_sigma_ms{cluster=\"$cluster\", instance=~\"$namespace\"}",
+          "expr": "aio_mq_payload_check_latency_mu_ms{cluster=\"$cluster\", instance=~\"$namespace\"} + aio_mq_payload_check_latency_sigma_ms{cluster=\"$cluster\", instance=~\"$namespace\"}",
           "hide": false,
           "legendFormat": "1 Std Dev",
           "range": true,
@@ -803,10 +695,10 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_MANAGED_PROMETHEUS_JAJENS-AZMONWORKSPACE-TEST}"
+            "uid": "${DS_Managed_Prometheus_Instance}"
           },
           "editorMode": "code",
-          "expr": "aio_mq_subscribe_latency_mu_ms{cluster=\"$cluster\", instance=~\"$namespace\"} + 2*aio_mq_subscribe_latency_sigma_ms{cluster=\"$cluster\", instance=~\"$namespace\"}",
+          "expr": "aio_mq_payload_check_latency_mu_ms{cluster=\"$cluster\", instance=~\"$namespace\"} + 2*aio_mq_payload_check_latency_sigma_ms{cluster=\"$cluster\", instance=~\"$namespace\"}",
           "hide": false,
           "legendFormat": "2 Std Dev",
           "range": true,
@@ -815,10 +707,10 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_MANAGED_PROMETHEUS_JAJENS-AZMONWORKSPACE-TEST}"
+            "uid": "${DS_Managed_Prometheus_Instance}"
           },
           "editorMode": "code",
-          "expr": "aio_mq_subscribe_latency_mu_ms{cluster=\"$cluster\", instance=~\"$namespace\"} + 3*aio_mq_subscribe_latency_sigma_ms{cluster=\"$cluster\", instance=~\"$namespace\"}",
+          "expr": "aio_mq_payload_check_latency_mu_ms{cluster=\"$cluster\", instance=~\"$namespace\"} + 3*aio_mq_payload_check_latency_sigma_ms{cluster=\"$cluster\", instance=~\"$namespace\"}",
           "hide": false,
           "legendFormat": "UCL",
           "range": true,
@@ -827,109 +719,18 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_MANAGED_PROMETHEUS_JAJENS-AZMONWORKSPACE-TEST}"
+            "uid": "${DS_Managed_Prometheus_Instance}"
           },
           "editorMode": "code",
-          "expr": "aio_mq_subscribe_latency_last_value_ms{cluster=\"$cluster\", instance=~\"$namespace\"}",
+          "expr": "aio_mq_payload_check_latency_last_value_ms{cluster=\"$cluster\", instance=~\"$namespace\"}",
           "hide": false,
           "legendFormat": "Last",
           "range": true,
           "refId": "H"
         }
       ],
-      "title": "Avg subscribe latency [ms] (99th pctl) Control Chart",
+      "title": "Avg end-to-end latency [ms] (99th pctl) Control Chart",
       "transformations": [],
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_MANAGED_PROMETHEUS_JAJENS-AZMONWORKSPACE-TEST}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "fixedColor": "#648FFF",
-            "mode": "continuous-BlYlRd"
-          },
-          "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "blue"
-              }
-            ]
-          },
-          "unit": "ms"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 10,
-        "w": 13,
-        "x": 0,
-        "y": 34
-      },
-      "id": 18,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_MANAGED_PROMETHEUS_JAJENS-AZMONWORKSPACE-TEST}"
-          },
-          "editorMode": "code",
-          "expr": "aio_mq_subscribe_latency_route_ms{cluster=\"$cluster\", instance=~\"$namespace\"}",
-          "hide": false,
-          "legendFormat": "{{route}}",
-          "range": true,
-          "refId": "B"
-        }
-      ],
-      "title": "Subscribe latency per route [ms]",
       "type": "timeseries"
     }
   ],
@@ -943,8 +744,8 @@
       {
         "current": {
           "selected": false,
-          "text": "Managed_Prometheus_jajens-azmonworkspace-test",
-          "value": "Managed_Prometheus_jajens-azmonworkspace-test"
+          "text": "Managed_Prometheus_Instance",
+          "value": "Managed_Prometheus_Instance"
         },
         "hide": 1,
         "includeAll": false,
@@ -961,7 +762,7 @@
         "current": {},
         "datasource": {
           "type": "prometheus",
-          "uid": "${DS_MANAGED_PROMETHEUS_JAJENS-AZMONWORKSPACE-TEST}"
+          "uid": "${DS_Managed_Prometheus_Instance}"
         },
         "definition": "kube_node_status_condition",
         "description": "PAS Cluster to view",
@@ -985,7 +786,7 @@
         "current": {},
         "datasource": {
           "type": "prometheus",
-          "uid": "${DS_MANAGED_PROMETHEUS_JAJENS-AZMONWORKSPACE-TEST}"
+          "uid": "${DS_Managed_Prometheus_Instance}"
         },
         "definition": "kube_namespace_status_phase{cluster=\"$cluster\", phase!~\"terminating\"}",
         "hide": 0,
@@ -1011,8 +812,8 @@
   },
   "timepicker": {},
   "timezone": "",
-  "title": "aio-service-mq-subscribe",
-  "uid": "b5d606dc-a841-4ec0-b7c5-4f1d37c4e877",
-  "version": 13,
+  "title": "aio-service-mq-payload-check",
+  "uid": "c84357d6-e4ef-4459-8348-6049269ace5c",
+  "version": 16,
   "weekStart": ""
 }
