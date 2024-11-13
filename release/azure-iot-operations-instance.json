@@ -5,8 +5,8 @@
   "metadata": {
     "_generator": {
       "name": "bicep",
-      "version": "0.30.23.60470",
-      "templateHash": "6209031414191159933"
+      "version": "0.31.34.60546",
+      "templateHash": "11443463137054451975"
     }
   },
   "definitions": {
@@ -410,10 +410,10 @@
       }
     },
     "VERSIONS": {
-      "iotOperations": "0.8.32"
+      "iotOperations": "1.0.9"
     },
     "TRAINS": {
-      "iotOperations": "preview"
+      "iotOperations": "stable"
     },
     "MQTT_SETTINGS": {
       "brokerListenerServiceName": "aio-broker",
@@ -500,8 +500,7 @@
         "clusterExtensionIds": "[flatten(createArray(parameters('clExtentionIds'), createArray(extensionResourceId(resourceId('Microsoft.Kubernetes/connectedClusters', parameters('clusterName')), 'Microsoft.KubernetesConfiguration/extensions', format('azure-iot-operations-{0}', variables('AIO_EXTENSION_SUFFIX'))))))]"
       },
       "dependsOn": [
-        "aio_extension",
-        "cluster"
+        "aio_extension"
       ]
     },
     "aio_syncRule": {
@@ -545,7 +544,7 @@
     },
     "aioInstance": {
       "type": "Microsoft.IoTOperations/instances",
-      "apiVersion": "2024-09-15-preview",
+      "apiVersion": "2024-11-01",
       "name": "[format('aio-{0}', coalesce(tryGet(parameters('advancedConfig'), 'resourceSuffix'), take(uniqueString(resourceGroup().id, parameters('clusterName'), parameters('clusterNamespace')), 5)))]",
       "location": "[parameters('clusterLocation')]",
       "extendedLocation": {
@@ -565,7 +564,7 @@
     },
     "broker": {
       "type": "Microsoft.IoTOperations/instances/brokers",
-      "apiVersion": "2024-09-15-preview",
+      "apiVersion": "2024-11-01",
       "name": "[format('{0}/{1}', format('aio-{0}', coalesce(tryGet(parameters('advancedConfig'), 'resourceSuffix'), take(uniqueString(resourceGroup().id, parameters('clusterName'), parameters('clusterNamespace')), 5))), 'default')]",
       "extendedLocation": {
         "name": "[resourceId('Microsoft.ExtendedLocation/customLocations', parameters('customLocationName'))]",
@@ -595,7 +594,7 @@
     },
     "broker_authn": {
       "type": "Microsoft.IoTOperations/instances/brokers/authentications",
-      "apiVersion": "2024-09-15-preview",
+      "apiVersion": "2024-11-01",
       "name": "[format('{0}/{1}/{2}', format('aio-{0}', coalesce(tryGet(parameters('advancedConfig'), 'resourceSuffix'), take(uniqueString(resourceGroup().id, parameters('clusterName'), parameters('clusterNamespace')), 5))), 'default', 'default')]",
       "extendedLocation": {
         "name": "[resourceId('Microsoft.ExtendedLocation/customLocations', parameters('customLocationName'))]",
@@ -620,7 +619,7 @@
     },
     "broker_listener": {
       "type": "Microsoft.IoTOperations/instances/brokers/listeners",
-      "apiVersion": "2024-09-15-preview",
+      "apiVersion": "2024-11-01",
       "name": "[format('{0}/{1}/{2}', format('aio-{0}', coalesce(tryGet(parameters('advancedConfig'), 'resourceSuffix'), take(uniqueString(resourceGroup().id, parameters('clusterName'), parameters('clusterNamespace')), 5))), 'default', 'default')]",
       "extendedLocation": {
         "name": "[resourceId('Microsoft.ExtendedLocation/customLocations', parameters('customLocationName'))]",
@@ -654,7 +653,7 @@
     },
     "dataflow_profile": {
       "type": "Microsoft.IoTOperations/instances/dataflowProfiles",
-      "apiVersion": "2024-09-15-preview",
+      "apiVersion": "2024-11-01",
       "name": "[format('{0}/{1}', format('aio-{0}', coalesce(tryGet(parameters('advancedConfig'), 'resourceSuffix'), take(uniqueString(resourceGroup().id, parameters('clusterName'), parameters('clusterNamespace')), 5))), 'default')]",
       "extendedLocation": {
         "name": "[resourceId('Microsoft.ExtendedLocation/customLocations', parameters('customLocationName'))]",
@@ -670,7 +669,7 @@
     },
     "dataflow_endpoint": {
       "type": "Microsoft.IoTOperations/instances/dataflowEndpoints",
-      "apiVersion": "2024-09-15-preview",
+      "apiVersion": "2024-11-01",
       "name": "[format('{0}/{1}', format('aio-{0}', coalesce(tryGet(parameters('advancedConfig'), 'resourceSuffix'), take(uniqueString(resourceGroup().id, parameters('clusterName'), parameters('clusterNamespace')), 5))), 'default')]",
       "extendedLocation": {
         "name": "[resourceId('Microsoft.ExtendedLocation/customLocations', parameters('customLocationName'))]",
