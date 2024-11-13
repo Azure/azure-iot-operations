@@ -5,8 +5,8 @@
   "metadata": {
     "_generator": {
       "name": "bicep",
-      "version": "0.30.23.60470",
-      "templateHash": "12017477435115453809"
+      "version": "0.31.34.60546",
+      "templateHash": "3322333164880261279"
     }
   },
   "definitions": {
@@ -313,7 +313,7 @@
     "VERSIONS": {
       "platform": "0.7.6",
       "secretStore": "0.6.7",
-      "containerStorage": "2.2.1",
+      "containerStorage": "2.2.2",
       "openServiceMesh": "1.2.10"
     },
     "TRAINS": {
@@ -338,9 +338,6 @@
       "apiVersion": "2023-05-01",
       "scope": "[format('Microsoft.Kubernetes/connectedClusters/{0}', parameters('clusterName'))]",
       "name": "azure-iot-operations-platform",
-      "identity": {
-        "type": "SystemAssigned"
-      },
       "properties": {
         "extensionType": "microsoft.iotoperations.platform",
         "version": "[coalesce(tryGet(tryGet(parameters('advancedConfig'), 'platform'), 'version'), variables('VERSIONS').platform)]",
