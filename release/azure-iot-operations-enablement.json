@@ -5,8 +5,8 @@
   "metadata": {
     "_generator": {
       "name": "bicep",
-      "version": "0.31.34.60546",
-      "templateHash": "3322333164880261279"
+      "version": "0.32.4.45862",
+      "templateHash": "3534807839334108747"
     }
   },
   "definitions": {
@@ -313,7 +313,7 @@
     "VERSIONS": {
       "platform": "0.7.6",
       "secretStore": "0.6.7",
-      "containerStorage": "2.2.2",
+      "containerStorage": "2.2.3",
       "openServiceMesh": "1.2.10"
     },
     "TRAINS": {
@@ -352,10 +352,7 @@
           "installCertManager": "[if(equals(parameters('trustConfig').source, 'SelfSigned'), 'true', 'false')]",
           "installTrustManager": "[if(equals(parameters('trustConfig').source, 'SelfSigned'), 'true', 'false')]"
         }
-      },
-      "dependsOn": [
-        "cluster"
-      ]
+      }
     },
     "secret_store_extension": {
       "type": "Microsoft.KubernetesConfiguration/extensions",
@@ -376,8 +373,7 @@
         }
       },
       "dependsOn": [
-        "aio_platform_extension",
-        "cluster"
+        "aio_platform_extension"
       ]
     },
     "open_service_mesh_extension": {
@@ -398,10 +394,7 @@
           "osm.osm.osmBootstrap.resource.requests.cpu": "100m",
           "osm.osm.injector.resource.requests.cpu": "100m"
         }
-      },
-      "dependsOn": [
-        "cluster"
-      ]
+      }
     },
     "container_storage_extension": {
       "type": "Microsoft.KubernetesConfiguration/extensions",
@@ -420,7 +413,6 @@
       },
       "dependsOn": [
         "aio_platform_extension",
-        "cluster",
         "open_service_mesh_extension"
       ]
     }
