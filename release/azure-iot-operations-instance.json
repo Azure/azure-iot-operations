@@ -5,8 +5,8 @@
   "metadata": {
     "_generator": {
       "name": "bicep",
-      "version": "0.31.34.60546",
-      "templateHash": "11443463137054451975"
+      "version": "0.32.4.45862",
+      "templateHash": "16118026265927091454"
     }
   },
   "definitions": {
@@ -483,10 +483,7 @@
         "autoUpgradeMinorVersion": false,
         "scope": "[variables('AIO_EXTENSION_SCOPE')]",
         "configurationSettings": "[union(variables('defaultAioConfigurationSettings'), coalesce(tryGet(tryGet(parameters('advancedConfig'), 'aio'), 'configurationSettingsOverride'), createObject()))]"
-      },
-      "dependsOn": [
-        "cluster"
-      ]
+      }
     },
     "customLocation": {
       "type": "Microsoft.ExtendedLocation/customLocations",
