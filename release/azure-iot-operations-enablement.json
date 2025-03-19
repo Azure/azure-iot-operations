@@ -6,7 +6,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.33.93.31351",
-      "templateHash": "13776867008551554348"
+      "templateHash": "1487949763684507997"
     }
   },
   "definitions": {
@@ -108,6 +108,10 @@
             },
             "faultToleranceEnabled": {
               "type": "bool",
+              "nullable": true
+            },
+            "diskMountPoint": {
+              "type": "string",
               "nullable": true
             }
           },
@@ -223,6 +227,70 @@
         }
       }
     },
+    "_1.Features": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": {
+        "$ref": "#/definitions/_1.InstanceFeature",
+        "metadata": {
+          "description": "Object of features"
+        }
+      },
+      "metadata": {
+        "description": "AIO Instance features.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "types.bicep"
+        }
+      }
+    },
+    "_1.InstanceFeature": {
+      "type": "object",
+      "properties": {
+        "mode": {
+          "$ref": "#/definitions/_1.InstanceFeatureMode"
+        },
+        "settings": {
+          "type": "object",
+          "properties": {},
+          "additionalProperties": {
+            "$ref": "#/definitions/_1.InstanceFeatureSettingValue"
+          }
+        }
+      },
+      "metadata": {
+        "description": "Individual feature object within the AIO instance.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "types.bicep"
+        }
+      }
+    },
+    "_1.InstanceFeatureMode": {
+      "type": "string",
+      "allowedValues": [
+        "Disabled",
+        "Preview",
+        "Stable"
+      ],
+      "metadata": {
+        "description": "The mode of the AIO instance feature. Either \"Stable\", \"Preview\" or \"Disabled\".",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "types.bicep"
+        }
+      }
+    },
+    "_1.InstanceFeatureSettingValue": {
+      "type": "string",
+      "allowedValues": [
+        "Disabled",
+        "Enabled"
+      ],
+      "metadata": {
+        "description": "The setting value of the AIO instance feature. Either \"Enabled\" or \"Disabled\".",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "types.bicep"
+        }
+      }
+    },
     "_1.SelfSigned": {
       "type": "object",
       "properties": {
@@ -312,15 +380,13 @@
   "variables": {
     "VERSIONS": {
       "platform": "0.7.11",
-      "secretStore": "0.7.5",
-      "containerStorage": "2.2.4",
-      "openServiceMesh": "1.2.10"
+      "secretStore": "0.8.2",
+      "containerStorage": "2.3.2"
     },
     "TRAINS": {
       "platform": "preview",
       "secretStore": "preview",
-      "containerStorage": "stable",
-      "openServiceMesh": "stable"
+      "containerStorage": "stable"
     },
     "faultTolerantStorageClass": "[coalesce(tryGet(tryGet(parameters('advancedConfig'), 'edgeStorageAccelerator'), 'diskStorageClass'), 'acstor-arccontainerstorage-storage-pool')]",
     "nonFaultTolerantStorageClass": "[coalesce(tryGet(tryGet(parameters('advancedConfig'), 'edgeStorageAccelerator'), 'diskStorageClass'), 'default,local-path')]",
@@ -376,26 +442,6 @@
         "aio_platform_extension"
       ]
     },
-    "open_service_mesh_extension": {
-      "type": "Microsoft.KubernetesConfiguration/extensions",
-      "apiVersion": "2023-05-01",
-      "scope": "[format('Microsoft.Kubernetes/connectedClusters/{0}', parameters('clusterName'))]",
-      "name": "open-service-mesh",
-      "properties": {
-        "extensionType": "microsoft.openservicemesh",
-        "autoUpgradeMinorVersion": false,
-        "version": "[coalesce(tryGet(tryGet(parameters('advancedConfig'), 'openServiceMesh'), 'version'), variables('VERSIONS').openServiceMesh)]",
-        "releaseTrain": "[coalesce(tryGet(tryGet(parameters('advancedConfig'), 'openServiceMesh'), 'train'), variables('TRAINS').openServiceMesh)]",
-        "configurationSettings": {
-          "osm.osm.enablePermissiveTrafficPolicy": "false",
-          "osm.osm.featureFlags.enableWASMStats": "false",
-          "osm.osm.configResyncInterval": "10s",
-          "osm.osm.osmController.resource.requests.cpu": "100m",
-          "osm.osm.osmBootstrap.resource.requests.cpu": "100m",
-          "osm.osm.injector.resource.requests.cpu": "100m"
-        }
-      }
-    },
     "container_storage_extension": {
       "type": "Microsoft.KubernetesConfiguration/extensions",
       "apiVersion": "2023-05-01",
@@ -412,8 +458,7 @@
         "configurationSettings": "[union(createObject('edgeStorageConfiguration.create', 'true', 'feature.diskStorageClass', variables('kubernetesStorageClass')), if(equals(tryGet(tryGet(parameters('advancedConfig'), 'edgeStorageAccelerator'), 'faultToleranceEnabled'), true()), createObject('acstorConfiguration.create', 'true', 'acstorConfiguration.properties.diskMountPoint', '/mnt'), createObject()))]"
       },
       "dependsOn": [
-        "aio_platform_extension",
-        "open_service_mesh_extension"
+        "aio_platform_extension"
       ]
     }
   },
@@ -442,12 +487,6 @@
           "id": "[extensionResourceId(resourceId('Microsoft.Kubernetes/connectedClusters', parameters('clusterName')), 'Microsoft.KubernetesConfiguration/extensions', 'azure-secret-store')]",
           "version": "[reference('secret_store_extension').version]",
           "releaseTrain": "[reference('secret_store_extension').releaseTrain]"
-        },
-        "openServiceMesh": {
-          "name": "open-service-mesh",
-          "id": "[extensionResourceId(resourceId('Microsoft.Kubernetes/connectedClusters', parameters('clusterName')), 'Microsoft.KubernetesConfiguration/extensions', 'open-service-mesh')]",
-          "version": "[reference('open_service_mesh_extension').version]",
-          "releaseTrain": "[reference('open_service_mesh_extension').releaseTrain]"
         },
         "containerStorage": {
           "name": "azure-arc-containerstorage",
