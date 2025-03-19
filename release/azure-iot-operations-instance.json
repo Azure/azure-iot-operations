@@ -6,7 +6,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.33.93.31351",
-      "templateHash": "6093590022463185967"
+      "templateHash": "10984448815531393873"
     }
   },
   "definitions": {
@@ -410,7 +410,7 @@
       }
     },
     "VERSIONS": {
-      "iotOperations": "1.0.15"
+      "iotOperations": "1.0.34"
     },
     "TRAINS": {
       "iotOperations": "stable"
