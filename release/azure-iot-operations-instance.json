@@ -5,8 +5,8 @@
   "metadata": {
     "_generator": {
       "name": "bicep",
-      "version": "0.33.93.31351",
-      "templateHash": "10984448815531393873"
+      "version": "0.34.44.8038",
+      "templateHash": "4820379854816397418"
     }
   },
   "definitions": {
@@ -108,6 +108,10 @@
             },
             "faultToleranceEnabled": {
               "type": "bool",
+              "nullable": true
+            },
+            "diskMountPoint": {
+              "type": "string",
               "nullable": true
             }
           },
@@ -218,6 +222,70 @@
         }
       },
       "metadata": {
+        "__bicep_imported_from!": {
+          "sourceTemplate": "types.bicep"
+        }
+      }
+    },
+    "_1.Features": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": {
+        "$ref": "#/definitions/_1.InstanceFeature",
+        "metadata": {
+          "description": "Object of features"
+        }
+      },
+      "metadata": {
+        "description": "AIO Instance features.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "types.bicep"
+        }
+      }
+    },
+    "_1.InstanceFeature": {
+      "type": "object",
+      "properties": {
+        "mode": {
+          "$ref": "#/definitions/_1.InstanceFeatureMode"
+        },
+        "settings": {
+          "type": "object",
+          "properties": {},
+          "additionalProperties": {
+            "$ref": "#/definitions/_1.InstanceFeatureSettingValue"
+          }
+        }
+      },
+      "metadata": {
+        "description": "Individual feature object within the AIO instance.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "types.bicep"
+        }
+      }
+    },
+    "_1.InstanceFeatureMode": {
+      "type": "string",
+      "allowedValues": [
+        "Disabled",
+        "Preview",
+        "Stable"
+      ],
+      "metadata": {
+        "description": "The mode of the AIO instance feature. Either \"Stable\", \"Preview\" or \"Disabled\".",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "types.bicep"
+        }
+      }
+    },
+    "_1.InstanceFeatureSettingValue": {
+      "type": "string",
+      "allowedValues": [
+        "Disabled",
+        "Enabled"
+      ],
+      "metadata": {
+        "description": "The setting value of the AIO instance feature. Either \"Enabled\" or \"Disabled\".",
         "__bicep_imported_from!": {
           "sourceTemplate": "types.bicep"
         }
@@ -371,6 +439,13 @@
         "description": "Schema Registry Id used to reference the namespace to be passed in to the to be passed to Instance."
       }
     },
+    "features": {
+      "$ref": "#/definitions/_1.Features",
+      "nullable": true,
+      "metadata": {
+        "description": "AIO Instance features."
+      }
+    },
     "brokerConfig": {
       "$ref": "#/definitions/_1.BrokerConfig",
       "nullable": true,
@@ -410,7 +485,7 @@
       }
     },
     "VERSIONS": {
-      "iotOperations": "1.0.34"
+      "iotOperations": "1.1.19"
     },
     "TRAINS": {
       "iotOperations": "stable"
@@ -418,6 +493,7 @@
     "MQTT_SETTINGS": {
       "brokerListenerServiceName": "aio-broker",
       "brokerListenerPort": 18883,
+      "brokerListenerHost": "[format('aio-broker.{0}', variables('AIO_EXTENSION_SCOPE').cluster.releaseNamespace)]",
       "serviceAccountAudience": "aio-internal",
       "selfSignedIssuerName": "[format('{0}-aio-certificate-issuer', parameters('clusterNamespace'))]",
       "selfSignedConfigMapName": "[format('{0}-aio-ca-trust-bundle', parameters('clusterNamespace'))]"
@@ -437,7 +513,6 @@
       "connectors.values.mqttBroker.serviceAccountTokenAudience": "[variables('MQTT_SETTINGS').serviceAccountAudience]",
       "connectors.values.opcPlcSimulation.deploy": "false",
       "connectors.values.opcPlcSimulation.autoAcceptUntrustedCertificates": "false",
-      "connectors.values.discoveryHandler.enabled": "false",
       "adr.values.Microsoft.CustomLocation.ServiceAccount": "default",
       "akri.values.webhookConfiguration.enabled": "false",
       "akri.values.certManagerWebhookCertificate.enabled": "false",
@@ -541,7 +616,7 @@
     },
     "aioInstance": {
       "type": "Microsoft.IoTOperations/instances",
-      "apiVersion": "2024-11-01",
+      "apiVersion": "2025-04-01",
       "name": "[format('aio-{0}', coalesce(tryGet(parameters('advancedConfig'), 'resourceSuffix'), take(uniqueString(resourceGroup().id, parameters('clusterName'), parameters('clusterNamespace')), 5)))]",
       "location": "[parameters('clusterLocation')]",
       "extendedLocation": {
@@ -549,19 +624,14 @@
         "type": "CustomLocation"
       },
       "identity": "[if(empty(parameters('userAssignedIdentity')), createObject('type', 'None'), createObject('type', 'UserAssigned', 'userAssignedIdentities', createObject(format('{0}', parameters('userAssignedIdentity')), createObject())))]",
-      "properties": {
-        "description": "An AIO instance.",
-        "schemaRegistryRef": {
-          "resourceId": "[parameters('schemaRegistryId')]"
-        }
-      },
+      "properties": "[union(createObject('description', 'An AIO instance.', 'schemaRegistryRef', createObject('resourceId', parameters('schemaRegistryId'))), if(equals(parameters('features'), null()), createObject(), createObject('features', parameters('features'))))]",
       "dependsOn": [
         "customLocation"
       ]
     },
     "broker": {
       "type": "Microsoft.IoTOperations/instances/brokers",
-      "apiVersion": "2024-11-01",
+      "apiVersion": "2025-04-01",
       "name": "[format('{0}/{1}', format('aio-{0}', coalesce(tryGet(parameters('advancedConfig'), 'resourceSuffix'), take(uniqueString(resourceGroup().id, parameters('clusterName'), parameters('clusterNamespace')), 5))), 'default')]",
       "extendedLocation": {
         "name": "[resourceId('Microsoft.ExtendedLocation/customLocations', parameters('customLocationName'))]",
@@ -591,7 +661,7 @@
     },
     "broker_authn": {
       "type": "Microsoft.IoTOperations/instances/brokers/authentications",
-      "apiVersion": "2024-11-01",
+      "apiVersion": "2025-04-01",
       "name": "[format('{0}/{1}/{2}', format('aio-{0}', coalesce(tryGet(parameters('advancedConfig'), 'resourceSuffix'), take(uniqueString(resourceGroup().id, parameters('clusterName'), parameters('clusterNamespace')), 5))), 'default', 'default')]",
       "extendedLocation": {
         "name": "[resourceId('Microsoft.ExtendedLocation/customLocations', parameters('customLocationName'))]",
@@ -616,7 +686,7 @@
     },
     "broker_listener": {
       "type": "Microsoft.IoTOperations/instances/brokers/listeners",
-      "apiVersion": "2024-11-01",
+      "apiVersion": "2025-04-01",
       "name": "[format('{0}/{1}/{2}', format('aio-{0}', coalesce(tryGet(parameters('advancedConfig'), 'resourceSuffix'), take(uniqueString(resourceGroup().id, parameters('clusterName'), parameters('clusterNamespace')), 5))), 'default', 'default')]",
       "extendedLocation": {
         "name": "[resourceId('Microsoft.ExtendedLocation/customLocations', parameters('customLocationName'))]",
@@ -650,7 +720,7 @@
     },
     "dataflow_profile": {
       "type": "Microsoft.IoTOperations/instances/dataflowProfiles",
-      "apiVersion": "2024-11-01",
+      "apiVersion": "2025-04-01",
       "name": "[format('{0}/{1}', format('aio-{0}', coalesce(tryGet(parameters('advancedConfig'), 'resourceSuffix'), take(uniqueString(resourceGroup().id, parameters('clusterName'), parameters('clusterNamespace')), 5))), 'default')]",
       "extendedLocation": {
         "name": "[resourceId('Microsoft.ExtendedLocation/customLocations', parameters('customLocationName'))]",
@@ -666,7 +736,7 @@
     },
     "dataflow_endpoint": {
       "type": "Microsoft.IoTOperations/instances/dataflowEndpoints",
-      "apiVersion": "2024-11-01",
+      "apiVersion": "2025-04-01",
       "name": "[format('{0}/{1}', format('aio-{0}', coalesce(tryGet(parameters('advancedConfig'), 'resourceSuffix'), take(uniqueString(resourceGroup().id, parameters('clusterName'), parameters('clusterNamespace')), 5))), 'default')]",
       "extendedLocation": {
         "name": "[resourceId('Microsoft.ExtendedLocation/customLocations', parameters('customLocationName'))]",
@@ -703,8 +773,7 @@
         "version": "[reference('aio_extension').version]",
         "releaseTrain": "[reference('aio_extension').releaseTrain]",
         "config": {
-          "brokerListenerName": "[variables('MQTT_SETTINGS').brokerListenerServiceName]",
-          "brokerListenerPort": "[variables('MQTT_SETTINGS').brokerListenerPort]"
+          "trustConfig": "[parameters('trustConfig')]"
         },
         "identityPrincipalId": "[reference('aio_extension', '2023-05-01', 'full').identity.principalId]"
       }
@@ -717,7 +786,7 @@
           "name": "default",
           "listener": "default",
           "authn": "default",
-          "settings": "[variables('BROKER_CONFIG')]"
+          "settings": "[shallowMerge(createArray(variables('BROKER_CONFIG'), variables('MQTT_SETTINGS')))]"
         }
       }
     },

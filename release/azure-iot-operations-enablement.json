@@ -5,8 +5,8 @@
   "metadata": {
     "_generator": {
       "name": "bicep",
-      "version": "0.33.93.31351",
-      "templateHash": "11919718419833561801"
+      "version": "0.34.44.8038",
+      "templateHash": "14730289139762308894"
     }
   },
   "definitions": {
@@ -108,6 +108,10 @@
             },
             "faultToleranceEnabled": {
               "type": "bool",
+              "nullable": true
+            },
+            "diskMountPoint": {
+              "type": "string",
               "nullable": true
             }
           },
@@ -223,6 +227,70 @@
         }
       }
     },
+    "_1.Features": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": {
+        "$ref": "#/definitions/_1.InstanceFeature",
+        "metadata": {
+          "description": "Object of features"
+        }
+      },
+      "metadata": {
+        "description": "AIO Instance features.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "types.bicep"
+        }
+      }
+    },
+    "_1.InstanceFeature": {
+      "type": "object",
+      "properties": {
+        "mode": {
+          "$ref": "#/definitions/_1.InstanceFeatureMode"
+        },
+        "settings": {
+          "type": "object",
+          "properties": {},
+          "additionalProperties": {
+            "$ref": "#/definitions/_1.InstanceFeatureSettingValue"
+          }
+        }
+      },
+      "metadata": {
+        "description": "Individual feature object within the AIO instance.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "types.bicep"
+        }
+      }
+    },
+    "_1.InstanceFeatureMode": {
+      "type": "string",
+      "allowedValues": [
+        "Disabled",
+        "Preview",
+        "Stable"
+      ],
+      "metadata": {
+        "description": "The mode of the AIO instance feature. Either \"Stable\", \"Preview\" or \"Disabled\".",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "types.bicep"
+        }
+      }
+    },
+    "_1.InstanceFeatureSettingValue": {
+      "type": "string",
+      "allowedValues": [
+        "Disabled",
+        "Enabled"
+      ],
+      "metadata": {
+        "description": "The setting value of the AIO instance feature. Either \"Enabled\" or \"Disabled\".",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "types.bicep"
+        }
+      }
+    },
     "_1.SelfSigned": {
       "type": "object",
       "properties": {
@@ -311,9 +379,9 @@
   },
   "variables": {
     "VERSIONS": {
-      "platform": "0.7.11",
+      "platform": "0.7.12",
       "secretStore": "0.8.2",
-      "containerStorage": "2.3.2"
+      "containerStorage": "2.4.0"
     },
     "TRAINS": {
       "platform": "preview",
@@ -322,7 +390,8 @@
     },
     "faultTolerantStorageClass": "[coalesce(tryGet(tryGet(parameters('advancedConfig'), 'edgeStorageAccelerator'), 'diskStorageClass'), 'acstor-arccontainerstorage-storage-pool')]",
     "nonFaultTolerantStorageClass": "[coalesce(tryGet(tryGet(parameters('advancedConfig'), 'edgeStorageAccelerator'), 'diskStorageClass'), 'default,local-path')]",
-    "kubernetesStorageClass": "[if(equals(tryGet(tryGet(parameters('advancedConfig'), 'edgeStorageAccelerator'), 'faultToleranceEnabled'), true()), variables('faultTolerantStorageClass'), variables('nonFaultTolerantStorageClass'))]"
+    "diskStorageClass": "[if(equals(tryGet(tryGet(parameters('advancedConfig'), 'edgeStorageAccelerator'), 'faultToleranceEnabled'), true()), variables('faultTolerantStorageClass'), variables('nonFaultTolerantStorageClass'))]",
+    "diskMountPoint": "[coalesce(tryGet(tryGet(parameters('advancedConfig'), 'edgeStorageAccelerator'), 'diskMountPoint'), '/mnt')]"
   },
   "resources": {
     "cluster": {
@@ -387,7 +456,7 @@
         "autoUpgradeMinorVersion": false,
         "version": "[coalesce(tryGet(tryGet(parameters('advancedConfig'), 'edgeStorageAccelerator'), 'version'), variables('VERSIONS').containerStorage)]",
         "releaseTrain": "[coalesce(tryGet(tryGet(parameters('advancedConfig'), 'edgeStorageAccelerator'), 'train'), variables('TRAINS').containerStorage)]",
-        "configurationSettings": "[union(createObject('edgeStorageConfiguration.create', 'true', 'feature.diskStorageClass', variables('kubernetesStorageClass')), if(equals(tryGet(tryGet(parameters('advancedConfig'), 'edgeStorageAccelerator'), 'faultToleranceEnabled'), true()), createObject('acstorConfiguration.create', 'true', 'acstorConfiguration.properties.diskMountPoint', '/mnt'), createObject()))]"
+        "configurationSettings": "[union(createObject('edgeStorageConfiguration.create', 'true', 'feature.diskStorageClass', variables('diskStorageClass')), if(equals(tryGet(tryGet(parameters('advancedConfig'), 'edgeStorageAccelerator'), 'faultToleranceEnabled'), true()), createObject('acstorConfiguration.create', 'true', 'acstorConfiguration.properties.diskMountPoint', variables('diskMountPoint')), createObject()))]"
       },
       "dependsOn": [
         "aio_platform_extension"
