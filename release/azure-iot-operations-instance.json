@@ -5,8 +5,8 @@
   "metadata": {
     "_generator": {
       "name": "bicep",
-      "version": "0.34.44.8038",
-      "templateHash": "4820379854816397418"
+      "version": "0.36.1.42791",
+      "templateHash": "2312126364150229634"
     }
   },
   "definitions": {
@@ -247,7 +247,8 @@
       "type": "object",
       "properties": {
         "mode": {
-          "$ref": "#/definitions/_1.InstanceFeatureMode"
+          "$ref": "#/definitions/_1.InstanceFeatureMode",
+          "nullable": true
         },
         "settings": {
           "type": "object",
@@ -485,7 +486,7 @@
       }
     },
     "VERSIONS": {
-      "iotOperations": "1.1.19"
+      "iotOperations": "1.1.59"
     },
     "TRAINS": {
       "iotOperations": "stable"

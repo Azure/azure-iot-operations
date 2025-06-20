@@ -5,8 +5,8 @@
   "metadata": {
     "_generator": {
       "name": "bicep",
-      "version": "0.34.44.8038",
-      "templateHash": "14730289139762308894"
+      "version": "0.36.1.42791",
+      "templateHash": "13046130712474074101"
     }
   },
   "definitions": {
@@ -247,7 +247,8 @@
       "type": "object",
       "properties": {
         "mode": {
-          "$ref": "#/definitions/_1.InstanceFeatureMode"
+          "$ref": "#/definitions/_1.InstanceFeatureMode",
+          "nullable": true
         },
         "settings": {
           "type": "object",
@@ -379,9 +380,9 @@
   },
   "variables": {
     "VERSIONS": {
-      "platform": "0.7.12",
-      "secretStore": "0.8.2",
-      "containerStorage": "2.4.0"
+      "platform": "0.7.21",
+      "secretStore": "0.9.4",
+      "containerStorage": "2.5.3"
     },
     "TRAINS": {
       "platform": "preview",
