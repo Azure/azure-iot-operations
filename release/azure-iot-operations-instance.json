@@ -5,8 +5,8 @@
   "metadata": {
     "_generator": {
       "name": "bicep",
-      "version": "0.36.1.42791",
-      "templateHash": "2312126364150229634"
+      "version": "0.36.177.2456",
+      "templateHash": "4461101981339725452"
     }
   },
   "definitions": {
@@ -200,9 +200,476 @@
           "metadata": {
             "description": "The AIO Broker service type. The default is \"ClusterIp\"."
           }
+        },
+        "persistence": {
+          "$ref": "#/definitions/_1.BrokerPersistence",
+          "nullable": true,
+          "metadata": {
+            "description": "The persistence settings of the Broker."
+          }
         }
       },
       "metadata": {
+        "__bicep_imported_from!": {
+          "sourceTemplate": "types.bicep"
+        }
+      }
+    },
+    "_1.BrokerPersistence": {
+      "type": "object",
+      "properties": {
+        "dynamicSettings": {
+          "$ref": "#/definitions/_1.BrokerPersistenceDynamicSettings",
+          "nullable": true,
+          "metadata": {
+            "description": "Client sets the specified user property key/value in the CONNECT/SUBSCRIBE/PUBLISH.\nOptionally, if the customer specifies a configurable user property, it will work to enable persistence dynamically.\nDefault: key 'aio-persistence', value 'true'.\n"
+          }
+        },
+        "maxSize": {
+          "type": "string",
+          "metadata": {
+            "description": "The max size of the message buffer on disk. If a PVC template is specified, this size\nis used as the request and limit sizes of that template. If unset, a local-path provisioner is used.\n"
+          }
+        },
+        "persistentVolumeClaimSpec": {
+          "$ref": "#/definitions/_1.VolumeClaimSpec",
+          "nullable": true,
+          "metadata": {
+            "description": "Use the specified PersistentVolumeClaim template to mount a persistent volume.\nIf unset, a default PVC with default properties will be used.\n"
+          }
+        },
+        "retain": {
+          "$ref": "#/definitions/_1.BrokerRetainMessagesPolicy",
+          "nullable": true,
+          "metadata": {
+            "description": "Controls which topic's retained messages should be persisted to disk."
+          }
+        },
+        "stateStore": {
+          "$ref": "#/definitions/_1.BrokerStateStorePolicy",
+          "nullable": true,
+          "metadata": {
+            "description": "Controls which keys should be persisted to disk for the state store."
+          }
+        },
+        "subscriberQueue": {
+          "$ref": "#/definitions/_1.BrokerSubscriberQueuePolicy",
+          "nullable": true,
+          "metadata": {
+            "description": "Controls which subscriber message queues should be persisted to disk.\nSession state metadata are always written to disk if any persistence is specified.\n"
+          }
+        },
+        "encryption": {
+          "$ref": "#/definitions/_1.BrokerPersistenceEncryption",
+          "nullable": true,
+          "metadata": {
+            "description": "Controls settings related to encryption of the persistence database.\nOptional, defaults to enabling encryption.\n"
+          }
+        }
+      },
+      "metadata": {
+        "description": "Disk persistence configuration for the Broker.\nOptional. Everything is in-memory if not set.\nNote: if configured, all MQTT session states are written to disk.\n",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "types.bicep"
+        }
+      }
+    },
+    "_1.BrokerPersistenceDynamicSettings": {
+      "type": "object",
+      "properties": {
+        "userPropertyKey": {
+          "type": "string",
+          "metadata": {
+            "description": "The user property key to enable persistence."
+          }
+        },
+        "userPropertyValue": {
+          "type": "string",
+          "metadata": {
+            "description": "The user property value to enable persistence."
+          }
+        }
+      },
+      "metadata": {
+        "description": "Dynamic settings to toggle persistence via MQTTv5 user properties.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "types.bicep"
+        }
+      }
+    },
+    "_1.BrokerPersistenceEncryption": {
+      "type": "object",
+      "properties": {
+        "mode": {
+          "$ref": "#/definitions/_1.OperationalMode",
+          "metadata": {
+            "description": "Determines if encryption is enabled."
+          }
+        }
+      },
+      "metadata": {
+        "description": "Encryption settings for the persistence database.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "types.bicep"
+        }
+      }
+    },
+    "_1.BrokerRetainMessagesCustomPolicy": {
+      "type": "object",
+      "properties": {
+        "mode": {
+          "type": "string",
+          "allowedValues": [
+            "Custom"
+          ]
+        },
+        "retainSettings": {
+          "$ref": "#/definitions/_1.BrokerRetainMessagesSettings",
+          "metadata": {
+            "description": "Settings for the Custom mode."
+          }
+        }
+      },
+      "metadata": {
+        "description": "Custom retain messages policy for the Broker.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "types.bicep"
+        }
+      }
+    },
+    "_1.BrokerRetainMessagesDynamic": {
+      "type": "object",
+      "properties": {
+        "mode": {
+          "$ref": "#/definitions/_1.OperationalMode",
+          "metadata": {
+            "description": "Mode of dynamic retain settings."
+          }
+        }
+      },
+      "metadata": {
+        "description": "Dynamic toggles for retain messages policy.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "types.bicep"
+        }
+      }
+    },
+    "_1.BrokerRetainMessagesPolicy": {
+      "type": "object",
+      "discriminator": {
+        "propertyName": "mode",
+        "mapping": {
+          "All": {
+            "type": "object",
+            "properties": {
+              "mode": {
+                "type": "string",
+                "allowedValues": [
+                  "All"
+                ]
+              }
+            }
+          },
+          "None": {
+            "type": "object",
+            "properties": {
+              "mode": {
+                "type": "string",
+                "allowedValues": [
+                  "None"
+                ]
+              }
+            }
+          },
+          "Custom": {
+            "$ref": "#/definitions/_1.BrokerRetainMessagesCustomPolicy"
+          }
+        }
+      },
+      "metadata": {
+        "description": "Controls which retained messages are persisted.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "types.bicep"
+        }
+      }
+    },
+    "_1.BrokerRetainMessagesSettings": {
+      "type": "object",
+      "properties": {
+        "topics": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "Topics to persist (wildcards # and + supported)."
+          }
+        },
+        "dynamic": {
+          "$ref": "#/definitions/_1.BrokerRetainMessagesDynamic",
+          "nullable": true,
+          "metadata": {
+            "description": "Dynamic toggle via MQTTv5 user property."
+          }
+        }
+      },
+      "metadata": {
+        "description": "Settings for a custom retain messages policy.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "types.bicep"
+        }
+      }
+    },
+    "_1.BrokerStateStoreCustomPolicy": {
+      "type": "object",
+      "properties": {
+        "mode": {
+          "type": "string",
+          "allowedValues": [
+            "Custom"
+          ]
+        },
+        "stateStoreSettings": {
+          "$ref": "#/definitions/_1.BrokerStateStorePolicySettings",
+          "metadata": {
+            "description": "Settings for the Custom mode."
+          }
+        }
+      },
+      "metadata": {
+        "description": "Custom state store policy for the Broker.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "types.bicep"
+        }
+      }
+    },
+    "_1.BrokerStateStoreDynamic": {
+      "type": "object",
+      "properties": {
+        "mode": {
+          "$ref": "#/definitions/_1.OperationalMode",
+          "metadata": {
+            "description": "Mode of dynamic state store settings."
+          }
+        }
+      },
+      "metadata": {
+        "description": "Dynamic toggles for state store policy.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "types.bicep"
+        }
+      }
+    },
+    "_1.BrokerStateStorePolicy": {
+      "type": "object",
+      "discriminator": {
+        "propertyName": "mode",
+        "mapping": {
+          "All": {
+            "type": "object",
+            "properties": {
+              "mode": {
+                "type": "string",
+                "allowedValues": [
+                  "All"
+                ]
+              }
+            }
+          },
+          "None": {
+            "type": "object",
+            "properties": {
+              "mode": {
+                "type": "string",
+                "allowedValues": [
+                  "None"
+                ]
+              }
+            }
+          },
+          "Custom": {
+            "$ref": "#/definitions/_1.BrokerStateStoreCustomPolicy"
+          }
+        }
+      },
+      "metadata": {
+        "description": "Controls which state store entries are persisted.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "types.bicep"
+        }
+      }
+    },
+    "_1.BrokerStateStorePolicyResources": {
+      "type": "object",
+      "properties": {
+        "keyType": {
+          "type": "string",
+          "allowedValues": [
+            "Binary",
+            "Pattern",
+            "String"
+          ],
+          "metadata": {
+            "description": "Type of key matching."
+          }
+        },
+        "keys": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "metadata": {
+            "description": "List of keys to persist."
+          }
+        }
+      },
+      "metadata": {
+        "description": "A key-type and its associated keys for state store persistence.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "types.bicep"
+        }
+      }
+    },
+    "_1.BrokerStateStorePolicySettings": {
+      "type": "object",
+      "properties": {
+        "stateStoreResources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/_1.BrokerStateStorePolicyResources"
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "Resources to persist (keyType and list of keys)."
+          }
+        },
+        "dynamic": {
+          "$ref": "#/definitions/_1.BrokerStateStoreDynamic",
+          "nullable": true,
+          "metadata": {
+            "description": "Dynamic toggle via MQTTv5 user property."
+          }
+        }
+      },
+      "metadata": {
+        "description": "Settings for a custom state store policy.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "types.bicep"
+        }
+      }
+    },
+    "_1.BrokerSubscriberQueueCustomPolicy": {
+      "type": "object",
+      "properties": {
+        "mode": {
+          "type": "string",
+          "allowedValues": [
+            "Custom"
+          ]
+        },
+        "subscriberQueueSettings": {
+          "$ref": "#/definitions/_1.BrokerSubscriberQueueCustomPolicySettings",
+          "metadata": {
+            "description": "Settings for the Custom mode."
+          }
+        }
+      },
+      "metadata": {
+        "__bicep_imported_from!": {
+          "sourceTemplate": "types.bicep"
+        }
+      }
+    },
+    "_1.BrokerSubscriberQueueCustomPolicySettings": {
+      "type": "object",
+      "properties": {
+        "subscriberClientIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "Subscriber client IDs to persist (wildcard * supported)."
+          }
+        },
+        "dynamic": {
+          "$ref": "#/definitions/_1.BrokerSubscriberQueueDynamic",
+          "nullable": true,
+          "metadata": {
+            "description": "Dynamic toggle via MQTTv5 user property."
+          }
+        },
+        "topics": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "Topics to persist per subscriber (wildcards # and + supported)."
+          }
+        }
+      },
+      "metadata": {
+        "description": "Settings for a custom subscriber queue policy.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "types.bicep"
+        }
+      }
+    },
+    "_1.BrokerSubscriberQueueDynamic": {
+      "type": "object",
+      "properties": {
+        "mode": {
+          "$ref": "#/definitions/_1.OperationalMode",
+          "metadata": {
+            "description": "Mode of dynamic subscriber queue settings."
+          }
+        }
+      },
+      "metadata": {
+        "description": "Dynamic toggles for subscriber queue policy.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "types.bicep"
+        }
+      }
+    },
+    "_1.BrokerSubscriberQueuePolicy": {
+      "type": "object",
+      "discriminator": {
+        "propertyName": "mode",
+        "mapping": {
+          "All": {
+            "type": "object",
+            "properties": {
+              "mode": {
+                "type": "string",
+                "allowedValues": [
+                  "All"
+                ]
+              }
+            }
+          },
+          "None": {
+            "type": "object",
+            "properties": {
+              "mode": {
+                "type": "string",
+                "allowedValues": [
+                  "None"
+                ]
+              }
+            }
+          },
+          "Custom": {
+            "$ref": "#/definitions/_1.BrokerSubscriberQueueCustomPolicy"
+          }
+        }
+      },
+      "metadata": {
+        "description": "Controls which subscriber queues are persisted.",
         "__bicep_imported_from!": {
           "sourceTemplate": "types.bicep"
         }
@@ -280,13 +747,22 @@
       }
     },
     "_1.InstanceFeatureSettingValue": {
+      "$ref": "#/definitions/_1.OperationalMode",
+      "metadata": {
+        "description": "The setting value of the AIO instance feature. Either \"Enabled\" or \"Disabled\".",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "types.bicep"
+        }
+      }
+    },
+    "_1.OperationalMode": {
       "type": "string",
       "allowedValues": [
         "Disabled",
         "Enabled"
       ],
       "metadata": {
-        "description": "The setting value of the AIO instance feature. Either \"Enabled\" or \"Disabled\".",
+        "description": "Defines operational mode. Either \"Enabled\" or \"Disabled\".",
         "__bicep_imported_from!": {
           "sourceTemplate": "types.bicep"
         }
@@ -352,8 +828,143 @@
           "sourceTemplate": "types.bicep"
         }
       }
+    },
+    "_1.VolumeClaimSpec": {
+      "type": "object",
+      "properties": {
+        "volumeName": {
+          "type": "string",
+          "nullable": true
+        },
+        "volumeMode": {
+          "type": "string",
+          "nullable": true
+        },
+        "storageClassName": {
+          "type": "string",
+          "nullable": true
+        },
+        "accessModes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "nullable": true
+        },
+        "dataSource": {
+          "type": "object",
+          "nullable": true
+        },
+        "dataSourceRef": {
+          "type": "object",
+          "nullable": true
+        },
+        "resources": {
+          "type": "object",
+          "nullable": true
+        },
+        "selector": {
+          "type": "object",
+          "nullable": true
+        }
+      },
+      "metadata": {
+        "description": "Kubernetes PersistentVolumeClaim spec.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "types.bicep"
+        }
+      }
+    },
+    "_2.Identity": {
+      "type": "object",
+      "discriminator": {
+        "propertyName": "type",
+        "mapping": {
+          "None": {
+            "$ref": "#/definitions/_2.NoIdentity"
+          },
+          "UserAssigned": {
+            "$ref": "#/definitions/_2.UserAssignedIdentity"
+          }
+        }
+      },
+      "metadata": {
+        "__bicep_imported_from!": {
+          "sourceTemplate": "utils.bicep"
+        }
+      }
+    },
+    "_2.NoIdentity": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "allowedValues": [
+            "None"
+          ]
+        }
+      },
+      "metadata": {
+        "__bicep_imported_from!": {
+          "sourceTemplate": "utils.bicep"
+        }
+      }
+    },
+    "_2.UserAssignedIdentity": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "allowedValues": [
+            "UserAssigned"
+          ]
+        },
+        "userAssignedIdentities": {
+          "type": "object",
+          "properties": {},
+          "additionalProperties": {
+            "type": "object",
+            "properties": {}
+          }
+        }
+      },
+      "metadata": {
+        "__bicep_imported_from!": {
+          "sourceTemplate": "utils.bicep"
+        }
+      }
     }
   },
+  "functions": [
+    {
+      "namespace": "_2",
+      "members": {
+        "buildIdentity": {
+          "parameters": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "nullable": true
+              },
+              "nullable": true,
+              "name": "identities"
+            }
+          ],
+          "output": {
+            "$ref": "#/definitions/_2.Identity",
+            "value": "[if(or(empty(parameters('identities')), equals(length(filter(parameters('identities'), lambda('id', not(empty(lambdaVariables('id')))))), 0)), createObject('type', 'None'), createObject('type', 'UserAssigned', 'userAssignedIdentities', toObject(filter(parameters('identities'), lambda('identity', not(empty(lambdaVariables('identity'))))), lambda('identity', lambdaVariables('identity')), lambda('identity', createObject()))))]"
+          },
+          "metadata": {
+            "description": "Builds a UserAssigned identity object for the given array of identities.\nIf the list is empty, it will return {type: 'None'}\ne.g\n```bicep\nvar identites = ['/subscriptions/.../id1', '/subscriptions/.../id2']\noutput userIdentities object = buildUserIdentities(identites)\n// The output will be:\n// {\n//   \"type\": \"UserAssigned\",\n//   \"userAssignedIdentities\": {\n//     \"/subscriptions/.../id1\": {},\n//     \"/subscriptions/.../id2\": {}\n//   }\n// }\n}\n",
+            "__bicep_imported_from!": {
+              "sourceTemplate": "utils.bicep"
+            }
+          }
+        }
+      }
+    }
+  ],
   "parameters": {
     "clusterName": {
       "type": "string",
@@ -379,7 +990,8 @@
         "westus3",
         "westeurope",
         "northeurope",
-        "eastus2euap"
+        "eastus2euap",
+        "germanywestcentral"
       ],
       "metadata": {
         "description": "Location of the existing arc-enabled cluster where AIO will be deployed."
@@ -394,6 +1006,7 @@
         "MicroK8s"
       ],
       "metadata": {
+        "deprecated": "This parameter is not used anymore.",
         "description": "The Kubernetes distro to run AIO on. The default is k8s."
       }
     },
@@ -401,12 +1014,13 @@
       "type": "string",
       "defaultValue": "",
       "metadata": {
+        "deprecated": "This parameter is not used anymore.",
         "description": "The default node path of the container runtime socket. The default is empty.\nIf it's empty, socket path is determined by param kubernetesDistro.\n"
       }
     },
     "customLocationName": {
       "type": "string",
-      "defaultValue": "[format('location-{0}', coalesce(tryGet(parameters('advancedConfig'), 'resourceSuffix'), take(uniqueString(resourceGroup().id, parameters('clusterName'), parameters('clusterNamespace')), 5)))]",
+      "nullable": true,
       "metadata": {
         "description": "Name of the custom location where AIO will be deployed."
       }
@@ -427,6 +1041,13 @@
         "description": "Flag to enable resource sync rules. The default is true."
       }
     },
+    "aioInstanceName": {
+      "type": "string",
+      "nullable": true,
+      "metadata": {
+        "description": "Name of the AIO instance to be created."
+      }
+    },
     "userAssignedIdentity": {
       "type": "string",
       "nullable": true,
@@ -438,6 +1059,13 @@
       "type": "string",
       "metadata": {
         "description": "Schema Registry Id used to reference the namespace to be passed in to the to be passed to Instance."
+      }
+    },
+    "adrNamespaceId": {
+      "type": "string",
+      "nullable": true,
+      "metadata": {
+        "description": "Existing Azure Device Registry namespace resource ID to be passed in to the AIO Instance."
       }
     },
     "features": {
@@ -479,25 +1107,28 @@
     }
   },
   "variables": {
-    "AIO_EXTENSION_SUFFIX": "[take(uniqueString(resourceId('Microsoft.Kubernetes/connectedClusters', parameters('clusterName'))), 5)]",
-    "AIO_EXTENSION_SCOPE": {
-      "cluster": {
-        "releaseNamespace": "azure-iot-operations"
-      }
-    },
     "VERSIONS": {
-      "iotOperations": "1.1.59"
+      "iotOperations": "1.2.36"
     },
     "TRAINS": {
-      "iotOperations": "stable"
+      "iotOperations": "preview"
     },
+    "HASH": "[coalesce(tryGet(parameters('advancedConfig'), 'resourceSuffix'), take(uniqueString(resourceGroup().id, parameters('clusterName'), parameters('clusterNamespace')), 5))]",
+    "AIO_EXTENSION_SUFFIX": "[take(uniqueString(resourceId('Microsoft.Kubernetes/connectedClusters', parameters('clusterName'))), 5)]",
+    "CUSTOM_LOCATION_NAMESPACE": "[parameters('clusterNamespace')]",
+    "AIO_EXTENSION_SCOPE": {
+      "cluster": {
+        "releaseNamespace": "[parameters('clusterNamespace')]"
+      }
+    },
+    "customerManagedTrust": "[equals(parameters('trustConfig').source, 'CustomerManaged')]",
+    "ISSUER_NAME": "[if(variables('customerManagedTrust'), parameters('trustConfig').settings.issuerName, format('{0}-aio-certificate-issuer', parameters('clusterNamespace')))]",
+    "TRUST_CONFIG_MAP": "[if(variables('customerManagedTrust'), parameters('trustConfig').settings.configMapName, format('{0}-aio-ca-trust-bundle', parameters('clusterNamespace')))]",
     "MQTT_SETTINGS": {
       "brokerListenerServiceName": "aio-broker",
       "brokerListenerPort": 18883,
-      "brokerListenerHost": "[format('aio-broker.{0}', variables('AIO_EXTENSION_SCOPE').cluster.releaseNamespace)]",
-      "serviceAccountAudience": "aio-internal",
-      "selfSignedIssuerName": "[format('{0}-aio-certificate-issuer', parameters('clusterNamespace'))]",
-      "selfSignedConfigMapName": "[format('{0}-aio-ca-trust-bundle', parameters('clusterNamespace'))]"
+      "brokerListenerHost": "[format('aio-broker.{0}', variables('CUSTOM_LOCATION_NAMESPACE'))]",
+      "serviceAccountAudience": "aio-internal"
     },
     "BROKER_CONFIG": {
       "frontendReplicas": "[coalesce(tryGet(parameters('brokerConfig'), 'frontendReplicas'), 2)]",
@@ -506,35 +1137,26 @@
       "backendWorkers": "[coalesce(tryGet(parameters('brokerConfig'), 'backendWorkers'), 2)]",
       "backendPartitions": "[coalesce(tryGet(parameters('brokerConfig'), 'backendPartitions'), 2)]",
       "memoryProfile": "[coalesce(tryGet(parameters('brokerConfig'), 'memoryProfile'), 'Medium')]",
-      "serviceType": "[coalesce(tryGet(parameters('brokerConfig'), 'serviceType'), 'ClusterIp')]"
+      "serviceType": "[coalesce(tryGet(parameters('brokerConfig'), 'serviceType'), 'ClusterIp')]",
+      "persistence": "[tryGet(parameters('brokerConfig'), 'persistence')]"
     },
     "defaultAioConfigurationSettings": {
-      "AgentOperationTimeoutInMinutes": 120,
-      "connectors.values.mqttBroker.address": "[format('mqtts://{0}.{1}:{2}', variables('MQTT_SETTINGS').brokerListenerServiceName, variables('AIO_EXTENSION_SCOPE').cluster.releaseNamespace, variables('MQTT_SETTINGS').brokerListenerPort)]",
+      "AgentOperationTimeoutInMinutes": "120",
+      "connectors.values.mqttBroker.address": "[format('mqtts://{0}:{1}', variables('MQTT_SETTINGS').brokerListenerHost, variables('MQTT_SETTINGS').brokerListenerPort)]",
       "connectors.values.mqttBroker.serviceAccountTokenAudience": "[variables('MQTT_SETTINGS').serviceAccountAudience]",
-      "connectors.values.opcPlcSimulation.deploy": "false",
-      "connectors.values.opcPlcSimulation.autoAcceptUntrustedCertificates": "false",
-      "adr.values.Microsoft.CustomLocation.ServiceAccount": "default",
-      "akri.values.webhookConfiguration.enabled": "false",
-      "akri.values.certManagerWebhookCertificate.enabled": "false",
-      "akri.values.agent.extensionService.mqttBroker.hostName": "[format('{0}.{1}', variables('MQTT_SETTINGS').brokerListenerServiceName, variables('AIO_EXTENSION_SCOPE').cluster.releaseNamespace)]",
-      "akri.values.agent.extensionService.mqttBroker.port": "[variables('MQTT_SETTINGS').brokerListenerPort]",
-      "akri.values.agent.extensionService.mqttBroker.serviceAccountAudience": "[variables('MQTT_SETTINGS').serviceAccountAudience]",
-      "akri.values.agent.host.containerRuntimeSocket": "[parameters('containerRuntimeSocket')]",
-      "akri.values.kubernetesDistro": "[toLower(parameters('kubernetesDistro'))]",
-      "mqttBroker.values.global.quickstart": "false",
-      "mqttBroker.values.operator.firstPartyMetricsOn": "true",
       "observability.metrics.enabled": "[format('{0}', coalesce(tryGet(tryGet(parameters('advancedConfig'), 'observability'), 'enabled'), false()))]",
       "observability.metrics.openTelemetryCollectorAddress": "[if(coalesce(tryGet(tryGet(parameters('advancedConfig'), 'observability'), 'enabled'), false()), format('{0}', tryGet(tryGet(parameters('advancedConfig'), 'observability'), 'otelCollectorAddress')), '')]",
-      "observability.metrics.exportIntervalSeconds": "[format('{0}', coalesce(tryGet(tryGet(parameters('advancedConfig'), 'observability'), 'otelExportIntervalSeconds'), 60))]",
       "trustSource": "[parameters('trustConfig').source]",
-      "trustBundleSettings.issuer.name": "[if(equals(parameters('trustConfig').source, 'CustomerManaged'), parameters('trustConfig').settings.issuerName, variables('MQTT_SETTINGS').selfSignedIssuerName)]",
+      "trustBundleSettings.issuer.name": "[variables('ISSUER_NAME')]",
       "trustBundleSettings.issuer.kind": "[coalesce(tryGet(tryGet(parameters('trustConfig'), 'settings'), 'issuerKind'), '')]",
       "trustBundleSettings.configMap.name": "[coalesce(tryGet(tryGet(parameters('trustConfig'), 'settings'), 'configMapName'), '')]",
       "trustBundleSettings.configMap.key": "[coalesce(tryGet(tryGet(parameters('trustConfig'), 'settings'), 'configMapKey'), '')]",
-      "schemaRegistry.values.mqttBroker.host": "[format('mqtts://{0}.{1}:{2}', variables('MQTT_SETTINGS').brokerListenerServiceName, variables('AIO_EXTENSION_SCOPE').cluster.releaseNamespace, variables('MQTT_SETTINGS').brokerListenerPort)]",
-      "schemaRegistry.values.mqttBroker.tlsEnabled": true,
+      "schemaRegistry.values.mqttBroker.host": "[format('mqtts://{0}:{1}', variables('MQTT_SETTINGS').brokerListenerHost, variables('MQTT_SETTINGS').brokerListenerPort)]",
       "schemaRegistry.values.mqttBroker.serviceAccountTokenAudience": "[variables('MQTT_SETTINGS').serviceAccountAudience]"
+    },
+    "extendedLocation": {
+      "name": "[resourceId('Microsoft.ExtendedLocation/customLocations', coalesce(parameters('customLocationName'), format('location-{0}', variables('HASH'))))]",
+      "type": "CustomLocation"
     }
   },
   "resources": {
@@ -564,12 +1186,12 @@
     "customLocation": {
       "type": "Microsoft.ExtendedLocation/customLocations",
       "apiVersion": "2021-08-31-preview",
-      "name": "[parameters('customLocationName')]",
+      "name": "[coalesce(parameters('customLocationName'), format('location-{0}', variables('HASH')))]",
       "location": "[parameters('clusterLocation')]",
       "properties": {
         "hostResourceId": "[resourceId('Microsoft.Kubernetes/connectedClusters', parameters('clusterName'))]",
         "namespace": "[parameters('clusterNamespace')]",
-        "displayName": "[parameters('customLocationName')]",
+        "displayName": "[coalesce(parameters('customLocationName'), format('location-{0}', variables('HASH')))]",
         "clusterExtensionIds": "[flatten(createArray(parameters('clExtentionIds'), createArray(extensionResourceId(resourceId('Microsoft.Kubernetes/connectedClusters', parameters('clusterName')), 'Microsoft.KubernetesConfiguration/extensions', format('azure-iot-operations-{0}', variables('AIO_EXTENSION_SUFFIX'))))))]"
       },
       "dependsOn": [
@@ -580,14 +1202,21 @@
       "condition": "[parameters('deployResourceSyncRules')]",
       "type": "Microsoft.ExtendedLocation/customLocations/resourceSyncRules",
       "apiVersion": "2021-08-31-preview",
-      "name": "[format('{0}/{1}', parameters('customLocationName'), format('{0}-broker-sync', parameters('customLocationName')))]",
+      "name": "[format('{0}/{1}', coalesce(parameters('customLocationName'), format('location-{0}', variables('HASH'))), format('{0}-aio-sync', parameters('customLocationName')))]",
       "location": "[parameters('clusterLocation')]",
       "properties": {
         "priority": 400,
         "selector": {
-          "matchLabels": {
-            "management.azure.com/provider-name": "microsoft.iotoperations"
-          }
+          "matchExpressions": [
+            {
+              "key": "management.azure.com/provider-name",
+              "operator": "In",
+              "values": [
+                "Microsoft.IoTOperations",
+                "microsoft.iotoperations"
+              ]
+            }
+          ]
         },
         "targetResourceGroup": "[resourceGroup().id]"
       },
@@ -599,14 +1228,21 @@
       "condition": "[parameters('deployResourceSyncRules')]",
       "type": "Microsoft.ExtendedLocation/customLocations/resourceSyncRules",
       "apiVersion": "2021-08-31-preview",
-      "name": "[format('{0}/{1}', parameters('customLocationName'), format('{0}-adr-sync', parameters('customLocationName')))]",
+      "name": "[format('{0}/{1}', coalesce(parameters('customLocationName'), format('location-{0}', variables('HASH'))), format('{0}-adr-sync', coalesce(parameters('customLocationName'), format('location-{0}', variables('HASH')))))]",
       "location": "[parameters('clusterLocation')]",
       "properties": {
         "priority": 200,
         "selector": {
-          "matchLabels": {
-            "management.azure.com/provider-name": "Microsoft.DeviceRegistry"
-          }
+          "matchExpressions": [
+            {
+              "key": "management.azure.com/provider-name",
+              "operator": "In",
+              "values": [
+                "Microsoft.DeviceRegistry",
+                "microsoft.deviceregistry"
+              ]
+            }
+          ]
         },
         "targetResourceGroup": "[resourceGroup().id]"
       },
@@ -617,27 +1253,28 @@
     },
     "aioInstance": {
       "type": "Microsoft.IoTOperations/instances",
-      "apiVersion": "2025-04-01",
-      "name": "[format('aio-{0}', coalesce(tryGet(parameters('advancedConfig'), 'resourceSuffix'), take(uniqueString(resourceGroup().id, parameters('clusterName'), parameters('clusterNamespace')), 5)))]",
+      "apiVersion": "2025-07-01-preview",
+      "name": "[coalesce(parameters('aioInstanceName'), format('aio-{0}', variables('HASH')))]",
       "location": "[parameters('clusterLocation')]",
-      "extendedLocation": {
-        "name": "[resourceId('Microsoft.ExtendedLocation/customLocations', parameters('customLocationName'))]",
-        "type": "CustomLocation"
+      "extendedLocation": "[variables('extendedLocation')]",
+      "identity": "[_2.buildIdentity(createArray(parameters('userAssignedIdentity')))]",
+      "properties": {
+        "description": "An AIO instance.",
+        "schemaRegistryRef": {
+          "resourceId": "[parameters('schemaRegistryId')]"
+        },
+        "features": "[parameters('features')]",
+        "adrNamespaceRef": "[if(not(empty(parameters('adrNamespaceId'))), createObject('resourceId', parameters('adrNamespaceId')), null())]"
       },
-      "identity": "[if(empty(parameters('userAssignedIdentity')), createObject('type', 'None'), createObject('type', 'UserAssigned', 'userAssignedIdentities', createObject(format('{0}', parameters('userAssignedIdentity')), createObject())))]",
-      "properties": "[union(createObject('description', 'An AIO instance.', 'schemaRegistryRef', createObject('resourceId', parameters('schemaRegistryId'))), if(equals(parameters('features'), null()), createObject(), createObject('features', parameters('features'))))]",
       "dependsOn": [
         "customLocation"
       ]
     },
     "broker": {
       "type": "Microsoft.IoTOperations/instances/brokers",
-      "apiVersion": "2025-04-01",
-      "name": "[format('{0}/{1}', format('aio-{0}', coalesce(tryGet(parameters('advancedConfig'), 'resourceSuffix'), take(uniqueString(resourceGroup().id, parameters('clusterName'), parameters('clusterNamespace')), 5))), 'default')]",
-      "extendedLocation": {
-        "name": "[resourceId('Microsoft.ExtendedLocation/customLocations', parameters('customLocationName'))]",
-        "type": "CustomLocation"
-      },
+      "apiVersion": "2025-07-01-preview",
+      "name": "[format('{0}/{1}', coalesce(parameters('aioInstanceName'), format('aio-{0}', variables('HASH'))), 'default')]",
+      "extendedLocation": "[variables('extendedLocation')]",
       "properties": {
         "memoryProfile": "[variables('BROKER_CONFIG').memoryProfile]",
         "generateResourceLimits": {
@@ -653,7 +1290,8 @@
             "replicas": "[variables('BROKER_CONFIG').frontendReplicas]",
             "workers": "[variables('BROKER_CONFIG').frontendWorkers]"
           }
-        }
+        },
+        "persistence": "[tryGet(variables('BROKER_CONFIG'), 'persistence')]"
       },
       "dependsOn": [
         "aioInstance",
@@ -662,12 +1300,9 @@
     },
     "broker_authn": {
       "type": "Microsoft.IoTOperations/instances/brokers/authentications",
-      "apiVersion": "2025-04-01",
-      "name": "[format('{0}/{1}/{2}', format('aio-{0}', coalesce(tryGet(parameters('advancedConfig'), 'resourceSuffix'), take(uniqueString(resourceGroup().id, parameters('clusterName'), parameters('clusterNamespace')), 5))), 'default', 'default')]",
-      "extendedLocation": {
-        "name": "[resourceId('Microsoft.ExtendedLocation/customLocations', parameters('customLocationName'))]",
-        "type": "CustomLocation"
-      },
+      "apiVersion": "2025-07-01-preview",
+      "name": "[format('{0}/{1}/{2}', coalesce(parameters('aioInstanceName'), format('aio-{0}', variables('HASH'))), 'default', 'default')]",
+      "extendedLocation": "[variables('extendedLocation')]",
       "properties": {
         "authenticationMethods": [
           {
@@ -687,12 +1322,9 @@
     },
     "broker_listener": {
       "type": "Microsoft.IoTOperations/instances/brokers/listeners",
-      "apiVersion": "2025-04-01",
-      "name": "[format('{0}/{1}/{2}', format('aio-{0}', coalesce(tryGet(parameters('advancedConfig'), 'resourceSuffix'), take(uniqueString(resourceGroup().id, parameters('clusterName'), parameters('clusterNamespace')), 5))), 'default', 'default')]",
-      "extendedLocation": {
-        "name": "[resourceId('Microsoft.ExtendedLocation/customLocations', parameters('customLocationName'))]",
-        "type": "CustomLocation"
-      },
+      "apiVersion": "2025-07-01-preview",
+      "name": "[format('{0}/{1}/{2}', coalesce(parameters('aioInstanceName'), format('aio-{0}', variables('HASH'))), 'default', 'default')]",
+      "extendedLocation": "[variables('extendedLocation')]",
       "properties": {
         "serviceType": "[variables('BROKER_CONFIG').serviceType]",
         "serviceName": "[variables('MQTT_SETTINGS').brokerListenerServiceName]",
@@ -704,8 +1336,8 @@
               "mode": "Automatic",
               "certManagerCertificateSpec": {
                 "issuerRef": {
-                  "name": "[if(equals(parameters('trustConfig').source, 'CustomerManaged'), parameters('trustConfig').settings.issuerName, variables('MQTT_SETTINGS').selfSignedIssuerName)]",
-                  "kind": "[if(equals(parameters('trustConfig').source, 'CustomerManaged'), parameters('trustConfig').settings.issuerKind, 'ClusterIssuer')]",
+                  "name": "[variables('ISSUER_NAME')]",
+                  "kind": "[if(variables('customerManagedTrust'), parameters('trustConfig').settings.issuerKind, 'ClusterIssuer')]",
                   "group": "cert-manager.io"
                 }
               }
@@ -721,12 +1353,9 @@
     },
     "dataflow_profile": {
       "type": "Microsoft.IoTOperations/instances/dataflowProfiles",
-      "apiVersion": "2025-04-01",
-      "name": "[format('{0}/{1}', format('aio-{0}', coalesce(tryGet(parameters('advancedConfig'), 'resourceSuffix'), take(uniqueString(resourceGroup().id, parameters('clusterName'), parameters('clusterNamespace')), 5))), 'default')]",
-      "extendedLocation": {
-        "name": "[resourceId('Microsoft.ExtendedLocation/customLocations', parameters('customLocationName'))]",
-        "type": "CustomLocation"
-      },
+      "apiVersion": "2025-07-01-preview",
+      "name": "[format('{0}/{1}', coalesce(parameters('aioInstanceName'), format('aio-{0}', variables('HASH'))), 'default')]",
+      "extendedLocation": "[variables('extendedLocation')]",
       "properties": {
         "instanceCount": "[parameters('defaultDataflowinstanceCount')]"
       },
@@ -737,16 +1366,13 @@
     },
     "dataflow_endpoint": {
       "type": "Microsoft.IoTOperations/instances/dataflowEndpoints",
-      "apiVersion": "2025-04-01",
-      "name": "[format('{0}/{1}', format('aio-{0}', coalesce(tryGet(parameters('advancedConfig'), 'resourceSuffix'), take(uniqueString(resourceGroup().id, parameters('clusterName'), parameters('clusterNamespace')), 5))), 'default')]",
-      "extendedLocation": {
-        "name": "[resourceId('Microsoft.ExtendedLocation/customLocations', parameters('customLocationName'))]",
-        "type": "CustomLocation"
-      },
+      "apiVersion": "2025-07-01-preview",
+      "name": "[format('{0}/{1}', coalesce(parameters('aioInstanceName'), format('aio-{0}', variables('HASH'))), 'default')]",
+      "extendedLocation": "[variables('extendedLocation')]",
       "properties": {
         "endpointType": "Mqtt",
         "mqttSettings": {
-          "host": "[format('{0}:{1}', variables('MQTT_SETTINGS').brokerListenerServiceName, variables('MQTT_SETTINGS').brokerListenerPort)]",
+          "host": "[format('{0}:{1}', variables('MQTT_SETTINGS').brokerListenerHost, variables('MQTT_SETTINGS').brokerListenerPort)]",
           "authentication": {
             "method": "ServiceAccountToken",
             "serviceAccountTokenSettings": {
@@ -755,7 +1381,7 @@
           },
           "tls": {
             "mode": "Enabled",
-            "trustedCaCertificateConfigMapRef": "[if(equals(parameters('trustConfig').source, 'CustomerManaged'), parameters('trustConfig').settings.configMapName, variables('MQTT_SETTINGS').selfSignedConfigMapName)]"
+            "trustedCaCertificateConfigMapRef": "[variables('TRUST_CONFIG_MAP')]"
           }
         }
       },
@@ -782,7 +1408,7 @@
     "aio": {
       "type": "object",
       "value": {
-        "name": "[format('aio-{0}', coalesce(tryGet(parameters('advancedConfig'), 'resourceSuffix'), take(uniqueString(resourceGroup().id, parameters('clusterName'), parameters('clusterNamespace')), 5)))]",
+        "name": "[coalesce(parameters('aioInstanceName'), format('aio-{0}', variables('HASH')))]",
         "broker": {
           "name": "default",
           "listener": "default",
@@ -794,12 +1420,12 @@
     "customLocation": {
       "type": "object",
       "value": {
-        "id": "[resourceId('Microsoft.ExtendedLocation/customLocations', parameters('customLocationName'))]",
-        "name": "[parameters('customLocationName')]",
+        "id": "[resourceId('Microsoft.ExtendedLocation/customLocations', coalesce(parameters('customLocationName'), format('location-{0}', variables('HASH'))))]",
+        "name": "[coalesce(parameters('customLocationName'), format('location-{0}', variables('HASH')))]",
         "resourceSyncRulesEnabled": "[parameters('deployResourceSyncRules')]",
         "resourceSyncRules": [
-          "[format('{0}-adr-sync', parameters('customLocationName'))]",
-          "[format('{0}-broker-sync', parameters('customLocationName'))]"
+          "[format('{0}-adr-sync', coalesce(parameters('customLocationName'), format('location-{0}', variables('HASH'))))]",
+          "[format('{0}-aio-sync', parameters('customLocationName'))]"
         ]
       }
     }
