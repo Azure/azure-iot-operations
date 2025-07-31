@@ -5,8 +5,8 @@
   "metadata": {
     "_generator": {
       "name": "bicep",
-      "version": "0.36.1.42791",
-      "templateHash": "13046130712474074101"
+      "version": "0.36.177.2456",
+      "templateHash": "14056350168558676608"
     }
   },
   "definitions": {
@@ -200,9 +200,476 @@
           "metadata": {
             "description": "The AIO Broker service type. The default is \"ClusterIp\"."
           }
+        },
+        "persistence": {
+          "$ref": "#/definitions/_1.BrokerPersistence",
+          "nullable": true,
+          "metadata": {
+            "description": "The persistence settings of the Broker."
+          }
         }
       },
       "metadata": {
+        "__bicep_imported_from!": {
+          "sourceTemplate": "types.bicep"
+        }
+      }
+    },
+    "_1.BrokerPersistence": {
+      "type": "object",
+      "properties": {
+        "dynamicSettings": {
+          "$ref": "#/definitions/_1.BrokerPersistenceDynamicSettings",
+          "nullable": true,
+          "metadata": {
+            "description": "Client sets the specified user property key/value in the CONNECT/SUBSCRIBE/PUBLISH.\nOptionally, if the customer specifies a configurable user property, it will work to enable persistence dynamically.\nDefault: key 'aio-persistence', value 'true'.\n"
+          }
+        },
+        "maxSize": {
+          "type": "string",
+          "metadata": {
+            "description": "The max size of the message buffer on disk. If a PVC template is specified, this size\nis used as the request and limit sizes of that template. If unset, a local-path provisioner is used.\n"
+          }
+        },
+        "persistentVolumeClaimSpec": {
+          "$ref": "#/definitions/_1.VolumeClaimSpec",
+          "nullable": true,
+          "metadata": {
+            "description": "Use the specified PersistentVolumeClaim template to mount a persistent volume.\nIf unset, a default PVC with default properties will be used.\n"
+          }
+        },
+        "retain": {
+          "$ref": "#/definitions/_1.BrokerRetainMessagesPolicy",
+          "nullable": true,
+          "metadata": {
+            "description": "Controls which topic's retained messages should be persisted to disk."
+          }
+        },
+        "stateStore": {
+          "$ref": "#/definitions/_1.BrokerStateStorePolicy",
+          "nullable": true,
+          "metadata": {
+            "description": "Controls which keys should be persisted to disk for the state store."
+          }
+        },
+        "subscriberQueue": {
+          "$ref": "#/definitions/_1.BrokerSubscriberQueuePolicy",
+          "nullable": true,
+          "metadata": {
+            "description": "Controls which subscriber message queues should be persisted to disk.\nSession state metadata are always written to disk if any persistence is specified.\n"
+          }
+        },
+        "encryption": {
+          "$ref": "#/definitions/_1.BrokerPersistenceEncryption",
+          "nullable": true,
+          "metadata": {
+            "description": "Controls settings related to encryption of the persistence database.\nOptional, defaults to enabling encryption.\n"
+          }
+        }
+      },
+      "metadata": {
+        "description": "Disk persistence configuration for the Broker.\nOptional. Everything is in-memory if not set.\nNote: if configured, all MQTT session states are written to disk.\n",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "types.bicep"
+        }
+      }
+    },
+    "_1.BrokerPersistenceDynamicSettings": {
+      "type": "object",
+      "properties": {
+        "userPropertyKey": {
+          "type": "string",
+          "metadata": {
+            "description": "The user property key to enable persistence."
+          }
+        },
+        "userPropertyValue": {
+          "type": "string",
+          "metadata": {
+            "description": "The user property value to enable persistence."
+          }
+        }
+      },
+      "metadata": {
+        "description": "Dynamic settings to toggle persistence via MQTTv5 user properties.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "types.bicep"
+        }
+      }
+    },
+    "_1.BrokerPersistenceEncryption": {
+      "type": "object",
+      "properties": {
+        "mode": {
+          "$ref": "#/definitions/_1.OperationalMode",
+          "metadata": {
+            "description": "Determines if encryption is enabled."
+          }
+        }
+      },
+      "metadata": {
+        "description": "Encryption settings for the persistence database.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "types.bicep"
+        }
+      }
+    },
+    "_1.BrokerRetainMessagesCustomPolicy": {
+      "type": "object",
+      "properties": {
+        "mode": {
+          "type": "string",
+          "allowedValues": [
+            "Custom"
+          ]
+        },
+        "retainSettings": {
+          "$ref": "#/definitions/_1.BrokerRetainMessagesSettings",
+          "metadata": {
+            "description": "Settings for the Custom mode."
+          }
+        }
+      },
+      "metadata": {
+        "description": "Custom retain messages policy for the Broker.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "types.bicep"
+        }
+      }
+    },
+    "_1.BrokerRetainMessagesDynamic": {
+      "type": "object",
+      "properties": {
+        "mode": {
+          "$ref": "#/definitions/_1.OperationalMode",
+          "metadata": {
+            "description": "Mode of dynamic retain settings."
+          }
+        }
+      },
+      "metadata": {
+        "description": "Dynamic toggles for retain messages policy.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "types.bicep"
+        }
+      }
+    },
+    "_1.BrokerRetainMessagesPolicy": {
+      "type": "object",
+      "discriminator": {
+        "propertyName": "mode",
+        "mapping": {
+          "All": {
+            "type": "object",
+            "properties": {
+              "mode": {
+                "type": "string",
+                "allowedValues": [
+                  "All"
+                ]
+              }
+            }
+          },
+          "None": {
+            "type": "object",
+            "properties": {
+              "mode": {
+                "type": "string",
+                "allowedValues": [
+                  "None"
+                ]
+              }
+            }
+          },
+          "Custom": {
+            "$ref": "#/definitions/_1.BrokerRetainMessagesCustomPolicy"
+          }
+        }
+      },
+      "metadata": {
+        "description": "Controls which retained messages are persisted.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "types.bicep"
+        }
+      }
+    },
+    "_1.BrokerRetainMessagesSettings": {
+      "type": "object",
+      "properties": {
+        "topics": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "Topics to persist (wildcards # and + supported)."
+          }
+        },
+        "dynamic": {
+          "$ref": "#/definitions/_1.BrokerRetainMessagesDynamic",
+          "nullable": true,
+          "metadata": {
+            "description": "Dynamic toggle via MQTTv5 user property."
+          }
+        }
+      },
+      "metadata": {
+        "description": "Settings for a custom retain messages policy.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "types.bicep"
+        }
+      }
+    },
+    "_1.BrokerStateStoreCustomPolicy": {
+      "type": "object",
+      "properties": {
+        "mode": {
+          "type": "string",
+          "allowedValues": [
+            "Custom"
+          ]
+        },
+        "stateStoreSettings": {
+          "$ref": "#/definitions/_1.BrokerStateStorePolicySettings",
+          "metadata": {
+            "description": "Settings for the Custom mode."
+          }
+        }
+      },
+      "metadata": {
+        "description": "Custom state store policy for the Broker.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "types.bicep"
+        }
+      }
+    },
+    "_1.BrokerStateStoreDynamic": {
+      "type": "object",
+      "properties": {
+        "mode": {
+          "$ref": "#/definitions/_1.OperationalMode",
+          "metadata": {
+            "description": "Mode of dynamic state store settings."
+          }
+        }
+      },
+      "metadata": {
+        "description": "Dynamic toggles for state store policy.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "types.bicep"
+        }
+      }
+    },
+    "_1.BrokerStateStorePolicy": {
+      "type": "object",
+      "discriminator": {
+        "propertyName": "mode",
+        "mapping": {
+          "All": {
+            "type": "object",
+            "properties": {
+              "mode": {
+                "type": "string",
+                "allowedValues": [
+                  "All"
+                ]
+              }
+            }
+          },
+          "None": {
+            "type": "object",
+            "properties": {
+              "mode": {
+                "type": "string",
+                "allowedValues": [
+                  "None"
+                ]
+              }
+            }
+          },
+          "Custom": {
+            "$ref": "#/definitions/_1.BrokerStateStoreCustomPolicy"
+          }
+        }
+      },
+      "metadata": {
+        "description": "Controls which state store entries are persisted.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "types.bicep"
+        }
+      }
+    },
+    "_1.BrokerStateStorePolicyResources": {
+      "type": "object",
+      "properties": {
+        "keyType": {
+          "type": "string",
+          "allowedValues": [
+            "Binary",
+            "Pattern",
+            "String"
+          ],
+          "metadata": {
+            "description": "Type of key matching."
+          }
+        },
+        "keys": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "metadata": {
+            "description": "List of keys to persist."
+          }
+        }
+      },
+      "metadata": {
+        "description": "A key-type and its associated keys for state store persistence.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "types.bicep"
+        }
+      }
+    },
+    "_1.BrokerStateStorePolicySettings": {
+      "type": "object",
+      "properties": {
+        "stateStoreResources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/_1.BrokerStateStorePolicyResources"
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "Resources to persist (keyType and list of keys)."
+          }
+        },
+        "dynamic": {
+          "$ref": "#/definitions/_1.BrokerStateStoreDynamic",
+          "nullable": true,
+          "metadata": {
+            "description": "Dynamic toggle via MQTTv5 user property."
+          }
+        }
+      },
+      "metadata": {
+        "description": "Settings for a custom state store policy.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "types.bicep"
+        }
+      }
+    },
+    "_1.BrokerSubscriberQueueCustomPolicy": {
+      "type": "object",
+      "properties": {
+        "mode": {
+          "type": "string",
+          "allowedValues": [
+            "Custom"
+          ]
+        },
+        "subscriberQueueSettings": {
+          "$ref": "#/definitions/_1.BrokerSubscriberQueueCustomPolicySettings",
+          "metadata": {
+            "description": "Settings for the Custom mode."
+          }
+        }
+      },
+      "metadata": {
+        "__bicep_imported_from!": {
+          "sourceTemplate": "types.bicep"
+        }
+      }
+    },
+    "_1.BrokerSubscriberQueueCustomPolicySettings": {
+      "type": "object",
+      "properties": {
+        "subscriberClientIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "Subscriber client IDs to persist (wildcard * supported)."
+          }
+        },
+        "dynamic": {
+          "$ref": "#/definitions/_1.BrokerSubscriberQueueDynamic",
+          "nullable": true,
+          "metadata": {
+            "description": "Dynamic toggle via MQTTv5 user property."
+          }
+        },
+        "topics": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "Topics to persist per subscriber (wildcards # and + supported)."
+          }
+        }
+      },
+      "metadata": {
+        "description": "Settings for a custom subscriber queue policy.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "types.bicep"
+        }
+      }
+    },
+    "_1.BrokerSubscriberQueueDynamic": {
+      "type": "object",
+      "properties": {
+        "mode": {
+          "$ref": "#/definitions/_1.OperationalMode",
+          "metadata": {
+            "description": "Mode of dynamic subscriber queue settings."
+          }
+        }
+      },
+      "metadata": {
+        "description": "Dynamic toggles for subscriber queue policy.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "types.bicep"
+        }
+      }
+    },
+    "_1.BrokerSubscriberQueuePolicy": {
+      "type": "object",
+      "discriminator": {
+        "propertyName": "mode",
+        "mapping": {
+          "All": {
+            "type": "object",
+            "properties": {
+              "mode": {
+                "type": "string",
+                "allowedValues": [
+                  "All"
+                ]
+              }
+            }
+          },
+          "None": {
+            "type": "object",
+            "properties": {
+              "mode": {
+                "type": "string",
+                "allowedValues": [
+                  "None"
+                ]
+              }
+            }
+          },
+          "Custom": {
+            "$ref": "#/definitions/_1.BrokerSubscriberQueueCustomPolicy"
+          }
+        }
+      },
+      "metadata": {
+        "description": "Controls which subscriber queues are persisted.",
         "__bicep_imported_from!": {
           "sourceTemplate": "types.bicep"
         }
@@ -280,13 +747,22 @@
       }
     },
     "_1.InstanceFeatureSettingValue": {
+      "$ref": "#/definitions/_1.OperationalMode",
+      "metadata": {
+        "description": "The setting value of the AIO instance feature. Either \"Enabled\" or \"Disabled\".",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "types.bicep"
+        }
+      }
+    },
+    "_1.OperationalMode": {
       "type": "string",
       "allowedValues": [
         "Disabled",
         "Enabled"
       ],
       "metadata": {
-        "description": "The setting value of the AIO instance feature. Either \"Enabled\" or \"Disabled\".",
+        "description": "Defines operational mode. Either \"Enabled\" or \"Disabled\".",
         "__bicep_imported_from!": {
           "sourceTemplate": "types.bicep"
         }
@@ -352,6 +828,52 @@
           "sourceTemplate": "types.bicep"
         }
       }
+    },
+    "_1.VolumeClaimSpec": {
+      "type": "object",
+      "properties": {
+        "volumeName": {
+          "type": "string",
+          "nullable": true
+        },
+        "volumeMode": {
+          "type": "string",
+          "nullable": true
+        },
+        "storageClassName": {
+          "type": "string",
+          "nullable": true
+        },
+        "accessModes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "nullable": true
+        },
+        "dataSource": {
+          "type": "object",
+          "nullable": true
+        },
+        "dataSourceRef": {
+          "type": "object",
+          "nullable": true
+        },
+        "resources": {
+          "type": "object",
+          "nullable": true
+        },
+        "selector": {
+          "type": "object",
+          "nullable": true
+        }
+      },
+      "metadata": {
+        "description": "Kubernetes PersistentVolumeClaim spec.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "types.bicep"
+        }
+      }
     }
   },
   "parameters": {
@@ -380,9 +902,9 @@
   },
   "variables": {
     "VERSIONS": {
-      "platform": "0.7.21",
-      "secretStore": "0.9.4",
-      "containerStorage": "2.5.3"
+      "platform": "0.7.25",
+      "secretStore": "0.10.0",
+      "containerStorage": "2.6.0"
     },
     "TRAINS": {
       "platform": "preview",
@@ -471,7 +993,6 @@
         "type": "string"
       },
       "value": [
-        "[extensionResourceId(resourceId('Microsoft.Kubernetes/connectedClusters', parameters('clusterName')), 'Microsoft.KubernetesConfiguration/extensions', 'azure-iot-operations-platform')]",
         "[extensionResourceId(resourceId('Microsoft.Kubernetes/connectedClusters', parameters('clusterName')), 'Microsoft.KubernetesConfiguration/extensions', 'azure-secret-store')]"
       ]
     },
