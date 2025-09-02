@@ -5,8 +5,8 @@
   "metadata": {
     "_generator": {
       "name": "bicep",
-      "version": "0.36.177.2456",
-      "templateHash": "4461101981339725452"
+      "version": "0.37.4.10188",
+      "templateHash": "14878645024143396937"
     }
   },
   "definitions": {
@@ -14,6 +14,20 @@
       "type": "object",
       "properties": {
         "platform": {
+          "type": "object",
+          "properties": {
+            "version": {
+              "type": "string",
+              "nullable": true
+            },
+            "train": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          "nullable": true
+        },
+        "certManager": {
           "type": "object",
           "properties": {
             "version": {
@@ -206,6 +220,13 @@
           "nullable": true,
           "metadata": {
             "description": "The persistence settings of the Broker."
+          }
+        },
+        "logsLevel": {
+          "type": "string",
+          "nullable": true,
+          "metadata": {
+            "description": "The AIO Broker logging level. The default is \"info\"."
           }
         }
       },
@@ -874,97 +895,8 @@
           "sourceTemplate": "types.bicep"
         }
       }
-    },
-    "_2.Identity": {
-      "type": "object",
-      "discriminator": {
-        "propertyName": "type",
-        "mapping": {
-          "None": {
-            "$ref": "#/definitions/_2.NoIdentity"
-          },
-          "UserAssigned": {
-            "$ref": "#/definitions/_2.UserAssignedIdentity"
-          }
-        }
-      },
-      "metadata": {
-        "__bicep_imported_from!": {
-          "sourceTemplate": "utils.bicep"
-        }
-      }
-    },
-    "_2.NoIdentity": {
-      "type": "object",
-      "properties": {
-        "type": {
-          "type": "string",
-          "allowedValues": [
-            "None"
-          ]
-        }
-      },
-      "metadata": {
-        "__bicep_imported_from!": {
-          "sourceTemplate": "utils.bicep"
-        }
-      }
-    },
-    "_2.UserAssignedIdentity": {
-      "type": "object",
-      "properties": {
-        "type": {
-          "type": "string",
-          "allowedValues": [
-            "UserAssigned"
-          ]
-        },
-        "userAssignedIdentities": {
-          "type": "object",
-          "properties": {},
-          "additionalProperties": {
-            "type": "object",
-            "properties": {}
-          }
-        }
-      },
-      "metadata": {
-        "__bicep_imported_from!": {
-          "sourceTemplate": "utils.bicep"
-        }
-      }
     }
   },
-  "functions": [
-    {
-      "namespace": "_2",
-      "members": {
-        "buildIdentity": {
-          "parameters": [
-            {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "nullable": true
-              },
-              "nullable": true,
-              "name": "identities"
-            }
-          ],
-          "output": {
-            "$ref": "#/definitions/_2.Identity",
-            "value": "[if(or(empty(parameters('identities')), equals(length(filter(parameters('identities'), lambda('id', not(empty(lambdaVariables('id')))))), 0)), createObject('type', 'None'), createObject('type', 'UserAssigned', 'userAssignedIdentities', toObject(filter(parameters('identities'), lambda('identity', not(empty(lambdaVariables('identity'))))), lambda('identity', lambdaVariables('identity')), lambda('identity', createObject()))))]"
-          },
-          "metadata": {
-            "description": "Builds a UserAssigned identity object for the given array of identities.\nIf the list is empty, it will return {type: 'None'}\ne.g\n```bicep\nvar identites = ['/subscriptions/.../id1', '/subscriptions/.../id2']\noutput userIdentities object = buildUserIdentities(identites)\n// The output will be:\n// {\n//   \"type\": \"UserAssigned\",\n//   \"userAssignedIdentities\": {\n//     \"/subscriptions/.../id1\": {},\n//     \"/subscriptions/.../id2\": {}\n//   }\n// }\n}\n",
-            "__bicep_imported_from!": {
-              "sourceTemplate": "utils.bicep"
-            }
-          }
-        }
-      }
-    }
-  ],
   "parameters": {
     "clusterName": {
       "type": "string",
@@ -990,8 +922,7 @@
         "westus3",
         "westeurope",
         "northeurope",
-        "eastus2euap",
-        "germanywestcentral"
+        "eastus2euap"
       ],
       "metadata": {
         "description": "Location of the existing arc-enabled cluster where AIO will be deployed."
@@ -1006,7 +937,6 @@
         "MicroK8s"
       ],
       "metadata": {
-        "deprecated": "This parameter is not used anymore.",
         "description": "The Kubernetes distro to run AIO on. The default is k8s."
       }
     },
@@ -1014,13 +944,12 @@
       "type": "string",
       "defaultValue": "",
       "metadata": {
-        "deprecated": "This parameter is not used anymore.",
         "description": "The default node path of the container runtime socket. The default is empty.\nIf it's empty, socket path is determined by param kubernetesDistro.\n"
       }
     },
     "customLocationName": {
       "type": "string",
-      "nullable": true,
+      "defaultValue": "[format('location-{0}', coalesce(tryGet(parameters('advancedConfig'), 'resourceSuffix'), take(uniqueString(resourceGroup().id, parameters('clusterName'), parameters('clusterNamespace')), 5)))]",
       "metadata": {
         "description": "Name of the custom location where AIO will be deployed."
       }
@@ -1041,13 +970,6 @@
         "description": "Flag to enable resource sync rules. The default is true."
       }
     },
-    "aioInstanceName": {
-      "type": "string",
-      "nullable": true,
-      "metadata": {
-        "description": "Name of the AIO instance to be created."
-      }
-    },
     "userAssignedIdentity": {
       "type": "string",
       "nullable": true,
@@ -1059,13 +981,6 @@
       "type": "string",
       "metadata": {
         "description": "Schema Registry Id used to reference the namespace to be passed in to the to be passed to Instance."
-      }
-    },
-    "adrNamespaceId": {
-      "type": "string",
-      "nullable": true,
-      "metadata": {
-        "description": "Existing Azure Device Registry namespace resource ID to be passed in to the AIO Instance."
       }
     },
     "features": {
@@ -1107,28 +1022,25 @@
     }
   },
   "variables": {
-    "VERSIONS": {
-      "iotOperations": "1.2.36"
-    },
-    "TRAINS": {
-      "iotOperations": "preview"
-    },
-    "HASH": "[coalesce(tryGet(parameters('advancedConfig'), 'resourceSuffix'), take(uniqueString(resourceGroup().id, parameters('clusterName'), parameters('clusterNamespace')), 5))]",
     "AIO_EXTENSION_SUFFIX": "[take(uniqueString(resourceId('Microsoft.Kubernetes/connectedClusters', parameters('clusterName'))), 5)]",
-    "CUSTOM_LOCATION_NAMESPACE": "[parameters('clusterNamespace')]",
     "AIO_EXTENSION_SCOPE": {
       "cluster": {
-        "releaseNamespace": "[parameters('clusterNamespace')]"
+        "releaseNamespace": "azure-iot-operations"
       }
     },
-    "customerManagedTrust": "[equals(parameters('trustConfig').source, 'CustomerManaged')]",
-    "ISSUER_NAME": "[if(variables('customerManagedTrust'), parameters('trustConfig').settings.issuerName, format('{0}-aio-certificate-issuer', parameters('clusterNamespace')))]",
-    "TRUST_CONFIG_MAP": "[if(variables('customerManagedTrust'), parameters('trustConfig').settings.configMapName, format('{0}-aio-ca-trust-bundle', parameters('clusterNamespace')))]",
+    "VERSIONS": {
+      "iotOperations": "1.1.69"
+    },
+    "TRAINS": {
+      "iotOperations": "integration"
+    },
     "MQTT_SETTINGS": {
       "brokerListenerServiceName": "aio-broker",
       "brokerListenerPort": 18883,
-      "brokerListenerHost": "[format('aio-broker.{0}', variables('CUSTOM_LOCATION_NAMESPACE'))]",
-      "serviceAccountAudience": "aio-internal"
+      "brokerListenerHost": "[format('aio-broker.{0}', variables('AIO_EXTENSION_SCOPE').cluster.releaseNamespace)]",
+      "serviceAccountAudience": "aio-internal",
+      "selfSignedIssuerName": "[format('{0}-aio-certificate-issuer', parameters('clusterNamespace'))]",
+      "selfSignedConfigMapName": "[format('{0}-aio-ca-trust-bundle', parameters('clusterNamespace'))]"
     },
     "BROKER_CONFIG": {
       "frontendReplicas": "[coalesce(tryGet(parameters('brokerConfig'), 'frontendReplicas'), 2)]",
@@ -1137,26 +1049,35 @@
       "backendWorkers": "[coalesce(tryGet(parameters('brokerConfig'), 'backendWorkers'), 2)]",
       "backendPartitions": "[coalesce(tryGet(parameters('brokerConfig'), 'backendPartitions'), 2)]",
       "memoryProfile": "[coalesce(tryGet(parameters('brokerConfig'), 'memoryProfile'), 'Medium')]",
-      "serviceType": "[coalesce(tryGet(parameters('brokerConfig'), 'serviceType'), 'ClusterIp')]",
-      "persistence": "[tryGet(parameters('brokerConfig'), 'persistence')]"
+      "serviceType": "[coalesce(tryGet(parameters('brokerConfig'), 'serviceType'), 'ClusterIp')]"
     },
     "defaultAioConfigurationSettings": {
-      "AgentOperationTimeoutInMinutes": "120",
-      "connectors.values.mqttBroker.address": "[format('mqtts://{0}:{1}', variables('MQTT_SETTINGS').brokerListenerHost, variables('MQTT_SETTINGS').brokerListenerPort)]",
+      "AgentOperationTimeoutInMinutes": 120,
+      "connectors.values.mqttBroker.address": "[format('mqtts://{0}.{1}:{2}', variables('MQTT_SETTINGS').brokerListenerServiceName, variables('AIO_EXTENSION_SCOPE').cluster.releaseNamespace, variables('MQTT_SETTINGS').brokerListenerPort)]",
       "connectors.values.mqttBroker.serviceAccountTokenAudience": "[variables('MQTT_SETTINGS').serviceAccountAudience]",
+      "connectors.values.opcPlcSimulation.deploy": "false",
+      "connectors.values.opcPlcSimulation.autoAcceptUntrustedCertificates": "false",
+      "adr.values.Microsoft.CustomLocation.ServiceAccount": "default",
+      "akri.values.webhookConfiguration.enabled": "false",
+      "akri.values.certManagerWebhookCertificate.enabled": "false",
+      "akri.values.agent.extensionService.mqttBroker.hostName": "[format('{0}.{1}', variables('MQTT_SETTINGS').brokerListenerServiceName, variables('AIO_EXTENSION_SCOPE').cluster.releaseNamespace)]",
+      "akri.values.agent.extensionService.mqttBroker.port": "[variables('MQTT_SETTINGS').brokerListenerPort]",
+      "akri.values.agent.extensionService.mqttBroker.serviceAccountAudience": "[variables('MQTT_SETTINGS').serviceAccountAudience]",
+      "akri.values.agent.host.containerRuntimeSocket": "[parameters('containerRuntimeSocket')]",
+      "akri.values.kubernetesDistro": "[toLower(parameters('kubernetesDistro'))]",
+      "mqttBroker.values.global.quickstart": "false",
+      "mqttBroker.values.operator.firstPartyMetricsOn": "true",
       "observability.metrics.enabled": "[format('{0}', coalesce(tryGet(tryGet(parameters('advancedConfig'), 'observability'), 'enabled'), false()))]",
       "observability.metrics.openTelemetryCollectorAddress": "[if(coalesce(tryGet(tryGet(parameters('advancedConfig'), 'observability'), 'enabled'), false()), format('{0}', tryGet(tryGet(parameters('advancedConfig'), 'observability'), 'otelCollectorAddress')), '')]",
+      "observability.metrics.exportIntervalSeconds": "[format('{0}', coalesce(tryGet(tryGet(parameters('advancedConfig'), 'observability'), 'otelExportIntervalSeconds'), 60))]",
       "trustSource": "[parameters('trustConfig').source]",
-      "trustBundleSettings.issuer.name": "[variables('ISSUER_NAME')]",
+      "trustBundleSettings.issuer.name": "[if(equals(parameters('trustConfig').source, 'CustomerManaged'), parameters('trustConfig').settings.issuerName, variables('MQTT_SETTINGS').selfSignedIssuerName)]",
       "trustBundleSettings.issuer.kind": "[coalesce(tryGet(tryGet(parameters('trustConfig'), 'settings'), 'issuerKind'), '')]",
       "trustBundleSettings.configMap.name": "[coalesce(tryGet(tryGet(parameters('trustConfig'), 'settings'), 'configMapName'), '')]",
       "trustBundleSettings.configMap.key": "[coalesce(tryGet(tryGet(parameters('trustConfig'), 'settings'), 'configMapKey'), '')]",
-      "schemaRegistry.values.mqttBroker.host": "[format('mqtts://{0}:{1}', variables('MQTT_SETTINGS').brokerListenerHost, variables('MQTT_SETTINGS').brokerListenerPort)]",
+      "schemaRegistry.values.mqttBroker.host": "[format('mqtts://{0}.{1}:{2}', variables('MQTT_SETTINGS').brokerListenerServiceName, variables('AIO_EXTENSION_SCOPE').cluster.releaseNamespace, variables('MQTT_SETTINGS').brokerListenerPort)]",
+      "schemaRegistry.values.mqttBroker.tlsEnabled": true,
       "schemaRegistry.values.mqttBroker.serviceAccountTokenAudience": "[variables('MQTT_SETTINGS').serviceAccountAudience]"
-    },
-    "extendedLocation": {
-      "name": "[resourceId('Microsoft.ExtendedLocation/customLocations', coalesce(parameters('customLocationName'), format('location-{0}', variables('HASH'))))]",
-      "type": "CustomLocation"
     }
   },
   "resources": {
@@ -1186,12 +1107,12 @@
     "customLocation": {
       "type": "Microsoft.ExtendedLocation/customLocations",
       "apiVersion": "2021-08-31-preview",
-      "name": "[coalesce(parameters('customLocationName'), format('location-{0}', variables('HASH')))]",
+      "name": "[parameters('customLocationName')]",
       "location": "[parameters('clusterLocation')]",
       "properties": {
         "hostResourceId": "[resourceId('Microsoft.Kubernetes/connectedClusters', parameters('clusterName'))]",
         "namespace": "[parameters('clusterNamespace')]",
-        "displayName": "[coalesce(parameters('customLocationName'), format('location-{0}', variables('HASH')))]",
+        "displayName": "[parameters('customLocationName')]",
         "clusterExtensionIds": "[flatten(createArray(parameters('clExtentionIds'), createArray(extensionResourceId(resourceId('Microsoft.Kubernetes/connectedClusters', parameters('clusterName')), 'Microsoft.KubernetesConfiguration/extensions', format('azure-iot-operations-{0}', variables('AIO_EXTENSION_SUFFIX'))))))]"
       },
       "dependsOn": [
@@ -1202,21 +1123,14 @@
       "condition": "[parameters('deployResourceSyncRules')]",
       "type": "Microsoft.ExtendedLocation/customLocations/resourceSyncRules",
       "apiVersion": "2021-08-31-preview",
-      "name": "[format('{0}/{1}', coalesce(parameters('customLocationName'), format('location-{0}', variables('HASH'))), format('{0}-aio-sync', parameters('customLocationName')))]",
+      "name": "[format('{0}/{1}', parameters('customLocationName'), format('{0}-broker-sync', parameters('customLocationName')))]",
       "location": "[parameters('clusterLocation')]",
       "properties": {
         "priority": 400,
         "selector": {
-          "matchExpressions": [
-            {
-              "key": "management.azure.com/provider-name",
-              "operator": "In",
-              "values": [
-                "Microsoft.IoTOperations",
-                "microsoft.iotoperations"
-              ]
-            }
-          ]
+          "matchLabels": {
+            "management.azure.com/provider-name": "microsoft.iotoperations"
+          }
         },
         "targetResourceGroup": "[resourceGroup().id]"
       },
@@ -1228,21 +1142,14 @@
       "condition": "[parameters('deployResourceSyncRules')]",
       "type": "Microsoft.ExtendedLocation/customLocations/resourceSyncRules",
       "apiVersion": "2021-08-31-preview",
-      "name": "[format('{0}/{1}', coalesce(parameters('customLocationName'), format('location-{0}', variables('HASH'))), format('{0}-adr-sync', coalesce(parameters('customLocationName'), format('location-{0}', variables('HASH')))))]",
+      "name": "[format('{0}/{1}', parameters('customLocationName'), format('{0}-adr-sync', parameters('customLocationName')))]",
       "location": "[parameters('clusterLocation')]",
       "properties": {
         "priority": 200,
         "selector": {
-          "matchExpressions": [
-            {
-              "key": "management.azure.com/provider-name",
-              "operator": "In",
-              "values": [
-                "Microsoft.DeviceRegistry",
-                "microsoft.deviceregistry"
-              ]
-            }
-          ]
+          "matchLabels": {
+            "management.azure.com/provider-name": "Microsoft.DeviceRegistry"
+          }
         },
         "targetResourceGroup": "[resourceGroup().id]"
       },
@@ -1253,28 +1160,27 @@
     },
     "aioInstance": {
       "type": "Microsoft.IoTOperations/instances",
-      "apiVersion": "2025-07-01-preview",
-      "name": "[coalesce(parameters('aioInstanceName'), format('aio-{0}', variables('HASH')))]",
+      "apiVersion": "2025-04-01",
+      "name": "[format('aio-{0}', coalesce(tryGet(parameters('advancedConfig'), 'resourceSuffix'), take(uniqueString(resourceGroup().id, parameters('clusterName'), parameters('clusterNamespace')), 5)))]",
       "location": "[parameters('clusterLocation')]",
-      "extendedLocation": "[variables('extendedLocation')]",
-      "identity": "[_2.buildIdentity(createArray(parameters('userAssignedIdentity')))]",
-      "properties": {
-        "description": "An AIO instance.",
-        "schemaRegistryRef": {
-          "resourceId": "[parameters('schemaRegistryId')]"
-        },
-        "features": "[parameters('features')]",
-        "adrNamespaceRef": "[if(not(empty(parameters('adrNamespaceId'))), createObject('resourceId', parameters('adrNamespaceId')), null())]"
+      "extendedLocation": {
+        "name": "[resourceId('Microsoft.ExtendedLocation/customLocations', parameters('customLocationName'))]",
+        "type": "CustomLocation"
       },
+      "identity": "[if(empty(parameters('userAssignedIdentity')), createObject('type', 'None'), createObject('type', 'UserAssigned', 'userAssignedIdentities', createObject(format('{0}', parameters('userAssignedIdentity')), createObject())))]",
+      "properties": "[union(createObject('description', 'An AIO instance.', 'schemaRegistryRef', createObject('resourceId', parameters('schemaRegistryId'))), if(equals(parameters('features'), null()), createObject(), createObject('features', parameters('features'))))]",
       "dependsOn": [
         "customLocation"
       ]
     },
     "broker": {
       "type": "Microsoft.IoTOperations/instances/brokers",
-      "apiVersion": "2025-07-01-preview",
-      "name": "[format('{0}/{1}', coalesce(parameters('aioInstanceName'), format('aio-{0}', variables('HASH'))), 'default')]",
-      "extendedLocation": "[variables('extendedLocation')]",
+      "apiVersion": "2025-04-01",
+      "name": "[format('{0}/{1}', format('aio-{0}', coalesce(tryGet(parameters('advancedConfig'), 'resourceSuffix'), take(uniqueString(resourceGroup().id, parameters('clusterName'), parameters('clusterNamespace')), 5))), 'default')]",
+      "extendedLocation": {
+        "name": "[resourceId('Microsoft.ExtendedLocation/customLocations', parameters('customLocationName'))]",
+        "type": "CustomLocation"
+      },
       "properties": {
         "memoryProfile": "[variables('BROKER_CONFIG').memoryProfile]",
         "generateResourceLimits": {
@@ -1290,8 +1196,7 @@
             "replicas": "[variables('BROKER_CONFIG').frontendReplicas]",
             "workers": "[variables('BROKER_CONFIG').frontendWorkers]"
           }
-        },
-        "persistence": "[tryGet(variables('BROKER_CONFIG'), 'persistence')]"
+        }
       },
       "dependsOn": [
         "aioInstance",
@@ -1300,9 +1205,12 @@
     },
     "broker_authn": {
       "type": "Microsoft.IoTOperations/instances/brokers/authentications",
-      "apiVersion": "2025-07-01-preview",
-      "name": "[format('{0}/{1}/{2}', coalesce(parameters('aioInstanceName'), format('aio-{0}', variables('HASH'))), 'default', 'default')]",
-      "extendedLocation": "[variables('extendedLocation')]",
+      "apiVersion": "2025-04-01",
+      "name": "[format('{0}/{1}/{2}', format('aio-{0}', coalesce(tryGet(parameters('advancedConfig'), 'resourceSuffix'), take(uniqueString(resourceGroup().id, parameters('clusterName'), parameters('clusterNamespace')), 5))), 'default', 'default')]",
+      "extendedLocation": {
+        "name": "[resourceId('Microsoft.ExtendedLocation/customLocations', parameters('customLocationName'))]",
+        "type": "CustomLocation"
+      },
       "properties": {
         "authenticationMethods": [
           {
@@ -1322,9 +1230,12 @@
     },
     "broker_listener": {
       "type": "Microsoft.IoTOperations/instances/brokers/listeners",
-      "apiVersion": "2025-07-01-preview",
-      "name": "[format('{0}/{1}/{2}', coalesce(parameters('aioInstanceName'), format('aio-{0}', variables('HASH'))), 'default', 'default')]",
-      "extendedLocation": "[variables('extendedLocation')]",
+      "apiVersion": "2025-04-01",
+      "name": "[format('{0}/{1}/{2}', format('aio-{0}', coalesce(tryGet(parameters('advancedConfig'), 'resourceSuffix'), take(uniqueString(resourceGroup().id, parameters('clusterName'), parameters('clusterNamespace')), 5))), 'default', 'default')]",
+      "extendedLocation": {
+        "name": "[resourceId('Microsoft.ExtendedLocation/customLocations', parameters('customLocationName'))]",
+        "type": "CustomLocation"
+      },
       "properties": {
         "serviceType": "[variables('BROKER_CONFIG').serviceType]",
         "serviceName": "[variables('MQTT_SETTINGS').brokerListenerServiceName]",
@@ -1336,8 +1247,8 @@
               "mode": "Automatic",
               "certManagerCertificateSpec": {
                 "issuerRef": {
-                  "name": "[variables('ISSUER_NAME')]",
-                  "kind": "[if(variables('customerManagedTrust'), parameters('trustConfig').settings.issuerKind, 'ClusterIssuer')]",
+                  "name": "[if(equals(parameters('trustConfig').source, 'CustomerManaged'), parameters('trustConfig').settings.issuerName, variables('MQTT_SETTINGS').selfSignedIssuerName)]",
+                  "kind": "[if(equals(parameters('trustConfig').source, 'CustomerManaged'), parameters('trustConfig').settings.issuerKind, 'ClusterIssuer')]",
                   "group": "cert-manager.io"
                 }
               }
@@ -1353,9 +1264,12 @@
     },
     "dataflow_profile": {
       "type": "Microsoft.IoTOperations/instances/dataflowProfiles",
-      "apiVersion": "2025-07-01-preview",
-      "name": "[format('{0}/{1}', coalesce(parameters('aioInstanceName'), format('aio-{0}', variables('HASH'))), 'default')]",
-      "extendedLocation": "[variables('extendedLocation')]",
+      "apiVersion": "2025-04-01",
+      "name": "[format('{0}/{1}', format('aio-{0}', coalesce(tryGet(parameters('advancedConfig'), 'resourceSuffix'), take(uniqueString(resourceGroup().id, parameters('clusterName'), parameters('clusterNamespace')), 5))), 'default')]",
+      "extendedLocation": {
+        "name": "[resourceId('Microsoft.ExtendedLocation/customLocations', parameters('customLocationName'))]",
+        "type": "CustomLocation"
+      },
       "properties": {
         "instanceCount": "[parameters('defaultDataflowinstanceCount')]"
       },
@@ -1366,13 +1280,16 @@
     },
     "dataflow_endpoint": {
       "type": "Microsoft.IoTOperations/instances/dataflowEndpoints",
-      "apiVersion": "2025-07-01-preview",
-      "name": "[format('{0}/{1}', coalesce(parameters('aioInstanceName'), format('aio-{0}', variables('HASH'))), 'default')]",
-      "extendedLocation": "[variables('extendedLocation')]",
+      "apiVersion": "2025-04-01",
+      "name": "[format('{0}/{1}', format('aio-{0}', coalesce(tryGet(parameters('advancedConfig'), 'resourceSuffix'), take(uniqueString(resourceGroup().id, parameters('clusterName'), parameters('clusterNamespace')), 5))), 'default')]",
+      "extendedLocation": {
+        "name": "[resourceId('Microsoft.ExtendedLocation/customLocations', parameters('customLocationName'))]",
+        "type": "CustomLocation"
+      },
       "properties": {
         "endpointType": "Mqtt",
         "mqttSettings": {
-          "host": "[format('{0}:{1}', variables('MQTT_SETTINGS').brokerListenerHost, variables('MQTT_SETTINGS').brokerListenerPort)]",
+          "host": "[format('{0}:{1}', variables('MQTT_SETTINGS').brokerListenerServiceName, variables('MQTT_SETTINGS').brokerListenerPort)]",
           "authentication": {
             "method": "ServiceAccountToken",
             "serviceAccountTokenSettings": {
@@ -1381,7 +1298,7 @@
           },
           "tls": {
             "mode": "Enabled",
-            "trustedCaCertificateConfigMapRef": "[variables('TRUST_CONFIG_MAP')]"
+            "trustedCaCertificateConfigMapRef": "[if(equals(parameters('trustConfig').source, 'CustomerManaged'), parameters('trustConfig').settings.configMapName, variables('MQTT_SETTINGS').selfSignedConfigMapName)]"
           }
         }
       },
@@ -1408,7 +1325,7 @@
     "aio": {
       "type": "object",
       "value": {
-        "name": "[coalesce(parameters('aioInstanceName'), format('aio-{0}', variables('HASH')))]",
+        "name": "[format('aio-{0}', coalesce(tryGet(parameters('advancedConfig'), 'resourceSuffix'), take(uniqueString(resourceGroup().id, parameters('clusterName'), parameters('clusterNamespace')), 5)))]",
         "broker": {
           "name": "default",
           "listener": "default",
@@ -1420,12 +1337,12 @@
     "customLocation": {
       "type": "object",
       "value": {
-        "id": "[resourceId('Microsoft.ExtendedLocation/customLocations', coalesce(parameters('customLocationName'), format('location-{0}', variables('HASH'))))]",
-        "name": "[coalesce(parameters('customLocationName'), format('location-{0}', variables('HASH')))]",
+        "id": "[resourceId('Microsoft.ExtendedLocation/customLocations', parameters('customLocationName'))]",
+        "name": "[parameters('customLocationName')]",
         "resourceSyncRulesEnabled": "[parameters('deployResourceSyncRules')]",
         "resourceSyncRules": [
-          "[format('{0}-adr-sync', coalesce(parameters('customLocationName'), format('location-{0}', variables('HASH'))))]",
-          "[format('{0}-aio-sync', parameters('customLocationName'))]"
+          "[format('{0}-adr-sync', parameters('customLocationName'))]",
+          "[format('{0}-broker-sync', parameters('customLocationName'))]"
         ]
       }
     }
