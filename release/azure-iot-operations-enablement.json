@@ -5,8 +5,8 @@
   "metadata": {
     "_generator": {
       "name": "bicep",
-      "version": "0.36.177.2456",
-      "templateHash": "14056350168558676608"
+      "version": "0.37.4.10188",
+      "templateHash": "6846030046916320732"
     }
   },
   "definitions": {
@@ -14,6 +14,20 @@
       "type": "object",
       "properties": {
         "platform": {
+          "type": "object",
+          "properties": {
+            "version": {
+              "type": "string",
+              "nullable": true
+            },
+            "train": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          "nullable": true
+        },
+        "certManager": {
           "type": "object",
           "properties": {
             "version": {
@@ -206,6 +220,13 @@
           "nullable": true,
           "metadata": {
             "description": "The persistence settings of the Broker."
+          }
+        },
+        "logsLevel": {
+          "type": "string",
+          "nullable": true,
+          "metadata": {
+            "description": "The AIO Broker logging level. The default is \"info\"."
           }
         }
       },
@@ -993,6 +1014,7 @@
         "type": "string"
       },
       "value": [
+        "[extensionResourceId(resourceId('Microsoft.Kubernetes/connectedClusters', parameters('clusterName')), 'Microsoft.KubernetesConfiguration/extensions', 'azure-iot-operations-platform')]",
         "[extensionResourceId(resourceId('Microsoft.Kubernetes/connectedClusters', parameters('clusterName')), 'Microsoft.KubernetesConfiguration/extensions', 'azure-secret-store')]"
       ]
     },
