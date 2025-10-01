@@ -5,8 +5,8 @@
   "metadata": {
     "_generator": {
       "name": "bicep",
-      "version": "0.37.4.10188",
-      "templateHash": "6846030046916320732"
+      "version": "0.38.3.11034",
+      "templateHash": "15012452578180993432"
     }
   },
   "definitions": {
@@ -923,19 +923,13 @@
   },
   "variables": {
     "VERSIONS": {
-      "platform": "0.7.25",
-      "secretStore": "0.10.0",
-      "containerStorage": "2.6.0"
+      "platform": "0.7.29",
+      "secretStore": "0.10.0"
     },
     "TRAINS": {
       "platform": "preview",
-      "secretStore": "preview",
-      "containerStorage": "stable"
-    },
-    "faultTolerantStorageClass": "[coalesce(tryGet(tryGet(parameters('advancedConfig'), 'edgeStorageAccelerator'), 'diskStorageClass'), 'acstor-arccontainerstorage-storage-pool')]",
-    "nonFaultTolerantStorageClass": "[coalesce(tryGet(tryGet(parameters('advancedConfig'), 'edgeStorageAccelerator'), 'diskStorageClass'), 'default,local-path')]",
-    "diskStorageClass": "[if(equals(tryGet(tryGet(parameters('advancedConfig'), 'edgeStorageAccelerator'), 'faultToleranceEnabled'), true()), variables('faultTolerantStorageClass'), variables('nonFaultTolerantStorageClass'))]",
-    "diskMountPoint": "[coalesce(tryGet(tryGet(parameters('advancedConfig'), 'edgeStorageAccelerator'), 'diskMountPoint'), '/mnt')]"
+      "secretStore": "preview"
+    }
   },
   "resources": {
     "cluster": {
@@ -944,15 +938,19 @@
       "apiVersion": "2021-03-01",
       "name": "[parameters('clusterName')]"
     },
-    "aio_platform_extension": {
+    "aioPlatformExtension": {
+      "condition": "[equals(parameters('trustConfig').source, 'SelfSigned')]",
       "type": "Microsoft.KubernetesConfiguration/extensions",
       "apiVersion": "2023-05-01",
       "scope": "[format('Microsoft.Kubernetes/connectedClusters/{0}', parameters('clusterName'))]",
       "name": "azure-iot-operations-platform",
+      "identity": {
+        "type": "SystemAssigned"
+      },
       "properties": {
         "extensionType": "microsoft.iotoperations.platform",
-        "version": "[coalesce(tryGet(tryGet(parameters('advancedConfig'), 'platform'), 'version'), variables('VERSIONS').platform)]",
-        "releaseTrain": "[coalesce(tryGet(tryGet(parameters('advancedConfig'), 'platform'), 'train'), variables('TRAINS').platform)]",
+        "releaseTrain": "[coalesce(tryGet(tryGet(parameters('advancedConfig'), 'certManager'), 'train'), variables('TRAINS').platform)]",
+        "version": "[coalesce(tryGet(tryGet(parameters('advancedConfig'), 'certManager'), 'version'), variables('VERSIONS').platform)]",
         "autoUpgradeMinorVersion": false,
         "scope": {
           "cluster": {
@@ -960,12 +958,11 @@
           }
         },
         "configurationSettings": {
-          "installCertManager": "[if(equals(parameters('trustConfig').source, 'SelfSigned'), 'true', 'false')]",
-          "installTrustManager": "[if(equals(parameters('trustConfig').source, 'SelfSigned'), 'true', 'false')]"
+          "AgentOperationTimeoutInMinutes": "20"
         }
       }
     },
-    "secret_store_extension": {
+    "secretStoreExtension": {
       "type": "Microsoft.KubernetesConfiguration/extensions",
       "apiVersion": "2023-05-01",
       "scope": "[format('Microsoft.Kubernetes/connectedClusters/{0}', parameters('clusterName'))]",
@@ -984,26 +981,7 @@
         }
       },
       "dependsOn": [
-        "aio_platform_extension"
-      ]
-    },
-    "container_storage_extension": {
-      "type": "Microsoft.KubernetesConfiguration/extensions",
-      "apiVersion": "2023-05-01",
-      "scope": "[format('Microsoft.Kubernetes/connectedClusters/{0}', parameters('clusterName'))]",
-      "name": "azure-arc-containerstorage",
-      "identity": {
-        "type": "SystemAssigned"
-      },
-      "properties": {
-        "extensionType": "microsoft.arc.containerstorage",
-        "autoUpgradeMinorVersion": false,
-        "version": "[coalesce(tryGet(tryGet(parameters('advancedConfig'), 'edgeStorageAccelerator'), 'version'), variables('VERSIONS').containerStorage)]",
-        "releaseTrain": "[coalesce(tryGet(tryGet(parameters('advancedConfig'), 'edgeStorageAccelerator'), 'train'), variables('TRAINS').containerStorage)]",
-        "configurationSettings": "[union(createObject('edgeStorageConfiguration.create', 'true', 'feature.diskStorageClass', variables('diskStorageClass')), if(equals(tryGet(tryGet(parameters('advancedConfig'), 'edgeStorageAccelerator'), 'faultToleranceEnabled'), true()), createObject('acstorConfiguration.create', 'true', 'acstorConfiguration.properties.diskMountPoint', variables('diskMountPoint')), createObject()))]"
-      },
-      "dependsOn": [
-        "aio_platform_extension"
+        "aioPlatformExtension"
       ]
     }
   },
@@ -1014,30 +992,23 @@
         "type": "string"
       },
       "value": [
-        "[extensionResourceId(resourceId('Microsoft.Kubernetes/connectedClusters', parameters('clusterName')), 'Microsoft.KubernetesConfiguration/extensions', 'azure-iot-operations-platform')]",
         "[extensionResourceId(resourceId('Microsoft.Kubernetes/connectedClusters', parameters('clusterName')), 'Microsoft.KubernetesConfiguration/extensions', 'azure-secret-store')]"
       ]
     },
     "extensions": {
       "type": "object",
       "value": {
-        "platform": {
-          "name": "azure-iot-operations-platform",
-          "id": "[extensionResourceId(resourceId('Microsoft.Kubernetes/connectedClusters', parameters('clusterName')), 'Microsoft.KubernetesConfiguration/extensions', 'azure-iot-operations-platform')]",
-          "version": "[reference('aio_platform_extension').version]",
-          "releaseTrain": "[reference('aio_platform_extension').releaseTrain]"
+        "certManager": {
+          "name": "[if(equals(parameters('trustConfig').source, 'SelfSigned'), 'azure-iot-operations-platform', null())]",
+          "id": "[if(equals(parameters('trustConfig').source, 'SelfSigned'), extensionResourceId(resourceId('Microsoft.Kubernetes/connectedClusters', parameters('clusterName')), 'Microsoft.KubernetesConfiguration/extensions', 'azure-iot-operations-platform'), null())]",
+          "version": "[tryGet(if(equals(parameters('trustConfig').source, 'SelfSigned'), reference('aioPlatformExtension', '2023-05-01', 'full'), null()), 'properties', 'version')]",
+          "releaseTrain": "[tryGet(if(equals(parameters('trustConfig').source, 'SelfSigned'), reference('aioPlatformExtension', '2023-05-01', 'full'), null()), 'properties', 'releaseTrain')]"
         },
         "secretStore": {
           "name": "azure-secret-store",
           "id": "[extensionResourceId(resourceId('Microsoft.Kubernetes/connectedClusters', parameters('clusterName')), 'Microsoft.KubernetesConfiguration/extensions', 'azure-secret-store')]",
-          "version": "[reference('secret_store_extension').version]",
-          "releaseTrain": "[reference('secret_store_extension').releaseTrain]"
-        },
-        "containerStorage": {
-          "name": "azure-arc-containerstorage",
-          "id": "[extensionResourceId(resourceId('Microsoft.Kubernetes/connectedClusters', parameters('clusterName')), 'Microsoft.KubernetesConfiguration/extensions', 'azure-arc-containerstorage')]",
-          "version": "[reference('container_storage_extension').version]",
-          "releaseTrain": "[reference('container_storage_extension').releaseTrain]"
+          "version": "[reference('secretStoreExtension').version]",
+          "releaseTrain": "[reference('secretStoreExtension').releaseTrain]"
         }
       }
     }
