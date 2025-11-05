@@ -5,8 +5,8 @@
   "metadata": {
     "_generator": {
       "name": "bicep",
-      "version": "0.38.3.11034",
-      "templateHash": "15012452578180993432"
+      "version": "0.38.33.27573",
+      "templateHash": "6203925150928073722"
     }
   },
   "definitions": {
@@ -36,6 +36,16 @@
             },
             "train": {
               "type": "string",
+              "nullable": true
+            },
+            "telemetry": {
+              "type": "object",
+              "properties": {
+                "enabled": {
+                  "type": "string",
+                  "nullable": true
+                }
+              },
               "nullable": true
             }
           },
@@ -239,13 +249,6 @@
     "_1.BrokerPersistence": {
       "type": "object",
       "properties": {
-        "dynamicSettings": {
-          "$ref": "#/definitions/_1.BrokerPersistenceDynamicSettings",
-          "nullable": true,
-          "metadata": {
-            "description": "Client sets the specified user property key/value in the CONNECT/SUBSCRIBE/PUBLISH.\nOptionally, if the customer specifies a configurable user property, it will work to enable persistence dynamically.\nDefault: key 'aio-persistence', value 'true'.\n"
-          }
-        },
         "maxSize": {
           "type": "string",
           "metadata": {
@@ -290,29 +293,6 @@
       },
       "metadata": {
         "description": "Disk persistence configuration for the Broker.\nOptional. Everything is in-memory if not set.\nNote: if configured, all MQTT session states are written to disk.\n",
-        "__bicep_imported_from!": {
-          "sourceTemplate": "types.bicep"
-        }
-      }
-    },
-    "_1.BrokerPersistenceDynamicSettings": {
-      "type": "object",
-      "properties": {
-        "userPropertyKey": {
-          "type": "string",
-          "metadata": {
-            "description": "The user property key to enable persistence."
-          }
-        },
-        "userPropertyValue": {
-          "type": "string",
-          "metadata": {
-            "description": "The user property value to enable persistence."
-          }
-        }
-      },
-      "metadata": {
-        "description": "Dynamic settings to toggle persistence via MQTTv5 user properties.",
         "__bicep_imported_from!": {
           "sourceTemplate": "types.bicep"
         }
@@ -621,16 +601,6 @@
           "metadata": {
             "description": "Dynamic toggle via MQTTv5 user property."
           }
-        },
-        "topics": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "nullable": true,
-          "metadata": {
-            "description": "Topics to persist per subscriber (wildcards # and + supported)."
-          }
         }
       },
       "metadata": {
@@ -923,12 +893,12 @@
   },
   "variables": {
     "VERSIONS": {
-      "platform": "0.7.29",
-      "secretStore": "0.10.0"
+      "certManager": "0.6.2",
+      "secretStore": "1.0.2"
     },
     "TRAINS": {
-      "platform": "preview",
-      "secretStore": "preview"
+      "certManager": "stable",
+      "secretStore": "stable"
     }
   },
   "resources": {
@@ -938,19 +908,19 @@
       "apiVersion": "2021-03-01",
       "name": "[parameters('clusterName')]"
     },
-    "aioPlatformExtension": {
+    "certManagerExtension": {
       "condition": "[equals(parameters('trustConfig').source, 'SelfSigned')]",
       "type": "Microsoft.KubernetesConfiguration/extensions",
       "apiVersion": "2023-05-01",
       "scope": "[format('Microsoft.Kubernetes/connectedClusters/{0}', parameters('clusterName'))]",
-      "name": "azure-iot-operations-platform",
+      "name": "cert-manager",
       "identity": {
         "type": "SystemAssigned"
       },
       "properties": {
-        "extensionType": "microsoft.iotoperations.platform",
-        "releaseTrain": "[coalesce(tryGet(tryGet(parameters('advancedConfig'), 'certManager'), 'train'), variables('TRAINS').platform)]",
-        "version": "[coalesce(tryGet(tryGet(parameters('advancedConfig'), 'certManager'), 'version'), variables('VERSIONS').platform)]",
+        "extensionType": "microsoft.certmanagement",
+        "releaseTrain": "[coalesce(tryGet(tryGet(parameters('advancedConfig'), 'certManager'), 'train'), variables('TRAINS').certManager)]",
+        "version": "[coalesce(tryGet(tryGet(parameters('advancedConfig'), 'certManager'), 'version'), variables('VERSIONS').certManager)]",
         "autoUpgradeMinorVersion": false,
         "scope": {
           "cluster": {
@@ -958,7 +928,8 @@
           }
         },
         "configurationSettings": {
-          "AgentOperationTimeoutInMinutes": "20"
+          "AgentOperationTimeoutInMinutes": "20",
+          "global.telemetry.enabled": "[coalesce(tryGet(tryGet(tryGet(parameters('advancedConfig'), 'certManager'), 'telemetry'), 'enabled'), 'true')]"
         }
       }
     },
@@ -981,7 +952,7 @@
         }
       },
       "dependsOn": [
-        "aioPlatformExtension"
+        "certManagerExtension"
       ]
     }
   },
@@ -999,10 +970,10 @@
       "type": "object",
       "value": {
         "certManager": {
-          "name": "[if(equals(parameters('trustConfig').source, 'SelfSigned'), 'azure-iot-operations-platform', null())]",
-          "id": "[if(equals(parameters('trustConfig').source, 'SelfSigned'), extensionResourceId(resourceId('Microsoft.Kubernetes/connectedClusters', parameters('clusterName')), 'Microsoft.KubernetesConfiguration/extensions', 'azure-iot-operations-platform'), null())]",
-          "version": "[tryGet(if(equals(parameters('trustConfig').source, 'SelfSigned'), reference('aioPlatformExtension', '2023-05-01', 'full'), null()), 'properties', 'version')]",
-          "releaseTrain": "[tryGet(if(equals(parameters('trustConfig').source, 'SelfSigned'), reference('aioPlatformExtension', '2023-05-01', 'full'), null()), 'properties', 'releaseTrain')]"
+          "name": "[if(equals(parameters('trustConfig').source, 'SelfSigned'), 'cert-manager', null())]",
+          "id": "[if(equals(parameters('trustConfig').source, 'SelfSigned'), extensionResourceId(resourceId('Microsoft.Kubernetes/connectedClusters', parameters('clusterName')), 'Microsoft.KubernetesConfiguration/extensions', 'cert-manager'), null())]",
+          "version": "[tryGet(if(equals(parameters('trustConfig').source, 'SelfSigned'), reference('certManagerExtension', '2023-05-01', 'full'), null()), 'properties', 'version')]",
+          "releaseTrain": "[tryGet(if(equals(parameters('trustConfig').source, 'SelfSigned'), reference('certManagerExtension', '2023-05-01', 'full'), null()), 'properties', 'releaseTrain')]"
         },
         "secretStore": {
           "name": "azure-secret-store",
