@@ -5,8 +5,8 @@
   "metadata": {
     "_generator": {
       "name": "bicep",
-      "version": "0.38.3.11034",
-      "templateHash": "7210641997078425314"
+      "version": "0.38.33.27573",
+      "templateHash": "4982288606057222896"
     }
   },
   "definitions": {
@@ -36,6 +36,16 @@
             },
             "train": {
               "type": "string",
+              "nullable": true
+            },
+            "telemetry": {
+              "type": "object",
+              "properties": {
+                "enabled": {
+                  "type": "string",
+                  "nullable": true
+                }
+              },
               "nullable": true
             }
           },
@@ -239,13 +249,6 @@
     "_1.BrokerPersistence": {
       "type": "object",
       "properties": {
-        "dynamicSettings": {
-          "$ref": "#/definitions/_1.BrokerPersistenceDynamicSettings",
-          "nullable": true,
-          "metadata": {
-            "description": "Client sets the specified user property key/value in the CONNECT/SUBSCRIBE/PUBLISH.\nOptionally, if the customer specifies a configurable user property, it will work to enable persistence dynamically.\nDefault: key 'aio-persistence', value 'true'.\n"
-          }
-        },
         "maxSize": {
           "type": "string",
           "metadata": {
@@ -290,29 +293,6 @@
       },
       "metadata": {
         "description": "Disk persistence configuration for the Broker.\nOptional. Everything is in-memory if not set.\nNote: if configured, all MQTT session states are written to disk.\n",
-        "__bicep_imported_from!": {
-          "sourceTemplate": "types.bicep"
-        }
-      }
-    },
-    "_1.BrokerPersistenceDynamicSettings": {
-      "type": "object",
-      "properties": {
-        "userPropertyKey": {
-          "type": "string",
-          "metadata": {
-            "description": "The user property key to enable persistence."
-          }
-        },
-        "userPropertyValue": {
-          "type": "string",
-          "metadata": {
-            "description": "The user property value to enable persistence."
-          }
-        }
-      },
-      "metadata": {
-        "description": "Dynamic settings to toggle persistence via MQTTv5 user properties.",
         "__bicep_imported_from!": {
           "sourceTemplate": "types.bicep"
         }
@@ -620,16 +600,6 @@
           "nullable": true,
           "metadata": {
             "description": "Dynamic toggle via MQTTv5 user property."
-          }
-        },
-        "topics": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "nullable": true,
-          "metadata": {
-            "description": "Topics to persist per subscriber (wildcards # and + supported)."
           }
         }
       },
@@ -1101,10 +1071,10 @@
   },
   "variables": {
     "VERSIONS": {
-      "iotOperations": "1.2.72"
+      "iotOperations": "1.2.112"
     },
     "TRAINS": {
-      "iotOperations": "preview"
+      "iotOperations": "stable"
     },
     "HASH": "[coalesce(tryGet(parameters('advancedConfig'), 'resourceSuffix'), take(uniqueString(resourceGroup().id, parameters('clusterName'), parameters('clusterNamespace')), 5))]",
     "AIO_EXTENSION_SUFFIX": "[take(uniqueString(resourceId('Microsoft.Kubernetes/connectedClusters', parameters('clusterName'))), 5)]",
@@ -1138,6 +1108,9 @@
       "AgentOperationTimeoutInMinutes": "120",
       "connectors.values.mqttBroker.address": "[format('mqtts://{0}:{1}', variables('MQTT_SETTINGS').brokerListenerHost, variables('MQTT_SETTINGS').brokerListenerPort)]",
       "connectors.values.mqttBroker.serviceAccountTokenAudience": "[variables('MQTT_SETTINGS').serviceAccountAudience]",
+      "dataFlows.values.tinyKube.mqttBroker.hostName": "[variables('MQTT_SETTINGS').brokerListenerHost]",
+      "dataFlows.values.tinyKube.mqttBroker.port": "[variables('MQTT_SETTINGS').brokerListenerPort]",
+      "dataFlows.values.tinyKube.mqttBroker.authentication.serviceAccountTokenAudience": "[variables('MQTT_SETTINGS').serviceAccountAudience]",
       "observability.metrics.enabled": "[format('{0}', coalesce(tryGet(tryGet(parameters('advancedConfig'), 'observability'), 'enabled'), false()))]",
       "observability.metrics.openTelemetryCollectorAddress": "[if(coalesce(tryGet(tryGet(parameters('advancedConfig'), 'observability'), 'enabled'), false()), format('{0}', tryGet(tryGet(parameters('advancedConfig'), 'observability'), 'otelCollectorAddress')), '')]",
       "trustSource": "[parameters('trustConfig').source]",
@@ -1194,7 +1167,7 @@
     },
     "aioInstance": {
       "type": "Microsoft.IoTOperations/instances",
-      "apiVersion": "2025-07-01-preview",
+      "apiVersion": "2025-10-01",
       "name": "[coalesce(parameters('aioInstanceName'), format('aio-{0}', variables('HASH')))]",
       "location": "[parameters('clusterLocation')]",
       "extendedLocation": "[variables('extendedLocation')]",
@@ -1213,7 +1186,7 @@
     },
     "broker": {
       "type": "Microsoft.IoTOperations/instances/brokers",
-      "apiVersion": "2025-07-01-preview",
+      "apiVersion": "2025-10-01",
       "name": "[format('{0}/{1}', coalesce(parameters('aioInstanceName'), format('aio-{0}', variables('HASH'))), 'default')]",
       "extendedLocation": "[variables('extendedLocation')]",
       "properties": {
@@ -1246,7 +1219,7 @@
     },
     "brokerAuthn": {
       "type": "Microsoft.IoTOperations/instances/brokers/authentications",
-      "apiVersion": "2025-07-01-preview",
+      "apiVersion": "2025-10-01",
       "name": "[format('{0}/{1}/{2}', coalesce(parameters('aioInstanceName'), format('aio-{0}', variables('HASH'))), 'default', 'default')]",
       "extendedLocation": "[variables('extendedLocation')]",
       "properties": {
@@ -1268,7 +1241,7 @@
     },
     "brokerListener": {
       "type": "Microsoft.IoTOperations/instances/brokers/listeners",
-      "apiVersion": "2025-07-01-preview",
+      "apiVersion": "2025-10-01",
       "name": "[format('{0}/{1}/{2}', coalesce(parameters('aioInstanceName'), format('aio-{0}', variables('HASH'))), 'default', 'default')]",
       "extendedLocation": "[variables('extendedLocation')]",
       "properties": {
@@ -1299,7 +1272,7 @@
     },
     "dataflowProfile": {
       "type": "Microsoft.IoTOperations/instances/dataflowProfiles",
-      "apiVersion": "2025-07-01-preview",
+      "apiVersion": "2025-10-01",
       "name": "[format('{0}/{1}', coalesce(parameters('aioInstanceName'), format('aio-{0}', variables('HASH'))), 'default')]",
       "extendedLocation": "[variables('extendedLocation')]",
       "properties": {
@@ -1312,7 +1285,7 @@
     },
     "dataflowEndpoint": {
       "type": "Microsoft.IoTOperations/instances/dataflowEndpoints",
-      "apiVersion": "2025-07-01-preview",
+      "apiVersion": "2025-10-01",
       "name": "[format('{0}/{1}', coalesce(parameters('aioInstanceName'), format('aio-{0}', variables('HASH'))), 'default')]",
       "extendedLocation": "[variables('extendedLocation')]",
       "properties": {
@@ -1329,6 +1302,23 @@
             "mode": "Enabled",
             "trustedCaCertificateConfigMapRef": "[variables('TRUST_CONFIG_MAP')]"
           }
+        }
+      },
+      "dependsOn": [
+        "aioInstance",
+        "customLocation"
+      ]
+    },
+    "artifactRegistryEndpoint": {
+      "type": "Microsoft.IoTOperations/instances/registryEndpoints",
+      "apiVersion": "2025-10-01",
+      "name": "[format('{0}/{1}', coalesce(parameters('aioInstanceName'), format('aio-{0}', variables('HASH'))), 'default')]",
+      "extendedLocation": "[variables('extendedLocation')]",
+      "properties": {
+        "host": "mcr.microsoft.com",
+        "authentication": {
+          "method": "Anonymous",
+          "anonymousSettings": {}
         }
       },
       "dependsOn": [
@@ -1369,6 +1359,10 @@
         "id": "[resourceId('Microsoft.ExtendedLocation/customLocations', coalesce(parameters('customLocationName'), format('location-{0}', variables('HASH'))))]",
         "name": "[coalesce(parameters('customLocationName'), format('location-{0}', variables('HASH')))]"
       }
+    },
+    "location": {
+      "type": "string",
+      "value": "[parameters('clusterLocation')]"
     }
   }
 }
