@@ -1,40 +1,45 @@
 # AIO Sample Dashboard
 
 ### Overview
-This Grafana dashboard is designed to monitor Azure IoT Operations, offering insights into health, usage, and error trends across clusters. It integrates with **Prometheus** as the data source and is built on Grafana **v10.4.7**. If you need assistance in deploying Observability components, see [this guide](https://learn.microsoft.com/en-us/azure/iot-operations/configure-observability-monitoring/howto-configure-observability).
+This Grafana dashboard is designed to monitor Azure IoT Operations, offering insights into health, usage, and error trends across clusters. It integrates with **Prometheus** as the data source and is built on Grafana **v11.6.3**. If you need assistance in deploying Observability components, see [this guide](https://learn.microsoft.com/en-us/azure/iot-operations/configure-observability-monitoring/howto-configure-observability).
 
 ### Dashboard Panels
 
-1. **AIO Health Model**  
-   Text panel displaying general information on Azure IoT operations' overall health.
+1. **AIO Broker Health**  
+   State timeline displaying health information on Azure IoT operations' Broker health.
 
-2. **AIO Service Health**  
-   State timeline visualizes key health metrics across clusters, such as:
-   - Authentication failures
-   - Authorization denials
-   - Message drops
-   - Backpressure conditions
+2. **AIO Dataflow Health**  
+   State timeline displaying health information on Azure IoT operations' Dataflow Operator health.
 
 3. **Service Errors**  
    A timeseries panel tracking error rates across the service components like:
+   - Broker Backpressure events
+   - Authentication failures
+   - Authorization failures
    - OPC-UA Connectors
    - Dataflow messages and errors
 
-4. **AIO Kubernetes Workload Health**  
+5. **AIO Kubernetes Workload Health**  
    State timeline reflecting Kubernetes pod and container health, including:
    - Workload readiness
    - Container restart rates
    - CPU and memory usage
 
-5. **Kubernetes Node Health**  
+6. **Kubernetes Node Health**  
    Monitors node statuses, such as CPU and memory health, as well as disk usage levels.
 
-6. **Connector (OPC-UA) Assets and DataPoints**  
+7. **Connector (OPC-UA) Assets and DataPoints**  
    Timeseries view showing the count of OPC-UA assets and data points.
 
-7. **Broker Connected Sessions**  
-   Monitors the active sessions of connected brokers and tracks messages published or received by category.
+8. **Broker**  
+   - Monitors the total sessions and subscriptions in the Broker
+   - Tracks messages published or received by category.
+   - Tracks payload size published or received by category.
 
+9. **Dataflows**
+   - Displays number of active Dataflows and Dataflow Graphs
+   - Displays messages received and sent by Endpoint Type
+     
 ### Usage
 
 1. **Add the Dashboard to Grafana**  
