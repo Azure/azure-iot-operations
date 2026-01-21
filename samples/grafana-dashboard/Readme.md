@@ -8,10 +8,10 @@ This Grafana dashboard is designed to monitor Azure IoT Operations, offering ins
 1. **AIO Broker Health**  
    State timeline displaying health information on Azure IoT operations' Broker health.
 
-2. **AIO Dataflow Health**  
+1. **AIO Dataflow Health**  
    State timeline displaying health information on Azure IoT operations' Dataflow Operator health.
 
-3. **Service Errors**  
+1. **Service Errors**  
    A timeseries panel tracking error rates across the service components like:
    - Broker Backpressure events
    - Authentication failures
@@ -19,24 +19,24 @@ This Grafana dashboard is designed to monitor Azure IoT Operations, offering ins
    - OPC-UA Connectors
    - Dataflow messages and errors
 
-5. **AIO Kubernetes Workload Health**  
+1. **AIO Kubernetes Workload Health**  
    State timeline reflecting Kubernetes pod and container health, including:
    - Workload readiness
    - Container restart rates
    - CPU and memory usage
 
-6. **Kubernetes Node Health**  
+1. **Kubernetes Node Health**  
    Monitors node statuses, such as CPU and memory health, as well as disk usage levels.
 
-7. **Connector (OPC-UA) Assets and DataPoints**  
+1. **Connector (OPC-UA) Assets and DataPoints**  
    Timeseries view showing the count of OPC-UA assets and data points.
 
-8. **Broker**  
+1. **Broker**  
    - Monitors the total sessions and subscriptions in the Broker
    - Tracks messages published or received by category.
    - Tracks payload size published or received by category.
 
-9. **Dataflows**
+1. **Dataflows**
    - Displays number of active Dataflows and Dataflow Graphs
    - Displays messages received and sent by Endpoint Type
      
@@ -45,10 +45,10 @@ This Grafana dashboard is designed to monitor Azure IoT Operations, offering ins
 1. **Add the Dashboard to Grafana**  
    Import this dashboard JSON file into Grafana.
 
-2. **Configure Data Source**  
+1. **Configure Data Source**  
    Ensure the Prometheus data source is correctly set up and associated with `${DS_MANAGED_PROMETHEUS_INSTANCE}`.
 
-3. **Viewing Data by Cluster**  
+1. **Viewing Data by Cluster**  
    Use the `$cluster` and `$namespace` variables to filter data by specific clusters and namespaces.
 
 ### Customization
