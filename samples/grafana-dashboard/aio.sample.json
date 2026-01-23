@@ -205,7 +205,7 @@
             "uid": "${DS_MANAGED_PROMETHEUS_INSTANCE}"
           },
           "editorMode": "code",
-          "expr": "label_replace(\r\n  sum(\r\n    sum_over_time(\r\n      aio_broker_connect_route_replication_correctness{cluster=\"$cluster\"}[10m]\r\n    )\r\n  )\r\n  /\r\n  sum(\r\n    count_over_time(\r\n      aio_broker_connect_route_replication_correctness{cluster=\"$cluster\"}[10m]\r\n    )\r\n  ),\r\n  \"_\", \"Connect\", \"__name__\", \".*\"\r\n)\r\nOR on() vector(404)\r\n",
+          "expr": "label_replace(\r\n  sum(\r\n    sum_over_time(\r\n      aio_broker_connect_route_replication_correctness{cluster=\"$cluster\"}[10m]\r\n    )\r\n  )\r\n  /\r\n  sum(\r\n    count_over_time(\r\n      aio_broker_connect_route_replication_correctness{cluster=\"$cluster\"}[10m]\r\n    )\r\n  ) OR on() vector(404),\r\n  \"_\", \"Connect\", \"__name__\", \".*\"\r\n)\r\n",
           "hide": false,
           "legendFormat": "__auto",
           "range": true,
@@ -217,7 +217,7 @@
             "uid": "${DS_MANAGED_PROMETHEUS_INSTANCE}"
           },
           "editorMode": "code",
-          "expr": "label_replace(\r\n  sum(\r\n    sum_over_time(\r\n      aio_broker_publish_route_replication_correctness{cluster=\"$cluster\"}[10m]\r\n    )\r\n  )\r\n  /\r\n  sum(\r\n    count_over_time(\r\n      aio_broker_publish_route_replication_correctness{cluster=\"$cluster\"}[10m]\r\n    )\r\n  ),\r\n  \"_\", \"Publish\", \"__name__\", \".*\"\r\n)\r\nOR on() vector(404)\r\n",
+          "expr": "label_replace(\r\n  sum(\r\n    sum_over_time(\r\n      aio_broker_publish_route_replication_correctness{cluster=\"$cluster\"}[10m]\r\n    )\r\n  )\r\n  /\r\n  sum(\r\n    count_over_time(\r\n      aio_broker_publish_route_replication_correctness{cluster=\"$cluster\"}[10m]\r\n    )\r\n  ) OR on() vector(404),\r\n  \"_\", \"Publish\", \"__name__\", \".*\"\r\n)\r\n",
           "hide": false,
           "legendFormat": "__auto",
           "range": true,
@@ -229,7 +229,7 @@
             "uid": "${DS_MANAGED_PROMETHEUS_INSTANCE}"
           },
           "editorMode": "code",
-          "expr": "label_replace(\r\n  sum(\r\n    sum_over_time(\r\n      aio_broker_subscribe_route_replication_correctness{cluster=\"$cluster\"}[10m]\r\n    )\r\n  )\r\n  /\r\n  sum(\r\n    count_over_time(\r\n      aio_broker_subscribe_route_replication_correctness{cluster=\"$cluster\"}[10m]\r\n    )\r\n  ),\r\n  \"_\", \"Subscribe\", \"__name__\", \".*\"\r\n)\r\nOR on() vector(404)\r\n",
+          "expr": "label_replace(\r\n  sum(\r\n    sum_over_time(\r\n      aio_broker_subscribe_route_replication_correctness{cluster=\"$cluster\"}[10m]\r\n    )\r\n  )\r\n  /\r\n  sum(\r\n    count_over_time(\r\n      aio_broker_subscribe_route_replication_correctness{cluster=\"$cluster\"}[10m]\r\n    )\r\n  ) OR on() vector(404),\r\n  \"_\", \"Subscribe\", \"__name__\", \".*\"\r\n)\r\n\r\n",
           "hide": false,
           "legendFormat": "__auto",
           "range": true,
@@ -241,7 +241,7 @@
             "uid": "${DS_MANAGED_PROMETHEUS_INSTANCE}"
           },
           "editorMode": "code",
-          "expr": "label_replace(\r\n  (\r\n    sum( # Total signals for 10m\r\n      count_over_time(\r\n        aio_broker_message_delivery_check_total_timeouts{cluster=\"$cluster\"}[10m]\r\n      )\r\n    )\r\n    -\r\n    sum( # Total failures for 10m\r\n      sum_over_time(\r\n        aio_broker_message_delivery_check_total_timeouts{cluster=\"$cluster\"}[10m]\r\n      )\r\n    )\r\n  )\r\n  / # Divide by total signals to get success rate\r\n  sum( \r\n    count_over_time(\r\n      aio_broker_message_delivery_check_total_timeouts{cluster=\"$cluster\"}[10m]\r\n    )\r\n  ),\r\n  \"_\", \"Message Delivery\", \"__name__\", \".*\"\r\n)\r\nOR on() vector(404)",
+          "expr": "label_replace(\r\n  (\r\n    sum( # Total signals for 10m\r\n      count_over_time(\r\n        aio_broker_message_delivery_check_total_timeouts{cluster=\"$cluster\"}[10m]\r\n      )\r\n    )\r\n    -\r\n    sum( # Total failures for 10m\r\n      sum_over_time(\r\n        aio_broker_message_delivery_check_total_timeouts{cluster=\"$cluster\"}[10m]\r\n      )\r\n    )\r\n  )\r\n  / # Divide by total signals to get success rate\r\n  sum( \r\n    count_over_time(\r\n      aio_broker_message_delivery_check_total_timeouts{cluster=\"$cluster\"}[10m]\r\n    )\r\n  ) OR on() vector(404),\r\n  \"_\", \"Message Delivery\", \"__name__\", \".*\"\r\n)\r\n",
           "hide": false,
           "legendFormat": "__auto",
           "range": true,
@@ -253,7 +253,7 @@
             "uid": "${DS_MANAGED_PROMETHEUS_INSTANCE}"
           },
           "editorMode": "code",
-          "expr": "label_replace(\r\n  sum(\r\n    sum_over_time(\r\n      aio_broker_ping_correctness{cluster=\"$cluster\"}[10m]\r\n    )\r\n  )\r\n  /\r\n  sum(\r\n    count_over_time(\r\n      aio_broker_ping_correctness{cluster=\"$cluster\"}[10m]\r\n    )\r\n  ),\r\n  \"_\", \"Ping\", \"__name__\", \".*\"\r\n)\r\nOR on() vector(404)\r\n",
+          "expr": "label_replace(\r\n  sum(\r\n    sum_over_time(\r\n      aio_broker_ping_correctness{cluster=\"$cluster\"}[10m]\r\n    )\r\n  )\r\n  /\r\n  sum(\r\n    count_over_time(\r\n      aio_broker_ping_correctness{cluster=\"$cluster\"}[10m]\r\n    )\r\n  ) OR on() vector(404),\r\n  \"_\", \"Ping\", \"__name__\", \".*\"\r\n)\r\n\r\n",
           "hide": false,
           "legendFormat": "__auto",
           "range": true,
@@ -346,7 +346,7 @@
             "uid": "${DS_MANAGED_PROMETHEUS_INSTANCE}"
           },
           "editorMode": "code",
-          "expr": "label_replace(\r\n  sum by (_) (\r\n    1 - max_over_time(\r\n      aio_dataflow_reconcile_errors{cluster=\"$cluster\"}[1m]\r\n    )\r\n  ),\r\n  \"_\",\r\n  \"Operator Health\",\r\n  \"__name__\",\r\n  \".*\"\r\n)\r\nOR on() vector(1)\r\n",
+          "expr": "label_replace(\r\n  sum by (_) (\r\n    1 - max_over_time(\r\n      aio_dataflow_reconcile_errors{cluster=\"$cluster\"}[1m]\r\n    )\r\n  ) OR on() vector(1),\r\n  \"_\",\r\n  \"Operator Health\",\r\n  \"__name__\",\r\n  \".*\"\r\n)\r\n",
           "hide": false,
           "legendFormat": "__auto",
           "range": true,
@@ -2758,6 +2758,132 @@
       "title": "Dataflows Messages Sent by EndPointType and DataflowId [$cluster]",
       "transparent": true,
       "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_MANAGED_PROMETHEUS_INSTANCE}"
+      },
+      "description": "P95 and P50",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "links": [],
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#505050"
+              },
+              {
+                "color": "red",
+                "value": 0
+              },
+              {
+                "color": "green",
+                "value": 1
+              },
+              {
+                "color": "#505050",
+                "value": 404
+              }
+            ]
+          },
+          "unit": "ms"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 24,
+        "x": 0,
+        "y": 106
+      },
+      "id": 218,
+      "maxPerRow": 12,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.6.3",
+      "repeat": "cluster",
+      "repeatDirection": "h",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_MANAGED_PROMETHEUS_INSTANCE}"
+          },
+          "editorMode": "code",
+          "expr": "histogram_quantile(\r\n  0.95,\r\n  sum by (le, source_service_type) (\r\n    rate(aio_dataflow_processing_latency_bucket[5m])\r\n  )\r\n)",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "p95 {{source_service_type}}",
+          "range": true,
+          "refId": "P95"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_MANAGED_PROMETHEUS_INSTANCE}"
+          },
+          "editorMode": "code",
+          "expr": "histogram_quantile(\r\n  0.50,\r\n  sum by (le, source_service_type) (\r\n    rate(aio_dataflow_processing_latency_bucket[5m])\r\n  )\r\n)",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "p50 {{source_service_type}}",
+          "range": true,
+          "refId": "P50"
+        }
+      ],
+      "title": "Dataflows Processing Latency by EndPointType [$cluster]",
+      "transparent": true,
+      "type": "timeseries"
     }
   ],
   "schemaVersion": 41,
@@ -2819,13 +2945,13 @@
     ]
   },
   "time": {
-    "from": "now-7d",
+    "from": "now-24h",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "browser",
   "title": "AIO Sample Dashboard",
   "uid": "de1sdpihgmjggd",
-  "version": 18,
+  "version": 19,
   "weekStart": ""
 }
