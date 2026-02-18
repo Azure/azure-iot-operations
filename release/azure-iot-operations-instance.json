@@ -5,8 +5,8 @@
   "metadata": {
     "_generator": {
       "name": "bicep",
-      "version": "0.39.26.7824",
-      "templateHash": "15070080871084967278"
+      "version": "0.40.2.10011",
+      "templateHash": "2546270884079079828"
     }
   },
   "definitions": {
@@ -1071,7 +1071,7 @@
   },
   "variables": {
     "VERSIONS": {
-      "iotOperations": "1.2.154"
+      "iotOperations": "1.2.189"
     },
     "TRAINS": {
       "iotOperations": "stable"
@@ -1136,7 +1136,7 @@
     "aioExtension": {
       "type": "Microsoft.KubernetesConfiguration/extensions",
       "apiVersion": "2023-05-01",
-      "scope": "[format('Microsoft.Kubernetes/connectedClusters/{0}', parameters('clusterName'))]",
+      "scope": "[resourceId('Microsoft.Kubernetes/connectedClusters', parameters('clusterName'))]",
       "name": "[format('azure-iot-operations-{0}', variables('AIO_EXTENSION_SUFFIX'))]",
       "identity": {
         "type": "SystemAssigned"
