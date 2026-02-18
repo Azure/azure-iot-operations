@@ -5,8 +5,8 @@
   "metadata": {
     "_generator": {
       "name": "bicep",
-      "version": "0.39.26.7824",
-      "templateHash": "15101221845416558399"
+      "version": "0.40.2.10011",
+      "templateHash": "9573832769461058187"
     }
   },
   "definitions": {
@@ -893,8 +893,8 @@
   },
   "variables": {
     "VERSIONS": {
-      "certManager": "0.7.0",
-      "secretStore": "1.1.5"
+      "certManager": "0.9.0",
+      "secretStore": "1.1.6"
     },
     "TRAINS": {
       "certManager": "stable",
@@ -912,7 +912,7 @@
       "condition": "[equals(parameters('trustConfig').source, 'SelfSigned')]",
       "type": "Microsoft.KubernetesConfiguration/extensions",
       "apiVersion": "2023-05-01",
-      "scope": "[format('Microsoft.Kubernetes/connectedClusters/{0}', parameters('clusterName'))]",
+      "scope": "[resourceId('Microsoft.Kubernetes/connectedClusters', parameters('clusterName'))]",
       "name": "cert-manager",
       "identity": {
         "type": "SystemAssigned"
@@ -936,7 +936,7 @@
     "secretStoreExtension": {
       "type": "Microsoft.KubernetesConfiguration/extensions",
       "apiVersion": "2023-05-01",
-      "scope": "[format('Microsoft.Kubernetes/connectedClusters/{0}', parameters('clusterName'))]",
+      "scope": "[resourceId('Microsoft.Kubernetes/connectedClusters', parameters('clusterName'))]",
       "name": "azure-secret-store",
       "identity": {
         "type": "SystemAssigned"
