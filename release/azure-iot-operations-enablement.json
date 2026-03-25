@@ -5,8 +5,8 @@
   "metadata": {
     "_generator": {
       "name": "bicep",
-      "version": "0.40.2.10011",
-      "templateHash": "9573832769461058187"
+      "version": "0.41.2.15936",
+      "templateHash": "8518564816807798756"
     }
   },
   "definitions": {
@@ -232,15 +232,141 @@
             "description": "The persistence settings of the Broker."
           }
         },
-        "logsLevel": {
-          "type": "string",
+        "diagnostics": {
+          "$ref": "#/definitions/_1.BrokerDiagnostics",
           "nullable": true,
           "metadata": {
-            "description": "The AIO Broker logging level. The default is \"info\"."
+            "description": "The AIO Broker diagnostics settings."
           }
         }
       },
       "metadata": {
+        "__bicep_imported_from!": {
+          "sourceTemplate": "types.bicep"
+        }
+      }
+    },
+    "_1.BrokerDiagnostics": {
+      "type": "object",
+      "properties": {
+        "logs": {
+          "type": "object",
+          "properties": {
+            "level": {
+              "type": "string",
+              "nullable": true,
+              "metadata": {
+                "description": "The log level. Examples - \"debug\", \"info\", \"warn\", \"error\", \"trace\"."
+              }
+            }
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "The log settings of the broker."
+          }
+        },
+        "metrics": {
+          "type": "object",
+          "properties": {
+            "prometheusPort": {
+              "type": "int",
+              "nullable": true,
+              "metadata": {
+                "description": "The prometheus port to expose the metrics."
+              }
+            }
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "The metrics properties."
+          }
+        },
+        "selfCheck": {
+          "type": "object",
+          "properties": {
+            "mode": {
+              "$ref": "#/definitions/_1.OperationalMode",
+              "nullable": true,
+              "metadata": {
+                "description": "The toggle to enable/disable self check. Allowed values: \"Enabled\", \"enabled\", \"Disabled\", \"disabled\"."
+              }
+            },
+            "intervalSeconds": {
+              "type": "int",
+              "nullable": true,
+              "metadata": {
+                "description": "The self check interval in seconds."
+              }
+            },
+            "timeoutSeconds": {
+              "type": "int",
+              "nullable": true,
+              "metadata": {
+                "description": "The timeout for self check in seconds."
+              }
+            }
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "The self check properties."
+          }
+        },
+        "traces": {
+          "type": "object",
+          "properties": {
+            "mode": {
+              "$ref": "#/definitions/_1.OperationalMode",
+              "nullable": true,
+              "metadata": {
+                "description": "The toggle to enable/disable traces. Allowed values: \"Enabled\", \"enabled\", \"Disabled\", \"disabled\"."
+              }
+            },
+            "cacheSizeMegabytes": {
+              "type": "int",
+              "nullable": true,
+              "metadata": {
+                "description": "The cache size in megabytes."
+              }
+            },
+            "selfTracing": {
+              "type": "object",
+              "properties": {
+                "mode": {
+                  "$ref": "#/definitions/_1.OperationalMode",
+                  "nullable": true,
+                  "metadata": {
+                    "description": "The toggle to enable/disable self tracing. Allowed values: \"Enabled\", \"enabled\", \"Disabled\", \"disabled\"."
+                  }
+                },
+                "intervalSeconds": {
+                  "type": "int",
+                  "nullable": true,
+                  "metadata": {
+                    "description": "The self tracing interval in seconds."
+                  }
+                }
+              },
+              "nullable": true,
+              "metadata": {
+                "description": "The self tracing properties."
+              }
+            },
+            "spanChannelCapacity": {
+              "type": "int",
+              "nullable": true,
+              "metadata": {
+                "description": "The span channel capacity."
+              }
+            }
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "The trace properties."
+          }
+        }
+      },
+      "metadata": {
+        "description": "Defines the diagnostics settings for the Broker CRD.",
         "__bicep_imported_from!": {
           "sourceTemplate": "types.bicep"
         }
@@ -893,8 +1019,8 @@
   },
   "variables": {
     "VERSIONS": {
-      "certManager": "0.9.0",
-      "secretStore": "1.1.6"
+      "certManager": "0.10.2",
+      "secretStore": "1.3.0"
     },
     "TRAINS": {
       "certManager": "stable",
