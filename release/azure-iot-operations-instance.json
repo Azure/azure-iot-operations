@@ -5,8 +5,8 @@
   "metadata": {
     "_generator": {
       "name": "bicep",
-      "version": "0.41.2.15936",
-      "templateHash": "4293282767321526451"
+      "version": "0.42.1.51946",
+      "templateHash": "13327234406501769441"
     }
   },
   "definitions": {
@@ -1198,7 +1198,7 @@
   },
   "variables": {
     "VERSIONS": {
-      "iotOperations": "1.3.38"
+      "iotOperations": "1.3.70"
     },
     "TRAINS": {
       "iotOperations": "stable"

@@ -83,7 +83,7 @@ param advancedConfig types.AdvancedConfig = {}
 /*****************************************************************************/
 
 var VERSIONS = {
-  iotOperations: '1.3.38'
+  iotOperations: '1.3.70'
 }
 
 var TRAINS = {
