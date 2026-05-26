@@ -31,8 +31,8 @@ param advancedConfig types.AdvancedConfig = {}
 // Note: Do NOT update the keys of this object. The AIO Portal Wizard depends on the
 // format of this object. Updating keys will break the UI.
 var VERSIONS = {
-  certManager: '0.11.0'
-  secretStore: '1.4.0'
+  certManager: '0.12.0'
+  secretStore: '1.4.1'
 }
 
 var TRAINS = {
