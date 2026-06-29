@@ -5,8 +5,8 @@
   "metadata": {
     "_generator": {
       "name": "bicep",
-      "version": "0.43.8.12551",
-      "templateHash": "10429247713227659883"
+      "version": "0.44.1.10279",
+      "templateHash": "7441326017904271928"
     }
   },
   "definitions": {
@@ -1019,8 +1019,8 @@
   },
   "variables": {
     "VERSIONS": {
-      "certManager": "0.12.0",
-      "secretStore": "1.4.1"
+      "certManager": "0.13.3",
+      "secretStore": "1.5.0"
     },
     "TRAINS": {
       "certManager": "stable",
