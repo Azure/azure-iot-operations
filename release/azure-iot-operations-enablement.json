@@ -5,8 +5,8 @@
   "metadata": {
     "_generator": {
       "name": "bicep",
-      "version": "0.44.1.10279",
-      "templateHash": "7441326017904271928"
+      "version": "0.45.15.27210",
+      "templateHash": "381872897952304332"
     }
   },
   "definitions": {
@@ -42,6 +42,20 @@
               "type": "object",
               "properties": {
                 "enabled": {
+                  "type": "string",
+                  "nullable": true
+                }
+              },
+              "nullable": true
+            },
+            "secretTargets": {
+              "type": "object",
+              "properties": {
+                "enabled": {
+                  "type": "string",
+                  "nullable": true
+                },
+                "authorizedSecretsAll": {
                   "type": "string",
                   "nullable": true
                 }
@@ -1019,8 +1033,8 @@
   },
   "variables": {
     "VERSIONS": {
-      "certManager": "0.13.3",
-      "secretStore": "1.5.0"
+      "certManager": "0.14.0",
+      "secretStore": "1.5.1"
     },
     "TRAINS": {
       "certManager": "stable",
@@ -1055,7 +1069,9 @@
         },
         "configurationSettings": {
           "AgentOperationTimeoutInMinutes": "20",
-          "global.telemetry.enabled": "[coalesce(tryGet(tryGet(tryGet(parameters('advancedConfig'), 'certManager'), 'telemetry'), 'enabled'), 'true')]"
+          "global.telemetry.enabled": "[coalesce(tryGet(tryGet(tryGet(parameters('advancedConfig'), 'certManager'), 'telemetry'), 'enabled'), 'true')]",
+          "trust-manager.secretTargets.enabled": "[coalesce(tryGet(tryGet(tryGet(parameters('advancedConfig'), 'certManager'), 'secretTargets'), 'enabled'), 'false')]",
+          "trust-manager.secretTargets.authorizedSecretsAll": "[coalesce(tryGet(tryGet(tryGet(parameters('advancedConfig'), 'certManager'), 'secretTargets'), 'authorizedSecretsAll'), 'false')]"
         }
       }
     },

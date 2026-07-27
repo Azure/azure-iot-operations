@@ -5,8 +5,8 @@
   "metadata": {
     "_generator": {
       "name": "bicep",
-      "version": "0.44.1.10279",
-      "templateHash": "9460116843817118827"
+      "version": "0.45.15.27210",
+      "templateHash": "10091655467238651388"
     }
   },
   "definitions": {
@@ -42,6 +42,20 @@
               "type": "object",
               "properties": {
                 "enabled": {
+                  "type": "string",
+                  "nullable": true
+                }
+              },
+              "nullable": true
+            },
+            "secretTargets": {
+              "type": "object",
+              "properties": {
+                "enabled": {
+                  "type": "string",
+                  "nullable": true
+                },
+                "authorizedSecretsAll": {
                   "type": "string",
                   "nullable": true
                 }
@@ -1188,6 +1202,13 @@
         "description": "Instance count for the default dataflow profile. The default is 1."
       }
     },
+    "enableGdsManager": {
+      "type": "bool",
+      "defaultValue": true,
+      "metadata": {
+        "description": "Enable the OPC UA GDS Manager. Disable this for single-node test clusters."
+      }
+    },
     "advancedConfig": {
       "$ref": "#/definitions/_1.AdvancedConfig",
       "defaultValue": {},
@@ -1198,7 +1219,7 @@
   },
   "variables": {
     "VERSIONS": {
-      "iotOperations": "1.3.137"
+      "iotOperations": "1.4.41"
     },
     "TRAINS": {
       "iotOperations": "stable"
@@ -1237,6 +1258,7 @@
       "connectors.values.mqttBroker.serviceAccountTokenAudience": "[variables('MQTT_SETTINGS').serviceAccountAudience]",
       "connectors.values.securityPki.applicationUri": "[format('urn:microsoft.com:aio:opc:ua:broker:{0}', variables('AIO_EXTENSION_SUFFIX'))]",
       "connectors.values.securityPki.subjectName": "[format('CN=aio-opc-opcuabroker-{0}', variables('AIO_EXTENSION_SUFFIX'))]",
+      "connectors.values.gdsManager.enabled": "[if(parameters('enableGdsManager'), 'true', 'false')]",
       "dataFlows.values.tinyKube.mqttBroker.hostName": "[variables('MQTT_SETTINGS').brokerListenerHost]",
       "dataFlows.values.tinyKube.mqttBroker.port": "[variables('MQTT_SETTINGS').brokerListenerPort]",
       "dataFlows.values.tinyKube.mqttBroker.authentication.serviceAccountTokenAudience": "[variables('MQTT_SETTINGS').serviceAccountAudience]",
@@ -1296,7 +1318,7 @@
     },
     "aioInstance": {
       "type": "Microsoft.IoTOperations/instances",
-      "apiVersion": "2026-03-01",
+      "apiVersion": "2026-07-01",
       "name": "[coalesce(parameters('aioInstanceName'), format('aio-{0}', variables('HASH')))]",
       "location": "[parameters('clusterLocation')]",
       "extendedLocation": "[variables('extendedLocation')]",
@@ -1315,7 +1337,7 @@
     },
     "broker": {
       "type": "Microsoft.IoTOperations/instances/brokers",
-      "apiVersion": "2026-03-01",
+      "apiVersion": "2026-07-01",
       "name": "[format('{0}/{1}', coalesce(parameters('aioInstanceName'), format('aio-{0}', variables('HASH'))), 'default')]",
       "extendedLocation": "[variables('extendedLocation')]",
       "properties": {
@@ -1344,7 +1366,7 @@
     },
     "brokerAuthn": {
       "type": "Microsoft.IoTOperations/instances/brokers/authentications",
-      "apiVersion": "2026-03-01",
+      "apiVersion": "2026-07-01",
       "name": "[format('{0}/{1}/{2}', coalesce(parameters('aioInstanceName'), format('aio-{0}', variables('HASH'))), 'default', 'default')]",
       "extendedLocation": "[variables('extendedLocation')]",
       "properties": {
@@ -1366,7 +1388,7 @@
     },
     "brokerListener": {
       "type": "Microsoft.IoTOperations/instances/brokers/listeners",
-      "apiVersion": "2026-03-01",
+      "apiVersion": "2026-07-01",
       "name": "[format('{0}/{1}/{2}', coalesce(parameters('aioInstanceName'), format('aio-{0}', variables('HASH'))), 'default', 'default')]",
       "extendedLocation": "[variables('extendedLocation')]",
       "properties": {
@@ -1397,7 +1419,7 @@
     },
     "dataflowProfile": {
       "type": "Microsoft.IoTOperations/instances/dataflowProfiles",
-      "apiVersion": "2026-03-01",
+      "apiVersion": "2026-07-01",
       "name": "[format('{0}/{1}', coalesce(parameters('aioInstanceName'), format('aio-{0}', variables('HASH'))), 'default')]",
       "extendedLocation": "[variables('extendedLocation')]",
       "properties": {
@@ -1411,7 +1433,7 @@
     },
     "dataflowEndpoint": {
       "type": "Microsoft.IoTOperations/instances/dataflowEndpoints",
-      "apiVersion": "2026-03-01",
+      "apiVersion": "2026-07-01",
       "name": "[format('{0}/{1}', coalesce(parameters('aioInstanceName'), format('aio-{0}', variables('HASH'))), 'default')]",
       "extendedLocation": "[variables('extendedLocation')]",
       "properties": {
@@ -1437,7 +1459,7 @@
     },
     "artifactRegistryEndpoint": {
       "type": "Microsoft.IoTOperations/instances/registryEndpoints",
-      "apiVersion": "2026-03-01",
+      "apiVersion": "2026-07-01",
       "name": "[format('{0}/{1}', coalesce(parameters('aioInstanceName'), format('aio-{0}', variables('HASH'))), 'default')]",
       "extendedLocation": "[variables('extendedLocation')]",
       "properties": {

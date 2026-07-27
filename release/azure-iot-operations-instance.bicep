@@ -75,6 +75,9 @@ param trustConfig types.TrustConfig = {
 @description('Instance count for the default dataflow profile. The default is 1.')
 param defaultDataflowInstanceCount int = 1
 
+@description('Enable the OPC UA GDS Manager. Disable this for single-node test clusters.')
+param enableGdsManager bool = true
+
 @description('Advanced Configuration for development')
 param advancedConfig types.AdvancedConfig = {}
 
@@ -83,7 +86,7 @@ param advancedConfig types.AdvancedConfig = {}
 /*****************************************************************************/
 
 var VERSIONS = {
-  iotOperations: '1.3.137'
+  iotOperations: '1.4.41'
 }
 
 var TRAINS = {
@@ -145,6 +148,7 @@ var defaultAioConfigurationSettings = {
   'connectors.values.mqttBroker.serviceAccountTokenAudience': MQTT_SETTINGS.serviceAccountAudience
   'connectors.values.securityPki.applicationUri': 'urn:microsoft.com:aio:opc:ua:broker:${AIO_EXTENSION_SUFFIX}'
   'connectors.values.securityPki.subjectName': 'CN=aio-opc-opcuabroker-${AIO_EXTENSION_SUFFIX}'
+  'connectors.values.gdsManager.enabled': enableGdsManager ? 'true' : 'false'
 
   'dataFlows.values.tinyKube.mqttBroker.hostName': MQTT_SETTINGS.brokerListenerHost
   'dataFlows.values.tinyKube.mqttBroker.port': MQTT_SETTINGS.brokerListenerPort
@@ -208,7 +212,7 @@ var extendedLocation = {
 /*     Deployment of Helm Charts and CRs to run on Arc-enabled cluster.      */
 /*****************************************************************************/
 
-resource aioInstance 'Microsoft.IoTOperations/instances@2026-03-01' = {
+resource aioInstance 'Microsoft.IoTOperations/instances@2026-07-01' = {
   name: aioInstanceName ?? 'aio-${HASH}'
   location: clusterLocation
   extendedLocation: extendedLocation
@@ -231,7 +235,7 @@ resource aioInstance 'Microsoft.IoTOperations/instances@2026-03-01' = {
 /*                             Broker Resources.                             */
 /*****************************************************************************/
 
-resource broker 'Microsoft.IoTOperations/instances/brokers@2026-03-01' = {
+resource broker 'Microsoft.IoTOperations/instances/brokers@2026-07-01' = {
   parent: aioInstance
   name: 'default'
   extendedLocation: extendedLocation
@@ -256,7 +260,7 @@ resource broker 'Microsoft.IoTOperations/instances/brokers@2026-03-01' = {
   }
 }
 
-resource brokerAuthn 'Microsoft.IoTOperations/instances/brokers/authentications@2026-03-01' = {
+resource brokerAuthn 'Microsoft.IoTOperations/instances/brokers/authentications@2026-07-01' = {
   parent: broker
   name: 'default'
   extendedLocation: extendedLocation
@@ -274,7 +278,7 @@ resource brokerAuthn 'Microsoft.IoTOperations/instances/brokers/authentications@
   }
 }
 
-resource brokerListener 'Microsoft.IoTOperations/instances/brokers/listeners@2026-03-01' = {
+resource brokerListener 'Microsoft.IoTOperations/instances/brokers/listeners@2026-07-01' = {
   parent: broker
   name: 'default'
   extendedLocation: extendedLocation
@@ -304,7 +308,7 @@ resource brokerListener 'Microsoft.IoTOperations/instances/brokers/listeners@202
 /*                             Dataflow Resources.                           */
 /*****************************************************************************/
 
-resource dataflowProfile 'Microsoft.IoTOperations/instances/dataflowProfiles@2026-03-01' = {
+resource dataflowProfile 'Microsoft.IoTOperations/instances/dataflowProfiles@2026-07-01' = {
   parent: aioInstance
   name: 'default'
   dependsOn: [
@@ -316,7 +320,7 @@ resource dataflowProfile 'Microsoft.IoTOperations/instances/dataflowProfiles@202
   }
 }
 
-resource dataflowEndpoint 'Microsoft.IoTOperations/instances/dataflowEndpoints@2026-03-01' = {
+resource dataflowEndpoint 'Microsoft.IoTOperations/instances/dataflowEndpoints@2026-07-01' = {
   parent: aioInstance
   name: 'default'
   extendedLocation: extendedLocation
@@ -338,7 +342,7 @@ resource dataflowEndpoint 'Microsoft.IoTOperations/instances/dataflowEndpoints@2
   }
 }
 
-resource artifactRegistryEndpoint 'Microsoft.IoTOperations/instances/registryEndpoints@2026-03-01' = {
+resource artifactRegistryEndpoint 'Microsoft.IoTOperations/instances/registryEndpoints@2026-07-01' = {
   parent: aioInstance
   name: 'default'
   extendedLocation: extendedLocation
