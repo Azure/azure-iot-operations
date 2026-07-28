@@ -6,7 +6,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.45.15.27210",
-      "templateHash": "10091655467238651388"
+      "templateHash": "1542672663147277619"
     }
   },
   "definitions": {
@@ -1202,13 +1202,6 @@
         "description": "Instance count for the default dataflow profile. The default is 1."
       }
     },
-    "enableGdsManager": {
-      "type": "bool",
-      "defaultValue": true,
-      "metadata": {
-        "description": "Enable the OPC UA GDS Manager. Disable this for single-node test clusters."
-      }
-    },
     "advancedConfig": {
       "$ref": "#/definitions/_1.AdvancedConfig",
       "defaultValue": {},
@@ -1258,7 +1251,6 @@
       "connectors.values.mqttBroker.serviceAccountTokenAudience": "[variables('MQTT_SETTINGS').serviceAccountAudience]",
       "connectors.values.securityPki.applicationUri": "[format('urn:microsoft.com:aio:opc:ua:broker:{0}', variables('AIO_EXTENSION_SUFFIX'))]",
       "connectors.values.securityPki.subjectName": "[format('CN=aio-opc-opcuabroker-{0}', variables('AIO_EXTENSION_SUFFIX'))]",
-      "connectors.values.gdsManager.enabled": "[if(parameters('enableGdsManager'), 'true', 'false')]",
       "dataFlows.values.tinyKube.mqttBroker.hostName": "[variables('MQTT_SETTINGS').brokerListenerHost]",
       "dataFlows.values.tinyKube.mqttBroker.port": "[variables('MQTT_SETTINGS').brokerListenerPort]",
       "dataFlows.values.tinyKube.mqttBroker.authentication.serviceAccountTokenAudience": "[variables('MQTT_SETTINGS').serviceAccountAudience]",

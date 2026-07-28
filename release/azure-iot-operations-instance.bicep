@@ -75,9 +75,6 @@ param trustConfig types.TrustConfig = {
 @description('Instance count for the default dataflow profile. The default is 1.')
 param defaultDataflowInstanceCount int = 1
 
-@description('Enable the OPC UA GDS Manager. Disable this for single-node test clusters.')
-param enableGdsManager bool = true
-
 @description('Advanced Configuration for development')
 param advancedConfig types.AdvancedConfig = {}
 
@@ -148,7 +145,6 @@ var defaultAioConfigurationSettings = {
   'connectors.values.mqttBroker.serviceAccountTokenAudience': MQTT_SETTINGS.serviceAccountAudience
   'connectors.values.securityPki.applicationUri': 'urn:microsoft.com:aio:opc:ua:broker:${AIO_EXTENSION_SUFFIX}'
   'connectors.values.securityPki.subjectName': 'CN=aio-opc-opcuabroker-${AIO_EXTENSION_SUFFIX}'
-  'connectors.values.gdsManager.enabled': enableGdsManager ? 'true' : 'false'
 
   'dataFlows.values.tinyKube.mqttBroker.hostName': MQTT_SETTINGS.brokerListenerHost
   'dataFlows.values.tinyKube.mqttBroker.port': MQTT_SETTINGS.brokerListenerPort
