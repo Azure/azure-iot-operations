@@ -10,6 +10,10 @@ type AdvancedConfig = {
     telemetry: {
       enabled: string?
     }?
+    secretTargets: {
+      enabled: string?
+      authorizedSecretsAll: string?
+    }?
   }?
   aio: {
     version: string?

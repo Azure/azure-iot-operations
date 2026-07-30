@@ -31,8 +31,8 @@ param advancedConfig types.AdvancedConfig = {}
 // Note: Do NOT update the keys of this object. The AIO Portal Wizard depends on the
 // format of this object. Updating keys will break the UI.
 var VERSIONS = {
-  certManager: '0.13.3'
-  secretStore: '1.5.0'
+  certManager: '0.14.0'
+  secretStore: '1.5.1'
 }
 
 var TRAINS = {
@@ -71,6 +71,8 @@ resource certManagerExtension 'Microsoft.KubernetesConfiguration/extensions@2023
     configurationSettings: {
       AgentOperationTimeoutInMinutes: '20'
       'global.telemetry.enabled': advancedConfig.?certManager.?telemetry.?enabled ?? 'true'
+      'trust-manager.secretTargets.enabled': advancedConfig.?certManager.?secretTargets.?enabled ?? 'false'
+      'trust-manager.secretTargets.authorizedSecretsAll': advancedConfig.?certManager.?secretTargets.?authorizedSecretsAll ?? 'false'
     }
   }
 }
