@@ -20,6 +20,9 @@ type AdvancedConfig = {
     train: string?
     configurationSettingsOverride: object?
   }?
+  connectors: {
+    version: string?
+  }?
   secretSyncController: {
     version: string?
     train: string?

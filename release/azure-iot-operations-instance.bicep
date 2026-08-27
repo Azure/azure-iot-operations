@@ -83,7 +83,8 @@ param advancedConfig types.AdvancedConfig = {}
 /*****************************************************************************/
 
 var VERSIONS = {
-  iotOperations: '1.4.41'
+  iotOperations: '1.4.73'
+  connectors: '1.4.11'
 }
 
 var TRAINS = {
@@ -107,6 +108,13 @@ var ISSUER_NAME = customerManagedTrust ? trustConfig.settings.issuerName : '${cl
 var TRUST_CONFIG_MAP = customerManagedTrust
   ? trustConfig.settings.configMapName
   : '${clusterNamespace}-aio-ca-trust-bundle'
+var TRUST_CONFIG_MAP_KEY = customerManagedTrust
+  ? trustConfig.settings.configMapKey
+  : 'ca.crt'
+
+// OPC UA connector version. Defaults to the connectors release bundled by the AIO
+// extension (VERSIONS.connectors); overridable per-deployment via advancedConfig.
+var OPCUA_CONNECTOR_VERSION = advancedConfig.?connectors.?version ?? VERSIONS.connectors
 
 var MQTT_SETTINGS = {
   brokerListenerServiceName: 'aio-broker'
@@ -149,6 +157,8 @@ var defaultAioConfigurationSettings = {
   'dataFlows.values.tinyKube.mqttBroker.hostName': MQTT_SETTINGS.brokerListenerHost
   'dataFlows.values.tinyKube.mqttBroker.port': MQTT_SETTINGS.brokerListenerPort
   'dataFlows.values.tinyKube.mqttBroker.authentication.serviceAccountTokenAudience': MQTT_SETTINGS.serviceAccountAudience
+  'dataFlows.values.wasmGraphController.mqttBroker.caCertConfigMapRef': TRUST_CONFIG_MAP
+  'dataFlows.values.wasmGraphController.mqttBroker.caCertFileName': TRUST_CONFIG_MAP_KEY
 
   'observability.metrics.enabled': '${advancedConfig.?observability.?enabled ?? false}'
   'observability.metrics.openTelemetryCollectorAddress': advancedConfig.?observability.?enabled ?? false
@@ -348,6 +358,60 @@ resource artifactRegistryEndpoint 'Microsoft.IoTOperations/instances/registryEnd
       method: 'Anonymous'
       anonymousSettings: {}
     }
+  }
+}
+
+/*****************************************************************************/
+/*                          Connector Templates.                             */
+/*****************************************************************************/
+
+// The OPC UA connector is supervisor-managed: the AIO extension maps this template
+// to a ConnectorTemplate CR labelled 'aio-opc-supervisor', and the OPC UA supervisor
+// (deployed by the connectors extension) creates the actual connector pods on demand.
+// Per the connector metadata (AzureIoTOperationsOPCUAConnector), the connector image is
+// the supervisor image, not the opcua-connector image.
+//
+// The name MUST start with 'azureiotoperationsconnectorforopcua-' so the OPC UA
+// supervisor adopts this template. The supervisor only reconciles ConnectorTemplate CRs
+// whose name matches that prefix (V1ConnectorTemplate.DefaultNamePrefix in the OPC UA
+// connector repo); otherwise it never writes back status.provisioningStatus=Succeeded
+// and the ARM akriConnectorTemplates operation hangs until the deployment times out.
+// A per-instance suffix mirrors the supervisor's generated name (e.g. '-e5c0').
+var opcUaConnectorTemplateName = 'azureiotoperationsconnectorforopcua-${substring(uniqueString(aioInstance.id), 0, 4)}'
+
+resource opcUaConnectorTemplate 'Microsoft.IoTOperations/instances/akriConnectorTemplates@2026-07-01' = {
+  parent: aioInstance
+  name: opcUaConnectorTemplateName
+  extendedLocation: extendedLocation
+  properties: {
+    connectorMetadataRef: 'mcr.microsoft.com/azureiotoperations/aio-connectors/opcua-metadata:${OPCUA_CONNECTOR_VERSION}'
+    aioMetadata: {
+      aioMinVersion: '1.2.100'
+    }
+    runtimeConfiguration: {
+      runtimeConfigurationType: 'ManagedConfiguration'
+      managedConfigurationSettings: {
+        managedConfigurationType: 'ImageConfiguration'
+        imageConfigurationSettings: {
+          registrySettings: {
+            registrySettingsType: 'ContainerRegistry'
+            containerRegistrySettings: {
+              registry: 'mcr.microsoft.com'
+            }
+          }
+          imageName: 'azureiotoperations/aio-connectors/supervisor'
+          tagDigestSettings: {
+            tagDigestType: 'Tag'
+            tag: OPCUA_CONNECTOR_VERSION
+          }
+        }
+      }
+    }
+    deviceInboundEndpointTypes: [
+      {
+        endpointType: 'Microsoft.OpcUa'
+      }
+    ]
   }
 }
 

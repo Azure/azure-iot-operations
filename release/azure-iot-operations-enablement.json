@@ -5,8 +5,8 @@
   "metadata": {
     "_generator": {
       "name": "bicep",
-      "version": "0.45.15.27210",
-      "templateHash": "381872897952304332"
+      "version": "0.46.1.21595",
+      "templateHash": "6829492317291626106"
     }
   },
   "definitions": {
@@ -78,6 +78,16 @@
             },
             "configurationSettingsOverride": {
               "type": "object",
+              "nullable": true
+            }
+          },
+          "nullable": true
+        },
+        "connectors": {
+          "type": "object",
+          "properties": {
+            "version": {
+              "type": "string",
               "nullable": true
             }
           },
@@ -1033,8 +1043,8 @@
   },
   "variables": {
     "VERSIONS": {
-      "certManager": "0.14.0",
-      "secretStore": "1.5.1"
+      "certManager": "1.0.0",
+      "secretStore": "1.5.2"
     },
     "TRAINS": {
       "certManager": "stable",
