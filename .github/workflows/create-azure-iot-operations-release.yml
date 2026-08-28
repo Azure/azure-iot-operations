@@ -78,7 +78,7 @@ jobs:
     needs: ValidateRelease
     steps:
       - name: Checkout
-        uses: actions/checkout@v1
+        uses: actions/checkout@50fbc622fc4ef5163becd7fab6573eac35f8462e # v1.2.0
 
       - name: Build Assets 
         id: buildAssets
@@ -144,7 +144,7 @@ jobs:
     needs: CreateRelease
     steps:
       - name: Checkout
-        uses: actions/checkout@v1
+        uses: actions/checkout@50fbc622fc4ef5163becd7fab6573eac35f8462e # v1.2.0
       - name: Create Release Branch
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
