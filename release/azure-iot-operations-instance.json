@@ -5,8 +5,8 @@
   "metadata": {
     "_generator": {
       "name": "bicep",
-      "version": "0.45.15.27210",
-      "templateHash": "1542672663147277619"
+      "version": "0.46.1.21595",
+      "templateHash": "10856884487855862822"
     }
   },
   "definitions": {
@@ -78,6 +78,16 @@
             },
             "configurationSettingsOverride": {
               "type": "object",
+              "nullable": true
+            }
+          },
+          "nullable": true
+        },
+        "connectors": {
+          "type": "object",
+          "properties": {
+            "version": {
+              "type": "string",
               "nullable": true
             }
           },
@@ -1212,7 +1222,8 @@
   },
   "variables": {
     "VERSIONS": {
-      "iotOperations": "1.4.41"
+      "iotOperations": "1.4.73",
+      "connectors": "1.4.11"
     },
     "TRAINS": {
       "iotOperations": "stable"
@@ -1228,6 +1239,8 @@
     "customerManagedTrust": "[equals(parameters('trustConfig').source, 'CustomerManaged')]",
     "ISSUER_NAME": "[if(variables('customerManagedTrust'), parameters('trustConfig').settings.issuerName, format('{0}-aio-certificate-issuer', parameters('clusterNamespace')))]",
     "TRUST_CONFIG_MAP": "[if(variables('customerManagedTrust'), parameters('trustConfig').settings.configMapName, format('{0}-aio-ca-trust-bundle', parameters('clusterNamespace')))]",
+    "TRUST_CONFIG_MAP_KEY": "[if(variables('customerManagedTrust'), parameters('trustConfig').settings.configMapKey, 'ca.crt')]",
+    "OPCUA_CONNECTOR_VERSION": "[coalesce(tryGet(tryGet(parameters('advancedConfig'), 'connectors'), 'version'), variables('VERSIONS').connectors)]",
     "MQTT_SETTINGS": {
       "brokerListenerServiceName": "aio-broker",
       "brokerListenerPort": 18883,
@@ -1254,6 +1267,8 @@
       "dataFlows.values.tinyKube.mqttBroker.hostName": "[variables('MQTT_SETTINGS').brokerListenerHost]",
       "dataFlows.values.tinyKube.mqttBroker.port": "[variables('MQTT_SETTINGS').brokerListenerPort]",
       "dataFlows.values.tinyKube.mqttBroker.authentication.serviceAccountTokenAudience": "[variables('MQTT_SETTINGS').serviceAccountAudience]",
+      "dataFlows.values.wasmGraphController.mqttBroker.caCertConfigMapRef": "[variables('TRUST_CONFIG_MAP')]",
+      "dataFlows.values.wasmGraphController.mqttBroker.caCertFileName": "[variables('TRUST_CONFIG_MAP_KEY')]",
       "observability.metrics.enabled": "[format('{0}', coalesce(tryGet(tryGet(parameters('advancedConfig'), 'observability'), 'enabled'), false()))]",
       "observability.metrics.openTelemetryCollectorAddress": "[if(coalesce(tryGet(tryGet(parameters('advancedConfig'), 'observability'), 'enabled'), false()), format('{0}', tryGet(tryGet(parameters('advancedConfig'), 'observability'), 'otelCollectorAddress')), '')]",
       "trustSource": "[parameters('trustConfig').source]",
@@ -1267,7 +1282,8 @@
     "extendedLocation": {
       "name": "[resourceId('Microsoft.ExtendedLocation/customLocations', coalesce(parameters('customLocationName'), format('location-{0}', variables('HASH'))))]",
       "type": "CustomLocation"
-    }
+    },
+    "opcUaConnectorTemplateName": "[format('azureiotoperationsconnectorforopcua-{0}', substring(uniqueString(resourceId('Microsoft.IoTOperations/instances', coalesce(parameters('aioInstanceName'), format('aio-{0}', variables('HASH'))))), 0, 4))]"
   },
   "resources": {
     "cluster": {
@@ -1460,6 +1476,46 @@
           "method": "Anonymous",
           "anonymousSettings": {}
         }
+      },
+      "dependsOn": [
+        "aioInstance",
+        "customLocation"
+      ]
+    },
+    "opcUaConnectorTemplate": {
+      "type": "Microsoft.IoTOperations/instances/akriConnectorTemplates",
+      "apiVersion": "2026-07-01",
+      "name": "[format('{0}/{1}', coalesce(parameters('aioInstanceName'), format('aio-{0}', variables('HASH'))), variables('opcUaConnectorTemplateName'))]",
+      "extendedLocation": "[variables('extendedLocation')]",
+      "properties": {
+        "connectorMetadataRef": "[format('mcr.microsoft.com/azureiotoperations/aio-connectors/opcua-metadata:{0}', variables('OPCUA_CONNECTOR_VERSION'))]",
+        "aioMetadata": {
+          "aioMinVersion": "1.2.100"
+        },
+        "runtimeConfiguration": {
+          "runtimeConfigurationType": "ManagedConfiguration",
+          "managedConfigurationSettings": {
+            "managedConfigurationType": "ImageConfiguration",
+            "imageConfigurationSettings": {
+              "registrySettings": {
+                "registrySettingsType": "ContainerRegistry",
+                "containerRegistrySettings": {
+                  "registry": "mcr.microsoft.com"
+                }
+              },
+              "imageName": "azureiotoperations/aio-connectors/supervisor",
+              "tagDigestSettings": {
+                "tagDigestType": "Tag",
+                "tag": "[variables('OPCUA_CONNECTOR_VERSION')]"
+              }
+            }
+          }
+        },
+        "deviceInboundEndpointTypes": [
+          {
+            "endpointType": "Microsoft.OpcUa"
+          }
+        ]
       },
       "dependsOn": [
         "aioInstance",
