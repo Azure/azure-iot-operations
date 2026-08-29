@@ -316,7 +316,7 @@
         "h": 4,
         "w": 24,
         "x": 0,
-        "y": 9
+        "y": 8
       },
       "id": 215,
       "maxPerRow": 12,
@@ -430,7 +430,7 @@
         "h": 6,
         "w": 24,
         "x": 0,
-        "y": 13
+        "y": 12
       },
       "id": 11,
       "maxPerRow": 12,
@@ -547,7 +547,7 @@
         "h": 4,
         "w": 24,
         "x": 0,
-        "y": 19
+        "y": 18
       },
       "id": 4,
       "maxPerRow": 12,
@@ -799,7 +799,7 @@
         "h": 7,
         "w": 24,
         "x": 0,
-        "y": 23
+        "y": 22
       },
       "id": 115,
       "maxPerRow": 12,
@@ -940,7 +940,7 @@
         "h": 4,
         "w": 24,
         "x": 0,
-        "y": 30
+        "y": 29
       },
       "id": 94,
       "maxPerRow": 12,
@@ -1035,6 +1035,7 @@
             "axisPlacement": "auto",
             "axisSoftMax": 100,
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 0,
             "gradientMode": "scheme",
@@ -1118,7 +1119,7 @@
         "h": 3,
         "w": 24,
         "x": 0,
-        "y": 34
+        "y": 33
       },
       "id": 207,
       "maxPerRow": 12,
@@ -1130,6 +1131,7 @@
           "showLegend": false
         },
         "tooltip": {
+          "hideZeros": false,
           "mode": "multi",
           "sort": "none"
         }
@@ -1256,7 +1258,7 @@
         "h": 3,
         "w": 24,
         "x": 0,
-        "y": 37
+        "y": 36
       },
       "id": 208,
       "maxPerRow": 12,
@@ -1394,7 +1396,7 @@
         "h": 3,
         "w": 24,
         "x": 0,
-        "y": 40
+        "y": 39
       },
       "id": 209,
       "maxPerRow": 12,
@@ -1448,7 +1450,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 43
+        "y": 42
       },
       "id": 25,
       "panels": [],
@@ -1461,7 +1463,7 @@
         "h": 2,
         "w": 24,
         "x": 0,
-        "y": 44
+        "y": 43
       },
       "id": 19,
       "maxPerRow": 12,
@@ -1566,7 +1568,7 @@
         "h": 5,
         "w": 24,
         "x": 0,
-        "y": 46
+        "y": 45
       },
       "id": 75,
       "maxPerRow": 12,
@@ -1624,7 +1626,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 51
+        "y": 50
       },
       "id": 24,
       "panels": [],
@@ -1637,7 +1639,7 @@
         "h": 2,
         "w": 24,
         "x": 0,
-        "y": 52
+        "y": 51
       },
       "id": 20,
       "maxPerRow": 12,
@@ -1730,7 +1732,7 @@
         "h": 5,
         "w": 24,
         "x": 0,
-        "y": 54
+        "y": 53
       },
       "id": 40,
       "maxPerRow": 12,
@@ -1844,7 +1846,7 @@
         "h": 5,
         "w": 24,
         "x": 0,
-        "y": 61
+        "y": 58
       },
       "id": 210,
       "maxPerRow": 12,
@@ -1970,7 +1972,7 @@
         "h": 5,
         "w": 24,
         "x": 0,
-        "y": 68
+        "y": 63
       },
       "id": 55,
       "interval": "1m",
@@ -1998,7 +2000,7 @@
             "uid": "${DS_MANAGED_PROMETHEUS_INSTANCE}"
           },
           "editorMode": "code",
-          "expr": "sum by(category)(\r\n    label_replace(\r\n        rate(aio_broker_publishes_received{cluster='$cluster',category!=''}[1m]) * 60\r\n    ,'_',' $1','category','(.*)')\r\n)",
+          "expr": "sum by(category)(\r\n    label_replace(\r\n        rate(aio_broker_publishes_received{cluster='$cluster',category!=''}[$__rate_interval]) * 60\r\n    ,'_',' $1','category','(.*)')\r\n)",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
@@ -2086,7 +2088,7 @@
         "h": 5,
         "w": 24,
         "x": 0,
-        "y": 76
+        "y": 68
       },
       "id": 211,
       "interval": "1m",
@@ -2114,7 +2116,7 @@
             "uid": "${DS_MANAGED_PROMETHEUS_INSTANCE}"
           },
           "editorMode": "code",
-          "expr": "sum by(category)(\r\n    label_replace(\r\n        rate(aio_broker_payload_bytes_received{cluster='$cluster',category!=''}[1m]) * 60\r\n    ,'_',' $1','category','(.*)')\r\n)",
+          "expr": "sum by(category)(\r\n    label_replace(\r\n        rate(aio_broker_payload_bytes_received{cluster='$cluster',category!=''}[$__rate_interval]) * 60\r\n    ,'_',' $1','category','(.*)')\r\n)",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
@@ -2201,7 +2203,7 @@
         "h": 5,
         "w": 24,
         "x": 0,
-        "y": 84
+        "y": 73
       },
       "id": 56,
       "maxPerRow": 12,
@@ -2228,7 +2230,7 @@
             "uid": "${DS_MANAGED_PROMETHEUS_INSTANCE}"
           },
           "editorMode": "code",
-          "expr": "sum by(_)(\r\n    label_replace(\r\n        rate(aio_broker_publishes_sent{cluster='$cluster',category!=''}[1m]) * 60\r\n    ,'_',' $1','category','(.*)')\r\n)",
+          "expr": "sum by(_)(\r\n    label_replace(\r\n        rate(aio_broker_publishes_sent{cluster='$cluster',category!=''}[$__rate_interval]) * 60\r\n    ,'_',' $1','category','(.*)')\r\n)",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
@@ -2246,7 +2248,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 92
+        "y": 78
       },
       "id": 23,
       "panels": [],
@@ -2317,7 +2319,7 @@
         "h": 5,
         "w": 24,
         "x": 0,
-        "y": 93
+        "y": 79
       },
       "id": 212,
       "interval": "1m",
@@ -2345,7 +2347,7 @@
             "uid": "${DS_MANAGED_PROMETHEUS_INSTANCE}"
           },
           "editorMode": "code",
-          "expr": "sum by(category)(\r\n    label_replace(\r\n        rate(aio_broker_payload_bytes_sent{cluster='$cluster',category!=''}[1m]) * 60\r\n    ,'_',' $1','category','(.*)')\r\n)",
+          "expr": "sum by(category)(\r\n    label_replace(\r\n        rate(aio_broker_payload_bytes_sent{cluster='$cluster',category!=''}[$__rate_interval]) * 60\r\n    ,'_',' $1','category','(.*)')\r\n)",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
@@ -2363,7 +2365,7 @@
         "h": 2,
         "w": 24,
         "x": 0,
-        "y": 101
+        "y": 84
       },
       "id": 21,
       "maxPerRow": 12,
@@ -2411,9 +2413,9 @@
       },
       "gridPos": {
         "h": 5,
-        "w": 12,
+        "w": 24,
         "x": 0,
-        "y": 103
+        "y": 86
       },
       "id": 22,
       "maxPerRow": 12,
@@ -2490,9 +2492,9 @@
       },
       "gridPos": {
         "h": 5,
-        "w": 12,
-        "x": 12,
-        "y": 103
+        "w": 24,
+        "x": 0,
+        "y": 91
       },
       "id": 217,
       "maxPerRow": 12,
@@ -2608,7 +2610,7 @@
         "h": 5,
         "w": 24,
         "x": 0,
-        "y": 109
+        "y": 96
       },
       "id": 216,
       "maxPerRow": 12,
@@ -2635,7 +2637,7 @@
             "uid": "${DS_MANAGED_PROMETHEUS_INSTANCE}"
           },
           "editorMode": "code",
-          "expr": "sum by(source_service_type)(rate(aio_dataflow_messages_received{cluster='$cluster'}[1m]) * 60)",
+          "expr": "sum by(source_service_type)(rate(aio_dataflow_messages_received{cluster='$cluster'}[$__rate_interval]) * 60)",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
@@ -2720,7 +2722,7 @@
         "h": 5,
         "w": 24,
         "x": 0,
-        "y": 118
+        "y": 101
       },
       "id": 27,
       "maxPerRow": 12,
@@ -2747,7 +2749,7 @@
             "uid": "${DS_MANAGED_PROMETHEUS_INSTANCE}"
           },
           "editorMode": "code",
-          "expr": "sum by(target_service_type)(rate(aio_dataflow_messages_sent{cluster='$cluster'}[1m]) * 60)",
+          "expr": "sum by(target_service_type)(rate(aio_dataflow_messages_sent{cluster='$cluster'}[$__rate_interval]) * 60)",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
@@ -2952,6 +2954,6 @@
   "timezone": "browser",
   "title": "AIO Sample Dashboard",
   "uid": "de1sdpihgmjggd",
-  "version": 19,
+  "version": 20,
   "weekStart": ""
 }
