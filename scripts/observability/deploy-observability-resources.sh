@@ -347,7 +347,7 @@ az iot ops upgrade \
   --resource-group "$RESOURCE_GROUP" \
   -n "$INSTANCE_NAME" \
   --ops-config observability.metrics.openTelemetryCollectorAddress=aio-otel-collector.azure-iot-operations.svc.cluster.local:4317 \
-  --ops-config observability.metrics.exportInternalSeconds=60 \
+  --ops-config observability.metrics.exportIntervalSeconds=60 \
   --ops-config observability.metrics.enabled=True
 
 log "[6/6] Azure IoT Operations observability configured!"
