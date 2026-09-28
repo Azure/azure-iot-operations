@@ -5,8 +5,8 @@
   "metadata": {
     "_generator": {
       "name": "bicep",
-      "version": "0.46.1.21595",
-      "templateHash": "10856884487855862822"
+      "version": "0.47.16.16243",
+      "templateHash": "17038013306831245672"
     }
   },
   "definitions": {
@@ -1212,6 +1212,13 @@
         "description": "Instance count for the default dataflow profile. The default is 1."
       }
     },
+    "disableOpcUaFeature": {
+      "type": "bool",
+      "defaultValue": false,
+      "metadata": {
+        "description": "Force the OPC UA feature off, overriding any opcua entry in 'features'. Small-form-factor runs set this so the caller does not have to hand-merge a features object."
+      }
+    },
     "advancedConfig": {
       "$ref": "#/definitions/_1.AdvancedConfig",
       "defaultValue": {},
@@ -1222,8 +1229,8 @@
   },
   "variables": {
     "VERSIONS": {
-      "iotOperations": "1.4.73",
-      "connectors": "1.4.11"
+      "iotOperations": "1.4.112",
+      "connectors": "1.4.14"
     },
     "TRAINS": {
       "iotOperations": "stable"
@@ -1283,7 +1290,10 @@
       "name": "[resourceId('Microsoft.ExtendedLocation/customLocations', coalesce(parameters('customLocationName'), format('location-{0}', variables('HASH'))))]",
       "type": "CustomLocation"
     },
-    "opcUaConnectorTemplateName": "[format('azureiotoperationsconnectorforopcua-{0}', substring(uniqueString(resourceId('Microsoft.IoTOperations/instances', coalesce(parameters('aioInstanceName'), format('aio-{0}', variables('HASH'))))), 0, 4))]"
+    "effectiveFeatures": "[if(parameters('disableOpcUaFeature'), union(coalesce(parameters('features'), createObject()), createObject('opcua', createObject('mode', 'Disabled', 'settings', createObject()))), parameters('features'))]",
+    "opcUaConnectorTemplateName": "[format('azureiotoperationsconnectorforopcua-{0}', substring(uniqueString(resourceId('Microsoft.IoTOperations/instances', coalesce(parameters('aioInstanceName'), format('aio-{0}', variables('HASH'))))), 0, 4))]",
+    "opcUaFeature": "[coalesce(coalesce(tryGet(parameters('features'), 'opcua'), tryGet(parameters('features'), 'connectors')), createObject())]",
+    "opcUaFeatureMode": "[if(parameters('disableOpcUaFeature'), 'Disabled', coalesce(tryGet(variables('opcUaFeature'), 'mode'), 'Stable'))]"
   },
   "resources": {
     "cluster": {
@@ -1336,7 +1346,7 @@
         "schemaRegistryRef": {
           "resourceId": "[parameters('schemaRegistryId')]"
         },
-        "features": "[parameters('features')]",
+        "features": "[variables('effectiveFeatures')]",
         "adrNamespaceRef": "[if(not(empty(parameters('adrNamespaceId'))), createObject('resourceId', parameters('adrNamespaceId')), null())]"
       },
       "dependsOn": [
@@ -1483,6 +1493,7 @@
       ]
     },
     "opcUaConnectorTemplate": {
+      "condition": "[not(equals(variables('opcUaFeatureMode'), 'Disabled'))]",
       "type": "Microsoft.IoTOperations/instances/akriConnectorTemplates",
       "apiVersion": "2026-07-01",
       "name": "[format('{0}/{1}', coalesce(parameters('aioInstanceName'), format('aio-{0}', variables('HASH'))), variables('opcUaConnectorTemplateName'))]",

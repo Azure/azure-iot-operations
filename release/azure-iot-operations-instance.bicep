@@ -75,6 +75,9 @@ param trustConfig types.TrustConfig = {
 @description('Instance count for the default dataflow profile. The default is 1.')
 param defaultDataflowInstanceCount int = 1
 
+@description('Force the OPC UA feature off, overriding any opcua entry in \'features\'. Small-form-factor runs set this so the caller does not have to hand-merge a features object.')
+param disableOpcUaFeature bool = false
+
 @description('Advanced Configuration for development')
 param advancedConfig types.AdvancedConfig = {}
 
@@ -83,8 +86,8 @@ param advancedConfig types.AdvancedConfig = {}
 /*****************************************************************************/
 
 var VERSIONS = {
-  iotOperations: '1.4.73'
-  connectors: '1.4.11'
+  iotOperations: '1.4.112'
+  connectors: '1.4.14'
 }
 
 var TRAINS = {
@@ -113,7 +116,7 @@ var TRUST_CONFIG_MAP_KEY = customerManagedTrust
   : 'ca.crt'
 
 // OPC UA connector version. Defaults to the connectors release bundled by the AIO
-// extension (VERSIONS.connectors); overridable per-deployment via advancedConfig.
+// extension; overridable per-deployment via advancedConfig.
 var OPCUA_CONNECTOR_VERSION = advancedConfig.?connectors.?version ?? VERSIONS.connectors
 
 var MQTT_SETTINGS = {
@@ -218,6 +221,17 @@ var extendedLocation = {
 /*     Deployment of Helm Charts and CRs to run on Arc-enabled cluster.      */
 /*****************************************************************************/
 
+// SFF drops OPC UA. Merged here because 'features' comes from the caller-owned splat and YAML has no
+// union(). 'settings' is emitted because main and the release branches require it (build 176505855).
+var effectiveFeatures = disableOpcUaFeature
+  ? union(features ?? {}, {
+      opcua: {
+        mode: 'Disabled'
+        settings: {}
+      }
+    })
+  : features
+
 resource aioInstance 'Microsoft.IoTOperations/instances@2026-07-01' = {
   name: aioInstanceName ?? 'aio-${HASH}'
   location: clusterLocation
@@ -228,7 +242,7 @@ resource aioInstance 'Microsoft.IoTOperations/instances@2026-07-01' = {
     schemaRegistryRef: {
       resourceId: schemaRegistryId
     }
-    features: features
+    features: effectiveFeatures
     adrNamespaceRef: !empty(adrNamespaceId)
       ? {
           resourceId: adrNamespaceId!
@@ -379,7 +393,12 @@ resource artifactRegistryEndpoint 'Microsoft.IoTOperations/instances/registryEnd
 // A per-instance suffix mirrors the supervisor's generated name (e.g. '-e5c0').
 var opcUaConnectorTemplateName = 'azureiotoperationsconnectorforopcua-${substring(uniqueString(aioInstance.id), 0, 4)}'
 
-resource opcUaConnectorTemplate 'Microsoft.IoTOperations/instances/akriConnectorTemplates@2026-07-01' = {
+// Creating this template while opcua is Disabled hangs ARM for the full timeout (no supervisor to
+// reconcile it). 'connectors' is the operator's legacy alias for 'opcua'; the canonical name wins.
+var opcUaFeature = features.?opcua ?? features.?connectors ?? {}
+var opcUaFeatureMode = disableOpcUaFeature ? 'Disabled' : (opcUaFeature.?mode ?? 'Stable')
+
+resource opcUaConnectorTemplate 'Microsoft.IoTOperations/instances/akriConnectorTemplates@2026-07-01' = if (opcUaFeatureMode != 'Disabled') {
   parent: aioInstance
   name: opcUaConnectorTemplateName
   extendedLocation: extendedLocation
