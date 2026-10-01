@@ -75,7 +75,7 @@ param trustConfig types.TrustConfig = {
 @description('Instance count for the default dataflow profile. The default is 1.')
 param defaultDataflowInstanceCount int = 1
 
-@description('Force the OPC UA feature off, overriding any opcua entry in \'features\'. Small-form-factor runs set this so the caller does not have to hand-merge a features object.')
+@description('Force the OPC UA feature off, overriding any opcua entry in \'features\'. Defaults to false (OPC UA enabled).')
 param disableOpcUaFeature bool = false
 
 @description('Advanced Configuration for development')
