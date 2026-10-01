@@ -221,8 +221,8 @@ var extendedLocation = {
 /*     Deployment of Helm Charts and CRs to run on Arc-enabled cluster.      */
 /*****************************************************************************/
 
-// SFF drops OPC UA. Merged here because 'features' comes from the caller-owned splat and YAML has no
-// union(). 'settings' is emitted because main and the release branches require it (build 176505855).
+// When disableOpcUaFeature is set, force the opcua feature to Disabled on top of any caller-supplied
+// features. 'settings' is included because the instance API requires it.
 var effectiveFeatures = disableOpcUaFeature
   ? union(features ?? {}, {
       opcua: {
