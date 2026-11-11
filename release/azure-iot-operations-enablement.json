@@ -5,8 +5,8 @@
   "metadata": {
     "_generator": {
       "name": "bicep",
-      "version": "0.47.16.16243",
-      "templateHash": "16735839634517342696"
+      "version": "0.44.1.10279",
+      "templateHash": "11146307182624867673"
     }
   },
   "definitions": {
@@ -87,6 +87,18 @@
           "type": "object",
           "properties": {
             "version": {
+              "type": "string",
+              "nullable": true
+            },
+            "registry": {
+              "type": "string",
+              "nullable": true
+            },
+            "repository": {
+              "type": "string",
+              "nullable": true
+            },
+            "imageRegistry": {
               "type": "string",
               "nullable": true
             }
@@ -1043,8 +1055,8 @@
   },
   "variables": {
     "VERSIONS": {
-      "certManager": "1.1.2",
-      "secretStore": "1.5.3"
+      "certManager": "1.2.3",
+      "secretStore": "1.6.1"
     },
     "TRAINS": {
       "certManager": "stable",
