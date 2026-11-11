@@ -6,7 +6,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.44.1.10279",
-      "templateHash": "18228349303212328286"
+      "templateHash": "6967798069032187934"
     }
   },
   "definitions": {
@@ -1235,13 +1235,6 @@
         "description": "Instance count for the default dataflow profile. The default is 1."
       }
     },
-    "enableGdsManager": {
-      "type": "bool",
-      "defaultValue": true,
-      "metadata": {
-        "description": "Enable the OPC UA GDS Manager. Disable this for single-node test clusters."
-      }
-    },
     "advancedConfig": {
       "$ref": "#/definitions/_1.AdvancedConfig",
       "defaultValue": {},
@@ -1301,7 +1294,6 @@
       "connectors.values.mqttBroker.serviceAccountTokenAudience": "[variables('MQTT_SETTINGS').serviceAccountAudience]",
       "connectors.values.securityPki.applicationUri": "[format('urn:microsoft.com:aio:opc:ua:broker:{0}', variables('AIO_EXTENSION_SUFFIX'))]",
       "connectors.values.securityPki.subjectName": "[format('CN=aio-opc-opcuabroker-{0}', variables('AIO_EXTENSION_SUFFIX'))]",
-      "connectors.values.gdsManager.enabled": "[if(parameters('enableGdsManager'), 'true', 'false')]",
       "connectors.values.opcUaConnector.environment[0].name": "opcuabroker_FeatureManagement__EdgeRegistryPreview",
       "connectors.values.opcUaConnector.environment[0].value": "false",
       "connectors.values.opcUaConnector.environment[1].name": "aioconnectors_FeatureManagement__EdgeRegistryPreview",

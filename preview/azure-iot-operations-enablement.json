@@ -1,0 +1,1152 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "languageVersion": "2.0",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.44.1.10279",
+      "templateHash": "4303899133979881009"
+    }
+  },
+  "definitions": {
+    "_1.AdvancedConfig": {
+      "type": "object",
+      "properties": {
+        "platform": {
+          "type": "object",
+          "properties": {
+            "version": {
+              "type": "string",
+              "nullable": true
+            },
+            "train": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          "nullable": true
+        },
+        "certManager": {
+          "type": "object",
+          "properties": {
+            "version": {
+              "type": "string",
+              "nullable": true
+            },
+            "train": {
+              "type": "string",
+              "nullable": true
+            },
+            "telemetry": {
+              "type": "object",
+              "properties": {
+                "enabled": {
+                  "type": "string",
+                  "nullable": true
+                }
+              },
+              "nullable": true
+            },
+            "secretTargets": {
+              "type": "object",
+              "properties": {
+                "enabled": {
+                  "type": "string",
+                  "nullable": true
+                },
+                "authorizedSecretsAll": {
+                  "type": "string",
+                  "nullable": true
+                }
+              },
+              "nullable": true
+            }
+          },
+          "nullable": true
+        },
+        "aio": {
+          "type": "object",
+          "properties": {
+            "version": {
+              "type": "string",
+              "nullable": true
+            },
+            "train": {
+              "type": "string",
+              "nullable": true
+            },
+            "configurationSettingsOverride": {
+              "type": "object",
+              "nullable": true
+            }
+          },
+          "nullable": true
+        },
+        "connectors": {
+          "type": "object",
+          "properties": {
+            "version": {
+              "type": "string",
+              "nullable": true
+            },
+            "registry": {
+              "type": "string",
+              "nullable": true
+            },
+            "repository": {
+              "type": "string",
+              "nullable": true
+            },
+            "imageRegistry": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          "nullable": true
+        },
+        "secretSyncController": {
+          "type": "object",
+          "properties": {
+            "version": {
+              "type": "string",
+              "nullable": true
+            },
+            "train": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          "nullable": true
+        },
+        "observability": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "bool",
+              "nullable": true
+            },
+            "otelCollectorAddress": {
+              "type": "string",
+              "nullable": true
+            },
+            "otelExportIntervalSeconds": {
+              "type": "int",
+              "nullable": true
+            }
+          },
+          "nullable": true
+        },
+        "openServiceMesh": {
+          "type": "object",
+          "properties": {
+            "version": {
+              "type": "string",
+              "nullable": true
+            },
+            "train": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          "nullable": true
+        },
+        "edgeStorageAccelerator": {
+          "type": "object",
+          "properties": {
+            "version": {
+              "type": "string",
+              "nullable": true
+            },
+            "train": {
+              "type": "string",
+              "nullable": true
+            },
+            "diskStorageClass": {
+              "type": "string",
+              "nullable": true
+            },
+            "faultToleranceEnabled": {
+              "type": "bool",
+              "nullable": true
+            },
+            "diskMountPoint": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          "nullable": true
+        },
+        "resourceSuffix": {
+          "type": "string",
+          "nullable": true
+        }
+      },
+      "metadata": {
+        "__bicep_imported_from!": {
+          "sourceTemplate": "types.bicep"
+        }
+      }
+    },
+    "_1.BrokerConfig": {
+      "type": "object",
+      "properties": {
+        "frontendReplicas": {
+          "type": "int",
+          "nullable": true,
+          "minValue": 1,
+          "maxValue": 16,
+          "metadata": {
+            "description": "Number of AIO Broker frontend replicas. The default is 2."
+          }
+        },
+        "frontendWorkers": {
+          "type": "int",
+          "nullable": true,
+          "minValue": 1,
+          "maxValue": 16,
+          "metadata": {
+            "description": "Number of AIO Broker frontend workers. The default is 2."
+          }
+        },
+        "backendRedundancyFactor": {
+          "type": "int",
+          "nullable": true,
+          "minValue": 1,
+          "maxValue": 5,
+          "metadata": {
+            "description": "The AIO Broker backend redundancy factory. The default is 2."
+          }
+        },
+        "backendWorkers": {
+          "type": "int",
+          "nullable": true,
+          "minValue": 1,
+          "maxValue": 16,
+          "metadata": {
+            "description": "Number of AIO Broker backend workers. The default is 2."
+          }
+        },
+        "backendPartitions": {
+          "type": "int",
+          "nullable": true,
+          "minValue": 1,
+          "maxValue": 16,
+          "metadata": {
+            "description": "Number of AIO Broker backend partitions. The default is 2."
+          }
+        },
+        "memoryProfile": {
+          "type": "string",
+          "allowedValues": [
+            "High",
+            "Low",
+            "Medium",
+            "Tiny"
+          ],
+          "nullable": true,
+          "metadata": {
+            "description": "The AIO Broker memory profile. The default is \"Medium\"."
+          }
+        },
+        "serviceType": {
+          "type": "string",
+          "allowedValues": [
+            "ClusterIp",
+            "LoadBalancer",
+            "NodePort"
+          ],
+          "nullable": true,
+          "metadata": {
+            "description": "The AIO Broker service type. The default is \"ClusterIp\"."
+          }
+        },
+        "persistence": {
+          "$ref": "#/definitions/_1.BrokerPersistence",
+          "nullable": true,
+          "metadata": {
+            "description": "The persistence settings of the Broker, preserved as supplied when enablePersistence is true. Customize maxSize and persistentVolumeClaimSpec.storageClassName here. When omitted, deployment templates use the recommended persistence default; set enablePersistence to false for an in-memory broker."
+          }
+        },
+        "diagnostics": {
+          "$ref": "#/definitions/_1.BrokerDiagnostics",
+          "nullable": true,
+          "metadata": {
+            "description": "The AIO Broker diagnostics settings."
+          }
+        }
+      },
+      "metadata": {
+        "__bicep_imported_from!": {
+          "sourceTemplate": "types.bicep"
+        }
+      }
+    },
+    "_1.BrokerDiagnostics": {
+      "type": "object",
+      "properties": {
+        "logs": {
+          "type": "object",
+          "properties": {
+            "level": {
+              "type": "string",
+              "nullable": true,
+              "metadata": {
+                "description": "The log level. Examples - \"debug\", \"info\", \"warn\", \"error\", \"trace\"."
+              }
+            }
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "The log settings of the broker."
+          }
+        },
+        "metrics": {
+          "type": "object",
+          "properties": {
+            "prometheusPort": {
+              "type": "int",
+              "nullable": true,
+              "metadata": {
+                "description": "The prometheus port to expose the metrics."
+              }
+            }
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "The metrics properties."
+          }
+        },
+        "selfCheck": {
+          "type": "object",
+          "properties": {
+            "mode": {
+              "$ref": "#/definitions/_1.OperationalMode",
+              "nullable": true,
+              "metadata": {
+                "description": "The toggle to enable/disable self check. Allowed values: \"Enabled\", \"enabled\", \"Disabled\", \"disabled\"."
+              }
+            },
+            "intervalSeconds": {
+              "type": "int",
+              "nullable": true,
+              "metadata": {
+                "description": "The self check interval in seconds."
+              }
+            },
+            "timeoutSeconds": {
+              "type": "int",
+              "nullable": true,
+              "metadata": {
+                "description": "The timeout for self check in seconds."
+              }
+            }
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "The self check properties."
+          }
+        },
+        "traces": {
+          "type": "object",
+          "properties": {
+            "mode": {
+              "$ref": "#/definitions/_1.OperationalMode",
+              "nullable": true,
+              "metadata": {
+                "description": "The toggle to enable/disable traces. Allowed values: \"Enabled\", \"enabled\", \"Disabled\", \"disabled\"."
+              }
+            },
+            "cacheSizeMegabytes": {
+              "type": "int",
+              "nullable": true,
+              "metadata": {
+                "description": "The cache size in megabytes."
+              }
+            },
+            "selfTracing": {
+              "type": "object",
+              "properties": {
+                "mode": {
+                  "$ref": "#/definitions/_1.OperationalMode",
+                  "nullable": true,
+                  "metadata": {
+                    "description": "The toggle to enable/disable self tracing. Allowed values: \"Enabled\", \"enabled\", \"Disabled\", \"disabled\"."
+                  }
+                },
+                "intervalSeconds": {
+                  "type": "int",
+                  "nullable": true,
+                  "metadata": {
+                    "description": "The self tracing interval in seconds."
+                  }
+                }
+              },
+              "nullable": true,
+              "metadata": {
+                "description": "The self tracing properties."
+              }
+            },
+            "spanChannelCapacity": {
+              "type": "int",
+              "nullable": true,
+              "metadata": {
+                "description": "The span channel capacity."
+              }
+            }
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "The trace properties."
+          }
+        }
+      },
+      "metadata": {
+        "description": "Defines the diagnostics settings for the Broker CRD.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "types.bicep"
+        }
+      }
+    },
+    "_1.BrokerPersistence": {
+      "type": "object",
+      "properties": {
+        "maxSize": {
+          "type": "string",
+          "metadata": {
+            "description": "The max size of the message buffer on disk. The recommended deployment default is 3Gi per Backend replica.\nIf a PVC template is specified, this size is used as the request and limit sizes of that template.\n"
+          }
+        },
+        "persistentVolumeClaimSpec": {
+          "$ref": "#/definitions/_1.VolumeClaimSpec",
+          "nullable": true,
+          "metadata": {
+            "description": "Use the specified PersistentVolumeClaim template to mount a persistent volume.\nIf unset, a default PVC using the cluster default StorageClass will be used.\n"
+          }
+        },
+        "retain": {
+          "$ref": "#/definitions/_1.BrokerRetainMessagesPolicy",
+          "nullable": true,
+          "metadata": {
+            "description": "Controls which topic's retained messages should be persisted to disk."
+          }
+        },
+        "stateStore": {
+          "$ref": "#/definitions/_1.BrokerStateStorePolicy",
+          "nullable": true,
+          "metadata": {
+            "description": "Controls which keys should be persisted to disk for the state store."
+          }
+        },
+        "subscriberQueue": {
+          "$ref": "#/definitions/_1.BrokerSubscriberQueuePolicy",
+          "nullable": true,
+          "metadata": {
+            "description": "Controls which subscriber message queues should be persisted to disk.\nSession state metadata are always written to disk if any persistence is specified.\n"
+          }
+        },
+        "encryption": {
+          "$ref": "#/definitions/_1.BrokerPersistenceEncryption",
+          "nullable": true,
+          "metadata": {
+            "description": "Controls settings related to encryption of the persistence database.\nOptional, defaults to enabling encryption.\n"
+          }
+        }
+      },
+      "metadata": {
+        "description": "Disk persistence configuration for the Broker.\nDeployment templates supply the recommended default when omitted unless enablePersistence is false.\nNote: if configured, all MQTT session states are written to disk.\n",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "types.bicep"
+        }
+      }
+    },
+    "_1.BrokerPersistenceEncryption": {
+      "type": "object",
+      "properties": {
+        "mode": {
+          "$ref": "#/definitions/_1.OperationalMode",
+          "metadata": {
+            "description": "Determines if encryption is enabled."
+          }
+        }
+      },
+      "metadata": {
+        "description": "Encryption settings for the persistence database.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "types.bicep"
+        }
+      }
+    },
+    "_1.BrokerRetainMessagesCustomPolicy": {
+      "type": "object",
+      "properties": {
+        "mode": {
+          "type": "string",
+          "allowedValues": [
+            "Custom"
+          ]
+        },
+        "retainSettings": {
+          "$ref": "#/definitions/_1.BrokerRetainMessagesSettings",
+          "metadata": {
+            "description": "Settings for the Custom mode."
+          }
+        }
+      },
+      "metadata": {
+        "description": "Custom retain messages policy for the Broker.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "types.bicep"
+        }
+      }
+    },
+    "_1.BrokerRetainMessagesDynamic": {
+      "type": "object",
+      "properties": {
+        "mode": {
+          "$ref": "#/definitions/_1.OperationalMode",
+          "metadata": {
+            "description": "Mode of dynamic retain settings."
+          }
+        }
+      },
+      "metadata": {
+        "description": "Dynamic toggles for retain messages policy.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "types.bicep"
+        }
+      }
+    },
+    "_1.BrokerRetainMessagesPolicy": {
+      "type": "object",
+      "discriminator": {
+        "propertyName": "mode",
+        "mapping": {
+          "All": {
+            "type": "object",
+            "properties": {
+              "mode": {
+                "type": "string",
+                "allowedValues": [
+                  "All"
+                ]
+              }
+            }
+          },
+          "None": {
+            "type": "object",
+            "properties": {
+              "mode": {
+                "type": "string",
+                "allowedValues": [
+                  "None"
+                ]
+              }
+            }
+          },
+          "Custom": {
+            "$ref": "#/definitions/_1.BrokerRetainMessagesCustomPolicy"
+          }
+        }
+      },
+      "metadata": {
+        "description": "Controls which retained messages are persisted.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "types.bicep"
+        }
+      }
+    },
+    "_1.BrokerRetainMessagesSettings": {
+      "type": "object",
+      "properties": {
+        "topics": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "Topics to persist (wildcards # and + supported)."
+          }
+        },
+        "dynamic": {
+          "$ref": "#/definitions/_1.BrokerRetainMessagesDynamic",
+          "nullable": true,
+          "metadata": {
+            "description": "Dynamic toggle via MQTTv5 user property."
+          }
+        }
+      },
+      "metadata": {
+        "description": "Settings for a custom retain messages policy.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "types.bicep"
+        }
+      }
+    },
+    "_1.BrokerStateStoreCustomPolicy": {
+      "type": "object",
+      "properties": {
+        "mode": {
+          "type": "string",
+          "allowedValues": [
+            "Custom"
+          ]
+        },
+        "stateStoreSettings": {
+          "$ref": "#/definitions/_1.BrokerStateStorePolicySettings",
+          "metadata": {
+            "description": "Settings for the Custom mode."
+          }
+        }
+      },
+      "metadata": {
+        "description": "Custom state store policy for the Broker.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "types.bicep"
+        }
+      }
+    },
+    "_1.BrokerStateStoreDynamic": {
+      "type": "object",
+      "properties": {
+        "mode": {
+          "$ref": "#/definitions/_1.OperationalMode",
+          "metadata": {
+            "description": "Mode of dynamic state store settings."
+          }
+        }
+      },
+      "metadata": {
+        "description": "Dynamic toggles for state store policy.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "types.bicep"
+        }
+      }
+    },
+    "_1.BrokerStateStorePolicy": {
+      "type": "object",
+      "discriminator": {
+        "propertyName": "mode",
+        "mapping": {
+          "All": {
+            "type": "object",
+            "properties": {
+              "mode": {
+                "type": "string",
+                "allowedValues": [
+                  "All"
+                ]
+              }
+            }
+          },
+          "None": {
+            "type": "object",
+            "properties": {
+              "mode": {
+                "type": "string",
+                "allowedValues": [
+                  "None"
+                ]
+              }
+            }
+          },
+          "Custom": {
+            "$ref": "#/definitions/_1.BrokerStateStoreCustomPolicy"
+          }
+        }
+      },
+      "metadata": {
+        "description": "Controls which state store entries are persisted.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "types.bicep"
+        }
+      }
+    },
+    "_1.BrokerStateStorePolicyResources": {
+      "type": "object",
+      "properties": {
+        "keyType": {
+          "type": "string",
+          "allowedValues": [
+            "Binary",
+            "Pattern",
+            "String"
+          ],
+          "metadata": {
+            "description": "Type of key matching."
+          }
+        },
+        "keys": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "metadata": {
+            "description": "List of keys to persist."
+          }
+        }
+      },
+      "metadata": {
+        "description": "A key-type and its associated keys for state store persistence.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "types.bicep"
+        }
+      }
+    },
+    "_1.BrokerStateStorePolicySettings": {
+      "type": "object",
+      "properties": {
+        "stateStoreResources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/_1.BrokerStateStorePolicyResources"
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "Resources to persist (keyType and list of keys)."
+          }
+        },
+        "dynamic": {
+          "$ref": "#/definitions/_1.BrokerStateStoreDynamic",
+          "nullable": true,
+          "metadata": {
+            "description": "Dynamic toggle via MQTTv5 user property."
+          }
+        }
+      },
+      "metadata": {
+        "description": "Settings for a custom state store policy.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "types.bicep"
+        }
+      }
+    },
+    "_1.BrokerSubscriberQueueCustomPolicy": {
+      "type": "object",
+      "properties": {
+        "mode": {
+          "type": "string",
+          "allowedValues": [
+            "Custom"
+          ]
+        },
+        "subscriberQueueSettings": {
+          "$ref": "#/definitions/_1.BrokerSubscriberQueueCustomPolicySettings",
+          "metadata": {
+            "description": "Settings for the Custom mode."
+          }
+        }
+      },
+      "metadata": {
+        "__bicep_imported_from!": {
+          "sourceTemplate": "types.bicep"
+        }
+      }
+    },
+    "_1.BrokerSubscriberQueueCustomPolicySettings": {
+      "type": "object",
+      "properties": {
+        "subscriberClientIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "Subscriber client IDs to persist (wildcard * supported)."
+          }
+        },
+        "dynamic": {
+          "$ref": "#/definitions/_1.BrokerSubscriberQueueDynamic",
+          "nullable": true,
+          "metadata": {
+            "description": "Dynamic toggle via MQTTv5 user property."
+          }
+        }
+      },
+      "metadata": {
+        "description": "Settings for a custom subscriber queue policy.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "types.bicep"
+        }
+      }
+    },
+    "_1.BrokerSubscriberQueueDynamic": {
+      "type": "object",
+      "properties": {
+        "mode": {
+          "$ref": "#/definitions/_1.OperationalMode",
+          "metadata": {
+            "description": "Mode of dynamic subscriber queue settings."
+          }
+        }
+      },
+      "metadata": {
+        "description": "Dynamic toggles for subscriber queue policy.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "types.bicep"
+        }
+      }
+    },
+    "_1.BrokerSubscriberQueuePolicy": {
+      "type": "object",
+      "discriminator": {
+        "propertyName": "mode",
+        "mapping": {
+          "All": {
+            "type": "object",
+            "properties": {
+              "mode": {
+                "type": "string",
+                "allowedValues": [
+                  "All"
+                ]
+              }
+            }
+          },
+          "None": {
+            "type": "object",
+            "properties": {
+              "mode": {
+                "type": "string",
+                "allowedValues": [
+                  "None"
+                ]
+              }
+            }
+          },
+          "Custom": {
+            "$ref": "#/definitions/_1.BrokerSubscriberQueueCustomPolicy"
+          }
+        }
+      },
+      "metadata": {
+        "description": "Controls which subscriber queues are persisted.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "types.bicep"
+        }
+      }
+    },
+    "_1.CustomerManaged": {
+      "type": "object",
+      "properties": {
+        "source": {
+          "type": "string",
+          "allowedValues": [
+            "CustomerManaged"
+          ]
+        },
+        "settings": {
+          "$ref": "#/definitions/_1.TrustBundleSettings"
+        }
+      },
+      "metadata": {
+        "__bicep_imported_from!": {
+          "sourceTemplate": "types.bicep"
+        }
+      }
+    },
+    "_1.Features": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": {
+        "$ref": "#/definitions/_1.InstanceFeature",
+        "metadata": {
+          "description": "Object of features"
+        }
+      },
+      "metadata": {
+        "description": "AIO Instance features.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "types.bicep"
+        }
+      }
+    },
+    "_1.InstanceFeature": {
+      "type": "object",
+      "properties": {
+        "mode": {
+          "$ref": "#/definitions/_1.InstanceFeatureMode",
+          "nullable": true
+        },
+        "settings": {
+          "type": "object",
+          "properties": {},
+          "additionalProperties": {
+            "$ref": "#/definitions/_1.InstanceFeatureSettingValue"
+          },
+          "nullable": true
+        }
+      },
+      "metadata": {
+        "description": "Individual feature object within the AIO instance.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "types.bicep"
+        }
+      }
+    },
+    "_1.InstanceFeatureMode": {
+      "type": "string",
+      "allowedValues": [
+        "Disabled",
+        "Preview",
+        "Stable"
+      ],
+      "metadata": {
+        "description": "The mode of the AIO instance feature. Either \"Stable\", \"Preview\" or \"Disabled\".",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "types.bicep"
+        }
+      }
+    },
+    "_1.InstanceFeatureSettingValue": {
+      "$ref": "#/definitions/_1.OperationalMode",
+      "metadata": {
+        "description": "The setting value of the AIO instance feature. Either \"Enabled\" or \"Disabled\".",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "types.bicep"
+        }
+      }
+    },
+    "_1.OperationalMode": {
+      "type": "string",
+      "allowedValues": [
+        "Disabled",
+        "Enabled"
+      ],
+      "metadata": {
+        "description": "Defines operational mode. Either \"Enabled\" or \"Disabled\".",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "types.bicep"
+        }
+      }
+    },
+    "_1.SelfSigned": {
+      "type": "object",
+      "properties": {
+        "source": {
+          "type": "string",
+          "allowedValues": [
+            "SelfSigned"
+          ]
+        }
+      },
+      "metadata": {
+        "__bicep_imported_from!": {
+          "sourceTemplate": "types.bicep"
+        }
+      }
+    },
+    "_1.TrustBundleSettings": {
+      "type": "object",
+      "properties": {
+        "issuerName": {
+          "type": "string"
+        },
+        "issuerKind": {
+          "type": "string",
+          "allowedValues": [
+            "ClusterIssuer",
+            "Issuer"
+          ]
+        },
+        "configMapName": {
+          "type": "string"
+        },
+        "configMapKey": {
+          "type": "string"
+        }
+      },
+      "metadata": {
+        "__bicep_imported_from!": {
+          "sourceTemplate": "types.bicep"
+        }
+      }
+    },
+    "_1.TrustConfig": {
+      "type": "object",
+      "discriminator": {
+        "propertyName": "source",
+        "mapping": {
+          "SelfSigned": {
+            "$ref": "#/definitions/_1.SelfSigned"
+          },
+          "CustomerManaged": {
+            "$ref": "#/definitions/_1.CustomerManaged"
+          }
+        }
+      },
+      "metadata": {
+        "__bicep_imported_from!": {
+          "sourceTemplate": "types.bicep"
+        }
+      }
+    },
+    "_1.VolumeClaimSpec": {
+      "type": "object",
+      "properties": {
+        "volumeName": {
+          "type": "string",
+          "nullable": true
+        },
+        "volumeMode": {
+          "type": "string",
+          "nullable": true
+        },
+        "storageClassName": {
+          "type": "string",
+          "nullable": true
+        },
+        "accessModes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "nullable": true
+        },
+        "dataSource": {
+          "type": "object",
+          "nullable": true
+        },
+        "dataSourceRef": {
+          "type": "object",
+          "nullable": true
+        },
+        "resources": {
+          "type": "object",
+          "nullable": true
+        },
+        "selector": {
+          "type": "object",
+          "nullable": true
+        }
+      },
+      "metadata": {
+        "description": "Kubernetes PersistentVolumeClaim spec.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "types.bicep"
+        }
+      }
+    }
+  },
+  "parameters": {
+    "clusterName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the existing arc-enabled cluster where AIO will be deployed."
+      }
+    },
+    "trustConfig": {
+      "$ref": "#/definitions/_1.TrustConfig",
+      "defaultValue": {
+        "source": "SelfSigned"
+      },
+      "metadata": {
+        "description": "Trust bundle config for AIO."
+      }
+    },
+    "advancedConfig": {
+      "$ref": "#/definitions/_1.AdvancedConfig",
+      "defaultValue": {},
+      "metadata": {
+        "description": "Advanced Configuration for development"
+      }
+    }
+  },
+  "variables": {
+    "VERSIONS": {
+      "certManager": "1.2.3",
+      "secretStore": "1.6.1"
+    },
+    "TRAINS": {
+      "certManager": "stable",
+      "secretStore": "stable"
+    }
+  },
+  "resources": {
+    "cluster": {
+      "existing": true,
+      "type": "Microsoft.Kubernetes/connectedClusters",
+      "apiVersion": "2021-03-01",
+      "name": "[parameters('clusterName')]"
+    },
+    "certManagerExtension": {
+      "condition": "[equals(parameters('trustConfig').source, 'SelfSigned')]",
+      "type": "Microsoft.KubernetesConfiguration/extensions",
+      "apiVersion": "2023-05-01",
+      "scope": "[resourceId('Microsoft.Kubernetes/connectedClusters', parameters('clusterName'))]",
+      "name": "cert-manager",
+      "identity": {
+        "type": "SystemAssigned"
+      },
+      "properties": {
+        "extensionType": "microsoft.certmanagement",
+        "releaseTrain": "[coalesce(tryGet(tryGet(parameters('advancedConfig'), 'certManager'), 'train'), variables('TRAINS').certManager)]",
+        "version": "[coalesce(tryGet(tryGet(parameters('advancedConfig'), 'certManager'), 'version'), variables('VERSIONS').certManager)]",
+        "autoUpgradeMinorVersion": false,
+        "scope": {
+          "cluster": {
+            "releaseNamespace": "cert-manager"
+          }
+        },
+        "configurationSettings": {
+          "AgentOperationTimeoutInMinutes": "20",
+          "global.telemetry.enabled": "[coalesce(tryGet(tryGet(tryGet(parameters('advancedConfig'), 'certManager'), 'telemetry'), 'enabled'), 'true')]",
+          "trust-manager.secretTargets.enabled": "[coalesce(tryGet(tryGet(tryGet(parameters('advancedConfig'), 'certManager'), 'secretTargets'), 'enabled'), 'false')]",
+          "trust-manager.secretTargets.authorizedSecretsAll": "[coalesce(tryGet(tryGet(tryGet(parameters('advancedConfig'), 'certManager'), 'secretTargets'), 'authorizedSecretsAll'), 'false')]"
+        }
+      }
+    },
+    "secretStoreExtension": {
+      "type": "Microsoft.KubernetesConfiguration/extensions",
+      "apiVersion": "2023-05-01",
+      "scope": "[resourceId('Microsoft.Kubernetes/connectedClusters', parameters('clusterName'))]",
+      "name": "azure-secret-store",
+      "identity": {
+        "type": "SystemAssigned"
+      },
+      "properties": {
+        "extensionType": "microsoft.azure.secretstore",
+        "version": "[coalesce(tryGet(tryGet(parameters('advancedConfig'), 'secretSyncController'), 'version'), variables('VERSIONS').secretStore)]",
+        "releaseTrain": "[coalesce(tryGet(tryGet(parameters('advancedConfig'), 'secretSyncController'), 'train'), variables('TRAINS').secretStore)]",
+        "autoUpgradeMinorVersion": false,
+        "configurationSettings": {
+          "rotationPollIntervalInSeconds": "120",
+          "validatingAdmissionPolicies.applyPolicies": "false"
+        }
+      },
+      "dependsOn": [
+        "certManagerExtension"
+      ]
+    }
+  },
+  "outputs": {
+    "clExtensionIds": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "value": [
+        "[extensionResourceId(resourceId('Microsoft.Kubernetes/connectedClusters', parameters('clusterName')), 'Microsoft.KubernetesConfiguration/extensions', 'azure-secret-store')]"
+      ]
+    },
+    "extensions": {
+      "type": "object",
+      "value": {
+        "certManager": {
+          "name": "[if(equals(parameters('trustConfig').source, 'SelfSigned'), 'cert-manager', null())]",
+          "id": "[if(equals(parameters('trustConfig').source, 'SelfSigned'), extensionResourceId(resourceId('Microsoft.Kubernetes/connectedClusters', parameters('clusterName')), 'Microsoft.KubernetesConfiguration/extensions', 'cert-manager'), null())]",
+          "version": "[tryGet(if(equals(parameters('trustConfig').source, 'SelfSigned'), reference('certManagerExtension', '2023-05-01', 'full'), null()), 'properties', 'version')]",
+          "releaseTrain": "[tryGet(if(equals(parameters('trustConfig').source, 'SelfSigned'), reference('certManagerExtension', '2023-05-01', 'full'), null()), 'properties', 'releaseTrain')]"
+        },
+        "secretStore": {
+          "name": "azure-secret-store",
+          "id": "[extensionResourceId(resourceId('Microsoft.Kubernetes/connectedClusters', parameters('clusterName')), 'Microsoft.KubernetesConfiguration/extensions', 'azure-secret-store')]",
+          "version": "[reference('secretStoreExtension').version]",
+          "releaseTrain": "[reference('secretStoreExtension').releaseTrain]"
+        }
+      }
+    }
+  }
+}
