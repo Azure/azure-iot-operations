@@ -55,6 +55,9 @@ param adrNamespaceId string?
 @description('AIO Instance features.')
 param features types.Features?
 
+@description('AIO Instance SKU name. Leave unset for the RP default.')
+param sku ('Standard' | 'Essentials')?
+
 /*                              Broker Parameters                            */
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -75,9 +78,6 @@ param trustConfig types.TrustConfig = {
 @description('Instance count for the default dataflow profile. The default is 1.')
 param defaultDataflowInstanceCount int = 1
 
-@description('Force the OPC UA feature off, overriding any opcua entry in \'features\'. Defaults to false (OPC UA enabled).')
-param disableOpcUaFeature bool = false
-
 @description('Advanced Configuration for development')
 param advancedConfig types.AdvancedConfig = {}
 
@@ -86,8 +86,8 @@ param advancedConfig types.AdvancedConfig = {}
 /*****************************************************************************/
 
 var VERSIONS = {
-  iotOperations: '1.4.112'
-  connectors: '1.4.14'
+  iotOperations: '1.5.45'
+  connectors: '1.5.22'
 }
 
 var TRAINS = {
@@ -115,9 +115,12 @@ var TRUST_CONFIG_MAP_KEY = customerManagedTrust
   ? trustConfig.settings.configMapKey
   : 'ca.crt'
 
-// OPC UA connector version. Defaults to the connectors release bundled by the AIO
-// extension; overridable per-deployment via advancedConfig.
+// OPC UA connector coordinates. These match the connectors chart shipped with this
+// release. All four are overridable per-deployment via advancedConfig.
 var OPCUA_CONNECTOR_VERSION = advancedConfig.?connectors.?version ?? VERSIONS.connectors
+var CONNECTORS_CHART_REGISTRY = advancedConfig.?connectors.?registry ?? 'mcr.microsoft.com'
+var CONNECTORS_CHART_REPOSITORY = advancedConfig.?connectors.?repository ?? 'azureiotoperations/aio-connectors/helmchart/microsoft-aio-connectors'
+var CONNECTORS_IMAGE_REGISTRY = advancedConfig.?connectors.?imageRegistry ?? 'mcr.microsoft.com'
 
 var MQTT_SETTINGS = {
   brokerListenerServiceName: 'aio-broker'
@@ -152,10 +155,26 @@ resource cluster 'Microsoft.Kubernetes/connectedClusters@2021-03-01' existing = 
 
 var defaultAioConfigurationSettings = {
   AgentOperationTimeoutInMinutes: '120'
+  'connectors.image.tag': OPCUA_CONNECTOR_VERSION
+  'connectors.image.registry': CONNECTORS_CHART_REGISTRY
+  'connectors.image.repository': CONNECTORS_CHART_REPOSITORY
+  'connectors.values.image.registry': CONNECTORS_IMAGE_REGISTRY
   'connectors.values.mqttBroker.address': 'mqtts://${MQTT_SETTINGS.brokerListenerHost}:${MQTT_SETTINGS.brokerListenerPort}'
   'connectors.values.mqttBroker.serviceAccountTokenAudience': MQTT_SETTINGS.serviceAccountAudience
   'connectors.values.securityPki.applicationUri': 'urn:microsoft.com:aio:opc:ua:broker:${AIO_EXTENSION_SUFFIX}'
   'connectors.values.securityPki.subjectName': 'CN=aio-opc-opcuabroker-${AIO_EXTENSION_SUFFIX}'
+  // This release ships the schema registry, not the edge registry, so keep the connector's
+  // EdgeRegistryPreview flag off. The supervisor injects
+  // "aioconnectors_FeatureManagement__EdgeRegistryPreview=true" whenever preview features are
+  // enabled, because it turns every FeatureManagement flag on as a group. Both prefixes are set
+  // on purpose: the connector's configuration builder reads them in an order that differs between
+  // connector versions, so pinning only one prefix silently stops working when that order flips.
+  // The supervisor appends these entries after its own feature flags, so the duplicate
+  // "aioconnectors_" name resolves to this value.
+  'connectors.values.opcUaConnector.environment[0].name': 'opcuabroker_FeatureManagement__EdgeRegistryPreview'
+  'connectors.values.opcUaConnector.environment[0].value': 'false'
+  'connectors.values.opcUaConnector.environment[1].name': 'aioconnectors_FeatureManagement__EdgeRegistryPreview'
+  'connectors.values.opcUaConnector.environment[1].value': 'false'
 
   'dataFlows.values.tinyKube.mqttBroker.hostName': MQTT_SETTINGS.brokerListenerHost
   'dataFlows.values.tinyKube.mqttBroker.port': MQTT_SETTINGS.brokerListenerPort
@@ -221,28 +240,20 @@ var extendedLocation = {
 /*     Deployment of Helm Charts and CRs to run on Arc-enabled cluster.      */
 /*****************************************************************************/
 
-// When disableOpcUaFeature is set, force the opcua feature to Disabled on top of any caller-supplied
-// features. 'settings' is included because the instance API requires it.
-var effectiveFeatures = disableOpcUaFeature
-  ? union(features ?? {}, {
-      opcua: {
-        mode: 'Disabled'
-        settings: {}
-      }
-    })
-  : features
-
-resource aioInstance 'Microsoft.IoTOperations/instances@2026-07-01' = {
+resource aioInstance 'Microsoft.IoTOperations/instances@2026-10-01' = {
   name: aioInstanceName ?? 'aio-${HASH}'
   location: clusterLocation
   extendedLocation: extendedLocation
   identity: utils.buildIdentity([userAssignedIdentity])
+  // sku stays null unless set; the generic envelope type flags that as BCP321
+  #disable-next-line BCP321
+  sku: sku != null ? { name: sku! } : null
   properties: {
     description: 'An AIO instance.'
     schemaRegistryRef: {
       resourceId: schemaRegistryId
     }
-    features: effectiveFeatures
+    features: features
     adrNamespaceRef: !empty(adrNamespaceId)
       ? {
           resourceId: adrNamespaceId!
@@ -255,7 +266,7 @@ resource aioInstance 'Microsoft.IoTOperations/instances@2026-07-01' = {
 /*                             Broker Resources.                             */
 /*****************************************************************************/
 
-resource broker 'Microsoft.IoTOperations/instances/brokers@2026-07-01' = {
+resource broker 'Microsoft.IoTOperations/instances/brokers@2026-10-01' = {
   parent: aioInstance
   name: 'default'
   extendedLocation: extendedLocation
@@ -280,7 +291,7 @@ resource broker 'Microsoft.IoTOperations/instances/brokers@2026-07-01' = {
   }
 }
 
-resource brokerAuthn 'Microsoft.IoTOperations/instances/brokers/authentications@2026-07-01' = {
+resource brokerAuthn 'Microsoft.IoTOperations/instances/brokers/authentications@2026-10-01' = {
   parent: broker
   name: 'default'
   extendedLocation: extendedLocation
@@ -298,7 +309,7 @@ resource brokerAuthn 'Microsoft.IoTOperations/instances/brokers/authentications@
   }
 }
 
-resource brokerListener 'Microsoft.IoTOperations/instances/brokers/listeners@2026-07-01' = {
+resource brokerListener 'Microsoft.IoTOperations/instances/brokers/listeners@2026-10-01' = {
   parent: broker
   name: 'default'
   extendedLocation: extendedLocation
@@ -328,7 +339,7 @@ resource brokerListener 'Microsoft.IoTOperations/instances/brokers/listeners@202
 /*                             Dataflow Resources.                           */
 /*****************************************************************************/
 
-resource dataflowProfile 'Microsoft.IoTOperations/instances/dataflowProfiles@2026-07-01' = {
+resource dataflowProfile 'Microsoft.IoTOperations/instances/dataflowProfiles@2026-10-01' = {
   parent: aioInstance
   name: 'default'
   dependsOn: [
@@ -340,7 +351,7 @@ resource dataflowProfile 'Microsoft.IoTOperations/instances/dataflowProfiles@202
   }
 }
 
-resource dataflowEndpoint 'Microsoft.IoTOperations/instances/dataflowEndpoints@2026-07-01' = {
+resource dataflowEndpoint 'Microsoft.IoTOperations/instances/dataflowEndpoints@2026-10-01' = {
   parent: aioInstance
   name: 'default'
   extendedLocation: extendedLocation
@@ -362,7 +373,7 @@ resource dataflowEndpoint 'Microsoft.IoTOperations/instances/dataflowEndpoints@2
   }
 }
 
-resource artifactRegistryEndpoint 'Microsoft.IoTOperations/instances/registryEndpoints@2026-07-01' = {
+resource artifactRegistryEndpoint 'Microsoft.IoTOperations/instances/registryEndpoints@2026-10-01' = {
   parent: aioInstance
   name: 'default'
   extendedLocation: extendedLocation
@@ -393,12 +404,7 @@ resource artifactRegistryEndpoint 'Microsoft.IoTOperations/instances/registryEnd
 // A per-instance suffix mirrors the supervisor's generated name (e.g. '-e5c0').
 var opcUaConnectorTemplateName = 'azureiotoperationsconnectorforopcua-${substring(uniqueString(aioInstance.id), 0, 4)}'
 
-// Creating this template while opcua is Disabled hangs ARM for the full timeout (no supervisor to
-// reconcile it). 'connectors' is the operator's legacy alias for 'opcua'; the canonical name wins.
-var opcUaFeature = features.?opcua ?? features.?connectors ?? {}
-var opcUaFeatureMode = disableOpcUaFeature ? 'Disabled' : (opcUaFeature.?mode ?? 'Stable')
-
-resource opcUaConnectorTemplate 'Microsoft.IoTOperations/instances/akriConnectorTemplates@2026-07-01' = if (opcUaFeatureMode != 'Disabled') {
+resource opcUaConnectorTemplate 'Microsoft.IoTOperations/instances/akriConnectorTemplates@2026-10-01' = {
   parent: aioInstance
   name: opcUaConnectorTemplateName
   extendedLocation: extendedLocation
@@ -429,6 +435,9 @@ resource opcUaConnectorTemplate 'Microsoft.IoTOperations/instances/akriConnector
     deviceInboundEndpointTypes: [
       {
         endpointType: 'Microsoft.OpcUa'
+      }
+      {
+        endpointType: 'Microsoft.OpcUa.WoT'
       }
     ]
   }

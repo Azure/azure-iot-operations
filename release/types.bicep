@@ -22,6 +22,12 @@ type AdvancedConfig = {
   }?
   connectors: {
     version: string?
+    // Helm chart registry (connectors.image.registry).
+    registry: string?
+    // Helm chart repository path (connectors.image.repository).
+    repository: string?
+    // Connector container image registry (connectors.values.image.registry).
+    imageRegistry: string?
   }?
   secretSyncController: {
     version: string?

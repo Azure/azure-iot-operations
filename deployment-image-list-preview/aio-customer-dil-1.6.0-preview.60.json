@@ -1,0 +1,918 @@
+{
+  "images": [
+    {
+      "repo": "mcr.microsoft.com/azurearck8s/cluster-identity",
+      "tag": "1.39.3",
+      "digest": "sha256:ab76cf65654a74a59195cd3fb05481e71c96754c3a700a943c46fe228992b172",
+      "namespace": "azure-arc",
+      "multiArch": true,
+      "architectures": [
+        "linux/amd64",
+        "linux/arm64"
+      ]
+    },
+    {
+      "repo": "mcr.microsoft.com/azurearck8s/cluster-metadata-operator",
+      "tag": "1.39.3",
+      "digest": "sha256:f6c99264e269df6b910741d1e5d218e74d5873cde1ce8931e1e995bd48a7ea39",
+      "namespace": "azure-arc",
+      "multiArch": true,
+      "architectures": [
+        "linux/amd64",
+        "linux/arm64"
+      ]
+    },
+    {
+      "repo": "mcr.microsoft.com/azurearck8s/clusterconnect-agent",
+      "tag": "1.39.3",
+      "digest": "sha256:ef88acbcd229ece3f7a81bdbd94fd2d6798436304951b4c3b5b8578af7dda895",
+      "namespace": "azure-arc",
+      "multiArch": true,
+      "architectures": [
+        "linux/amd64",
+        "linux/arm64"
+      ]
+    },
+    {
+      "repo": "mcr.microsoft.com/azurearck8s/clusterconnectservice-operator",
+      "tag": "1.39.3",
+      "digest": "sha256:92389fc52bb9ccf203f1f163381bbbb466bb365abf74ec29331131f9c1a359a1",
+      "namespace": "azure-arc",
+      "multiArch": true,
+      "architectures": [
+        "linux/amd64",
+        "linux/arm64"
+      ]
+    },
+    {
+      "repo": "mcr.microsoft.com/azurearck8s/clusterdiagnosticchecks",
+      "tag": "1.39.3",
+      "digest": "sha256:a2074c7fe8cf8f4fc2bf2de87a26c1c4142ddb482f7cf7d6793f8fa0082c8856",
+      "namespace": "",
+      "multiArch": true,
+      "architectures": [
+        "linux/amd64",
+        "linux/arm64"
+      ]
+    },
+    {
+      "repo": "mcr.microsoft.com/azurearck8s/config-agent",
+      "tag": "1.39.3",
+      "digest": "sha256:3d2f7c9c31f8f36579772bf0e855197cd689dcb77091004ecfed99bbb9052695",
+      "namespace": "azure-arc",
+      "multiArch": true,
+      "architectures": [
+        "linux/amd64",
+        "linux/arm64"
+      ]
+    },
+    {
+      "repo": "mcr.microsoft.com/azurearck8s/extension-events-collector",
+      "tag": "1.39.3",
+      "digest": "sha256:054d4285b3dae8eed486de5b2ac00dc39586c32da53633a30b4394571210b9f6",
+      "namespace": "azure-arc",
+      "multiArch": true,
+      "architectures": [
+        "linux/amd64",
+        "linux/arm64"
+      ]
+    },
+    {
+      "repo": "mcr.microsoft.com/azurearck8s/extensionoperator",
+      "tag": "1.39.3",
+      "digest": "sha256:620f43b5fa93f78a106a4307947929b68d25bb87549a981af282e93ddd4898e5",
+      "namespace": "azure-arc",
+      "multiArch": true,
+      "architectures": [
+        "linux/amd64",
+        "linux/arm64"
+      ]
+    },
+    {
+      "repo": "mcr.microsoft.com/azurearck8s/fluent-bit-collector",
+      "tag": "1.39.3",
+      "digest": "sha256:40d9eb718b4b35ca057f751f029abf3dcf489c605299ea1a49d21607c5360ee3",
+      "namespace": "azure-arc",
+      "multiArch": true,
+      "architectures": [
+        "linux/amd64",
+        "linux/arm64"
+      ]
+    },
+    {
+      "repo": "mcr.microsoft.com/azurearck8s/fluent-bit-metrics",
+      "tag": "1.39.3",
+      "digest": "sha256:6c5a7921f4b105db07d0161bd9131b891039618e439d752ebb5067cbd474bb98",
+      "namespace": "azure-arc",
+      "multiArch": true,
+      "architectures": [
+        "linux/amd64",
+        "linux/arm64"
+      ]
+    },
+    {
+      "repo": "mcr.microsoft.com/azurearck8s/fluent-bit",
+      "tag": "1.39.3",
+      "digest": "sha256:f281e96a94b8d33496a447ebdb4e78d9e809b5025d4dfb7b29d5cc65552cbf47",
+      "namespace": "azure-arc",
+      "multiArch": true,
+      "architectures": [
+        "linux/amd64",
+        "linux/arm64"
+      ]
+    },
+    {
+      "repo": "mcr.microsoft.com/azurearck8s/healthstatecontroller",
+      "tag": "1.39.3",
+      "digest": "sha256:b8f4743d2df3486cbe13104cbe8d2df49b9027eec969d282e51d927a97dc71a2",
+      "namespace": "azure-arc",
+      "multiArch": true,
+      "architectures": [
+        "linux/amd64",
+        "linux/arm64"
+      ]
+    },
+    {
+      "repo": "mcr.microsoft.com/azurearck8s/kube-aad-proxy",
+      "tag": "1.39.3",
+      "digest": "sha256:0ea3398a73c8b2614ab066c79dc89864b6b0e68ee40db69a1fa176fda57d98f3",
+      "namespace": "azure-arc",
+      "multiArch": true,
+      "architectures": [
+        "linux/amd64",
+        "linux/arm64"
+      ]
+    },
+    {
+      "repo": "mcr.microsoft.com/azurearck8s/msi-adapter",
+      "tag": "1.37.3",
+      "digest": "sha256:a454ff8e1f7368b6ab5f997fdda56cf5772d3efd63f2a2f3bab8a1c381851941",
+      "namespace": "azure-extensions-usage-system",
+      "multiArch": true,
+      "architectures": [
+        "linux/amd64",
+        "linux/arm64"
+      ]
+    },
+    {
+      "repo": "mcr.microsoft.com/azurearck8s/msi-adapter",
+      "tag": "1.39.3",
+      "digest": "sha256:ed559f67f6a46f65ce121ebb79abe6690561b51e6673a635b48d8dd466a75ac8",
+      "namespace": "azure-arc",
+      "multiArch": true,
+      "architectures": [
+        "linux/amd64",
+        "linux/arm64"
+      ]
+    },
+    {
+      "repo": "mcr.microsoft.com/azurearck8s/resource-sync",
+      "tag": "1.39.3",
+      "digest": "sha256:3cf54373c712104c87dd07ac854f2e981de4eb5e58f518e9e5e7c7ba3f0e156d",
+      "namespace": "azure-arc",
+      "multiArch": true,
+      "architectures": [
+        "linux/amd64",
+        "linux/arm64"
+      ]
+    },
+    {
+      "repo": "mcr.microsoft.com/azureiotoperations/aio-billing",
+      "tag": "1.6.0-preview.60",
+      "digest": "sha256:407e11afe33bbb62929284a97713f6d5b1f6b87009bf916151f37b831719dbda",
+      "namespace": "azure-iot-operations",
+      "multiArch": true,
+      "architectures": [
+        "linux/amd64",
+        "linux/arm64"
+      ]
+    },
+    {
+      "repo": "mcr.microsoft.com/azureiotoperations/aio-edge-registry",
+      "tag": "0.1.4",
+      "digest": "sha256:00e091e51489c51adc4145637059fbd0ef367edc52ac5992cf6dbdc7134c13d6",
+      "namespace": "azure-iot-operations",
+      "multiArch": true,
+      "architectures": [
+        "linux/amd64",
+        "linux/arm64"
+      ]
+    },
+    {
+      "repo": "mcr.microsoft.com/azureiotoperations/aio-mcp-frontend",
+      "tag": "0.1.3",
+      "digest": "sha256:42ac71e70d232a3a0c6d2836326a2d5d50d8b32d8addb6cb8e64e1d1a099b0ba",
+      "namespace": "azure-iot-operations",
+      "multiArch": true,
+      "architectures": [
+        "linux/amd64",
+        "linux/arm64"
+      ]
+    },
+    {
+      "repo": "mcr.microsoft.com/azureiotoperations/aio-mcp",
+      "tag": "0.1.3",
+      "digest": "sha256:e4f69c0e25f3013a89d928aac7a9ca0609d0aa5b340dc83fa8fab79ae697d461",
+      "namespace": "azure-iot-operations",
+      "multiArch": true,
+      "architectures": [
+        "linux/amd64",
+        "linux/arm64"
+      ]
+    },
+    {
+      "repo": "mcr.microsoft.com/azureiotoperations/aio-observability-operator-hooks",
+      "tag": "0.2.55",
+      "digest": "sha256:e11fe8f6957095a9f32dfcf0e1425fa92306018d5507a67b55d7d4d420db223c",
+      "namespace": "azure-iot-operations",
+      "multiArch": true,
+      "architectures": [
+        "linux/amd64",
+        "linux/arm64"
+      ]
+    },
+    {
+      "repo": "mcr.microsoft.com/azureiotoperations/aio-observability-operator",
+      "tag": "0.2.55",
+      "digest": "sha256:571b8fafa05a0a16c94bf0fa6ea90a0db7f4c9c1d7d685deeb9b02165880a5a8",
+      "namespace": "azure-iot-operations",
+      "multiArch": true,
+      "architectures": [
+        "linux/amd64",
+        "linux/arm64"
+      ]
+    },
+    {
+      "repo": "mcr.microsoft.com/azureiotoperations/aio-operator-hooks",
+      "tag": "1.6.0-preview.60",
+      "digest": "sha256:0b729ba0822f420eff599cde0468fd8fd8e3fee9baa33e1054753f4a4a3041cb",
+      "namespace": "azure-iot-operations",
+      "multiArch": true,
+      "architectures": [
+        "linux/amd64",
+        "linux/arm64"
+      ]
+    },
+    {
+      "repo": "mcr.microsoft.com/azureiotoperations/aio-operator",
+      "tag": "1.6.0-preview.60",
+      "digest": "sha256:de5d125b50d792ff216dda67737b7433a1e08a1e28e517ea8156b923a9e18af9",
+      "namespace": "azure-iot-operations",
+      "multiArch": true,
+      "architectures": [
+        "linux/amd64",
+        "linux/arm64"
+      ]
+    },
+    {
+      "repo": "mcr.microsoft.com/azureiotoperations/akri-connectors/media",
+      "tag": "1.6.5",
+      "digest": "sha256:1437d0e45f8ffd54a56369e16be1d7e14c558f734e57ec2335c7751e4b4d92f7",
+      "namespace": "azure-iot-operations",
+      "multiArch": true,
+      "architectures": [
+        "linux/amd64",
+        "linux/arm64"
+      ]
+    },
+    {
+      "repo": "mcr.microsoft.com/azureiotoperations/akri-connectors/mqtt",
+      "tag": "4.1.0-preview.3",
+      "digest": "sha256:ecfb238ec32e92e8fb5501b35840dafaaa55f12e50de531232e507ff89b63a77",
+      "namespace": "azure-iot-operations",
+      "multiArch": true,
+      "architectures": [
+        "linux/amd64",
+        "linux/arm64"
+      ]
+    },
+    {
+      "repo": "mcr.microsoft.com/azureiotoperations/akri-connectors/onvif",
+      "tag": "1.6.5",
+      "digest": "sha256:1f06ed755de3ad362ab59a7e366e8259f0325a9ce41b21dd9067c0949caa4a6c",
+      "namespace": "azure-iot-operations",
+      "multiArch": true,
+      "architectures": [
+        "linux/amd64",
+        "linux/arm64"
+      ]
+    },
+    {
+      "repo": "mcr.microsoft.com/azureiotoperations/akri-connectors/rest",
+      "tag": "1.5.0-preview.3",
+      "digest": "sha256:c4fe0c9e8021518fcab8ba20d3b980a97567a4b9fb0161a991b10c2a9b644e0f",
+      "namespace": "azure-iot-operations",
+      "multiArch": true,
+      "architectures": [
+        "linux/amd64",
+        "linux/arm64"
+      ]
+    },
+    {
+      "repo": "mcr.microsoft.com/azureiotoperations/akri-connectors/sqlserver",
+      "tag": "1.1.0-preview.3",
+      "digest": "sha256:9bd01456430c5c5be40aa9d69758d158eb75221eeeb28445bdf3a9e8b90594ac",
+      "namespace": "azure-iot-operations",
+      "multiArch": true,
+      "architectures": [
+        "linux/amd64",
+        "linux/arm64"
+      ]
+    },
+    {
+      "repo": "mcr.microsoft.com/azureiotoperations/akri-connectors/sse",
+      "tag": "1.4.0-preview.3",
+      "digest": "sha256:9ac3e82074246169dd6a67cd590b3b0a41b7e8f2070476a0d6854f61e9c2f7b4",
+      "namespace": "azure-iot-operations",
+      "multiArch": true,
+      "architectures": [
+        "linux/amd64",
+        "linux/arm64"
+      ]
+    },
+    {
+      "repo": "mcr.microsoft.com/azureiotoperations/akri/adr-service",
+      "tag": "1.4.0-preview.9",
+      "digest": "sha256:2468297e2b4a37bc9cf877a7304a7965a6e7fcfde8b7b7bb004616c8ea4e08f2",
+      "namespace": "azure-iot-operations",
+      "multiArch": true,
+      "architectures": [
+        "linux/amd64",
+        "linux/arm64"
+      ]
+    },
+    {
+      "repo": "mcr.microsoft.com/azureiotoperations/akri/operator",
+      "tag": "1.4.0-preview.9",
+      "digest": "sha256:1f1c01a3c7c14ebb774e3947c512114af7129a7f126519c3c64bd9d436eb3afa",
+      "namespace": "azure-iot-operations",
+      "multiArch": true,
+      "architectures": [
+        "linux/amd64",
+        "linux/arm64"
+      ]
+    },
+    {
+      "repo": "mcr.microsoft.com/azureiotoperations/common-operator",
+      "tag": "1.6.4",
+      "digest": "sha256:887b70001251259c00b8e94ac3f32b5802498d0a012b44953ea034fa97437c5c",
+      "namespace": "azure-iot-operations",
+      "multiArch": true,
+      "architectures": [
+        "linux/amd64",
+        "linux/arm64"
+      ]
+    },
+    {
+      "repo": "mcr.microsoft.com/azureiotoperations/dataflow-operator",
+      "tag": "1.7.3",
+      "digest": "sha256:880a28172a0fa3268d3f537b94c53b91bad04f3c092c0b98510bcb8992dbec86",
+      "namespace": "azure-iot-operations",
+      "multiArch": true,
+      "architectures": [
+        "linux/amd64",
+        "linux/arm64"
+      ]
+    },
+    {
+      "repo": "mcr.microsoft.com/azureiotoperations/dataflow",
+      "tag": "1.7.3",
+      "digest": "sha256:44395a74f1fbef3af634bcb4be99874c3c4d429304d4cd979ec5f0f2ccddb742",
+      "namespace": "azure-iot-operations",
+      "multiArch": true,
+      "architectures": [
+        "linux/amd64",
+        "linux/arm64"
+      ]
+    },
+    {
+      "repo": "mcr.microsoft.com/azureiotoperations/diagnostics-probe",
+      "tag": "1.6.4",
+      "digest": "sha256:fb6fa3d70744da4981b7233132b8818414f9bd06ea7808ae39d73d1151d824ce",
+      "namespace": "azure-iot-operations",
+      "multiArch": true,
+      "architectures": [
+        "linux/amd64",
+        "linux/arm64"
+      ]
+    },
+    {
+      "repo": "mcr.microsoft.com/azureiotoperations/dmqtt-authentication",
+      "tag": "1.6.4",
+      "digest": "sha256:d2165309e95190f593d6a09ba392a23c06fb3592a4f6f425f7758d811cf41042",
+      "namespace": "azure-iot-operations",
+      "multiArch": true,
+      "architectures": [
+        "linux/amd64",
+        "linux/arm64"
+      ]
+    },
+    {
+      "repo": "mcr.microsoft.com/azureiotoperations/dmqtt-operator",
+      "tag": "1.6.4",
+      "digest": "sha256:96d5a9a0b80ed3f176a33dfa9ac04a57bb35482384cc67ca7d90e3a1e8963646",
+      "namespace": "azure-iot-operations",
+      "multiArch": true,
+      "architectures": [
+        "linux/amd64",
+        "linux/arm64"
+      ]
+    },
+    {
+      "repo": "mcr.microsoft.com/azureiotoperations/dmqtt-pod",
+      "tag": "1.6.4",
+      "digest": "sha256:73634625423f7e67d971883327ad2ca7f662348327ab20b5acc7403b613d80d9",
+      "namespace": "azure-iot-operations",
+      "multiArch": true,
+      "architectures": [
+        "linux/amd64",
+        "linux/arm64"
+      ]
+    },
+    {
+      "repo": "mcr.microsoft.com/azureiotoperations/inference-connector",
+      "tag": "0.1.3",
+      "digest": "sha256:c7e186b72f5b956d31ebe7ecaba991616e2f9e5b579f883eb6f28b8d62479bdb",
+      "namespace": "azure-iot-operations",
+      "multiArch": true,
+      "architectures": [
+        "linux/amd64",
+        "linux/arm64"
+      ]
+    },
+    {
+      "repo": "mcr.microsoft.com/azureiotoperations/meso-image",
+      "tag": "0.2.55",
+      "digest": "sha256:446012b8a6657214c7906698c2c1113fa3e374d7fc41a8b67df9f7fa83e4cba0",
+      "namespace": "azure-iot-operations",
+      "multiArch": true,
+      "architectures": [
+        "linux/amd64",
+        "linux/arm64"
+      ]
+    },
+    {
+      "repo": "mcr.microsoft.com/azureiotoperations/wasmgraph-controller",
+      "tag": "1.7.3",
+      "digest": "sha256:858686225d0562e3caa810d6de5f03d90988a920cbbb88872b5eb260d188179a",
+      "namespace": "azure-iot-operations",
+      "multiArch": true,
+      "architectures": [
+        "linux/amd64",
+        "linux/arm64"
+      ]
+    },
+    {
+      "repo": "mcr.microsoft.com/azurek8sbilling/billing-operator-webhook",
+      "tag": "1.9.79",
+      "digest": "sha256:8c619b6afb378fb052ad7552f9fd2751d264790f507ebfe37ace30b083f0ab96",
+      "namespace": "azure-extensions-usage-system",
+      "multiArch": true,
+      "architectures": [
+        "linux/amd64",
+        "linux/arm64"
+      ]
+    },
+    {
+      "repo": "mcr.microsoft.com/azurek8sbilling/billing-operator",
+      "tag": "1.9.79",
+      "digest": "sha256:3dd8fb03acb93b2be13871074c8212cb46625a536f37474e0f32daf675061620",
+      "namespace": "azure-extensions-usage-system",
+      "multiArch": true,
+      "architectures": [
+        "linux/amd64",
+        "linux/arm64"
+      ]
+    },
+    {
+      "repo": "mcr.microsoft.com/azurek8sbilling/fluent-bit-collector",
+      "tag": "1.9.79",
+      "digest": "sha256:0c6a6ee909b853d01a7fa6ba173e90dbb74f2f050f99b9ff31e3f5e19331d165",
+      "namespace": "azure-extensions-usage-system",
+      "multiArch": true,
+      "architectures": [
+        "linux/amd64",
+        "linux/arm64"
+      ]
+    },
+    {
+      "repo": "mcr.microsoft.com/azuremonitor/diagnostics-operator",
+      "tag": "0.169.3",
+      "digest": "sha256:c9eef740fbf7d4f1dd62df48dbdd773f82f5377221e452ce0909dbea2cedc139",
+      "namespace": "azure-arc",
+      "multiArch": true,
+      "architectures": [
+        "linux/amd64",
+        "linux/arm64"
+      ]
+    },
+    {
+      "repo": "mcr.microsoft.com/azuremonitor/opentelemetry-collector-internal",
+      "tag": "0.163.2",
+      "digest": "sha256:301178ff19e2e7c9f10c20f108f00145418401866bc3594a08e283ebaa718825",
+      "namespace": "cert-manager",
+      "multiArch": true,
+      "architectures": [
+        "linux/amd64",
+        "linux/arm64"
+      ]
+    },
+    {
+      "repo": "mcr.microsoft.com/azuremonitor/pipeline",
+      "tag": "0.101.0",
+      "digest": "sha256:eb28052b0c0d5342b5b8fce40414acff1c12673bb2978ac9ce1853fdc8649d3a",
+      "namespace": "azure-arc",
+      "multiArch": true,
+      "architectures": [
+        "linux/amd64",
+        "linux/arm64"
+      ]
+    },
+    {
+      "repo": "mcr.microsoft.com/geneva/amacoreagentaot",
+      "tag": "3.0.120",
+      "digest": "sha256:9b9a2602eba622e2270db4a7fcab904926f7761e43429af51388867e140a639d",
+      "namespace": "azure-arc",
+      "multiArch": true,
+      "architectures": [
+        "linux/amd64",
+        "linux/arm64"
+      ]
+    },
+    {
+      "repo": "mcr.microsoft.com/geneva/distroless/mdm",
+      "tag": "2.202610200841.0-20261023-2",
+      "digest": "sha256:613030e394aa35dee2c96bc9c241c9649d2346bd409bb4537d9b73d14f4ef17f",
+      "namespace": "azure-arc",
+      "multiArch": true,
+      "architectures": [
+        "linux/amd64",
+        "linux/arm64"
+      ]
+    },
+    {
+      "repo": "mcr.microsoft.com/geneva/distroless/mdm",
+      "tag": "recommended",
+      "digest": "sha256:861a9145eb6a2d66fbea241df6f3088adf0f313dd8d61090a17a313b6310adef",
+      "namespace": "azure-extensions-usage-system",
+      "multiArch": true,
+      "architectures": [
+        "linux/amd64",
+        "linux/arm64"
+      ]
+    },
+    {
+      "repo": "mcr.microsoft.com/microsoft.certmanagement/zdtrcontroller",
+      "tag": "0.1.20",
+      "digest": "sha256:993f0ce00536d12ffe4b8e699a55a282bf1d10717a95d9b3ff2bcbab71dbc8a9",
+      "namespace": "cert-manager",
+      "multiArch": true,
+      "architectures": [
+        "linux/amd64",
+        "linux/arm64"
+      ]
+    },
+    {
+      "repo": "mcr.microsoft.com/microsoft.secretsynccontroller/secretsynccontroller",
+      "tag": "1.6.1",
+      "digest": "sha256:f1dcf23a1d61c10bb0d5ff14082ff68aa2d0b8e2b01a9ab084516ebaaf1a7742",
+      "namespace": "azure-secret-store",
+      "multiArch": true,
+      "architectures": [
+        "linux/amd64",
+        "linux/arm64"
+      ]
+    },
+    {
+      "repo": "mcr.microsoft.com/oss/v2/azure/secrets-store/provider-azure",
+      "tag": "v1.8.2-16",
+      "digest": "sha256:b451542dd17a9b1b1b400fa1ca768a492720b87b696f373f0494217d855aee8c",
+      "namespace": "azure-secret-store",
+      "multiArch": true,
+      "architectures": [
+        "linux/amd64",
+        "linux/arm64"
+      ]
+    },
+    {
+      "repo": "mcr.microsoft.com/oss/v2/azure/workload-identity/webhook",
+      "tag": "v1.6.1-10",
+      "digest": "sha256:9eec1eac7b1208534cc4607dc50a9289cdfbc82c4eca8381160d768736918644",
+      "namespace": "arc-workload-identity",
+      "multiArch": true,
+      "architectures": [
+        "linux/amd64",
+        "linux/arm64"
+      ]
+    },
+    {
+      "repo": "mcr.microsoft.com/oss/v2/cert-manager/acmesolver",
+      "tag": "v1.21.2-4",
+      "digest": "sha256:d9e4b965d95651af3ec8f0be1cd4b947126281b8fc540ed13486831708099bdc",
+      "namespace": "cert-manager",
+      "multiArch": true,
+      "architectures": [
+        "linux/amd64",
+        "linux/arm64"
+      ]
+    },
+    {
+      "repo": "mcr.microsoft.com/oss/v2/cert-manager/cainjector",
+      "tag": "v1.21.2-4",
+      "digest": "sha256:41939cdfb83ac05827f1c08b718f7fa5462d1e88ea34361df69af95fdc7b9e63",
+      "namespace": "cert-manager",
+      "multiArch": true,
+      "architectures": [
+        "linux/amd64",
+        "linux/arm64"
+      ]
+    },
+    {
+      "repo": "mcr.microsoft.com/oss/v2/cert-manager/controller",
+      "tag": "v1.21.2-6",
+      "digest": "sha256:6da610db64e8fef3f44af3b974d3dcb4e59203059f5c26cd22dbf865cebc2413",
+      "namespace": "cert-manager",
+      "multiArch": true,
+      "architectures": [
+        "linux/amd64",
+        "linux/arm64"
+      ]
+    },
+    {
+      "repo": "mcr.microsoft.com/oss/v2/cert-manager/startupapicheck",
+      "tag": "v1.21.2-4",
+      "digest": "sha256:f78942a85d668adb1250d55eadfd3f93869bd42c00d0a865c8199c3184524902",
+      "namespace": "cert-manager",
+      "multiArch": true,
+      "architectures": [
+        "linux/amd64",
+        "linux/arm64"
+      ]
+    },
+    {
+      "repo": "mcr.microsoft.com/oss/v2/cert-manager/trust-manager",
+      "tag": "v0.20.3-20",
+      "digest": "sha256:ed63ac440916901bebe3b991b35a103d7cbfa3880a365fe4f356faef66062316",
+      "namespace": "cert-manager",
+      "multiArch": true,
+      "architectures": [
+        "linux/amd64",
+        "linux/arm64"
+      ]
+    },
+    {
+      "repo": "mcr.microsoft.com/oss/v2/cert-manager/trust-pkg",
+      "tag": "v2023.03.11-15",
+      "digest": "sha256:9b6a86b680835fae4bc82b926437dcfa1059317a94ba3fdc7b6631f43ccf6f72",
+      "namespace": "cert-manager",
+      "multiArch": true,
+      "architectures": [
+        "linux/amd64",
+        "linux/arm64"
+      ]
+    },
+    {
+      "repo": "mcr.microsoft.com/oss/v2/cert-manager/webhook",
+      "tag": "v1.21.2-6",
+      "digest": "sha256:07590933eaf8f7412f361c606b9e17a1bddf4bcecb45fcb308252b6a91f90f9e",
+      "namespace": "cert-manager",
+      "multiArch": true,
+      "architectures": [
+        "linux/amd64",
+        "linux/arm64"
+      ]
+    },
+    {
+      "repo": "mcr.microsoft.com/oss/v2/kubernetes/kube-rbac-proxy",
+      "tag": "v0.21.2",
+      "digest": "sha256:a605572de1227e27dc96c41f81e16beab76fca866cb7c2eac2918c705eac3193",
+      "namespace": "azure-arc",
+      "multiArch": true,
+      "architectures": [
+        "linux/amd64",
+        "linux/arm64"
+      ]
+    },
+    {
+      "repo": "mcr.microsoft.com/oss/v2/kubernetes/kube-state-metrics",
+      "tag": "v2.16.0",
+      "digest": "sha256:360f001078981deafca520c789c553bc77dd7d48d97efadc2e0024be82a2307e",
+      "namespace": "azure-arc",
+      "multiArch": true,
+      "architectures": [
+        "linux/amd64",
+        "linux/arm64"
+      ]
+    },
+    {
+      "repo": "mcr.microsoft.com/oss/v2/kubernetes/kubectl",
+      "tag": "v1.33.3-2",
+      "digest": "sha256:9816a7730f47a6394cf8cea31f401f939af40511c2322d7186f31273f9b5cceb",
+      "namespace": "azure-arc",
+      "multiArch": true,
+      "architectures": [
+        "linux/amd64",
+        "linux/arm64"
+      ]
+    },
+    {
+      "repo": "mcr.microsoft.com/oss/v2/kubernetes/kubectl",
+      "tag": "v1.33.4",
+      "digest": "sha256:d0c52aa74632087beb9e64cf356ad9bf95c5a244c578570e0a94a48c8a03d5ab",
+      "namespace": "azure-arc-release",
+      "multiArch": true,
+      "architectures": [
+        "linux/amd64",
+        "linux/arm64"
+      ]
+    },
+    {
+      "repo": "mcr.microsoft.com/oss/v2/kubernetes/kubectl",
+      "tag": "v1.35.0",
+      "digest": "sha256:bf497a4c8882b5483ec00034345421d6a069affec67db02953c5028cfa4149d3",
+      "namespace": "azure-iot-operations",
+      "multiArch": true,
+      "architectures": [
+        "linux/amd64",
+        "linux/arm64"
+      ]
+    },
+    {
+      "repo": "mcr.microsoft.com/oss/v2/kubernetes/kubectl",
+      "tag": "v1.35.1",
+      "digest": "sha256:4e72a7c30dc0055e9a47f5031278a9817f843f51de5574107239e38a655d1a30",
+      "namespace": "azure-extensions-usage-system",
+      "multiArch": true,
+      "architectures": [
+        "linux/amd64",
+        "linux/arm64"
+      ]
+    },
+    {
+      "repo": "mcr.microsoft.com/oss/v2/kubernetes/kubectl",
+      "tag": "v1.37.0-4",
+      "digest": "sha256:4aba4e53e1351b48fd17d466eb9ca642fa9fa010c10ff11f80fa478b9a3e6178",
+      "namespace": "azure-secret-store",
+      "multiArch": true,
+      "architectures": [
+        "linux/amd64",
+        "linux/arm64"
+      ]
+    }
+  ],
+  "helmCharts": [
+    {
+      "release": "wiextension",
+      "chartName": "azure-arc-k8s-workloadidentity",
+      "chartVersion": "1.0.13",
+      "appVersion": "1.0.13",
+      "namespace": "arc-workload-identity",
+      "ociRef": null,
+      "digest": null
+    },
+    {
+      "release": "microsoft.extensiondiagnostics-v0",
+      "chartName": "diagnostics-operator",
+      "chartVersion": "0.169.3-26299.2",
+      "appVersion": "0.169.3",
+      "namespace": "azure-arc",
+      "ociRef": null,
+      "digest": null
+    },
+    {
+      "release": "azure-arc",
+      "chartName": "azure-arc-k8sagents",
+      "chartVersion": "1.39.3",
+      "appVersion": "1.0",
+      "namespace": "azure-arc-release",
+      "ociRef": null,
+      "digest": null
+    },
+    {
+      "release": "systemextension.microsoft.extensionsusage",
+      "chartName": "azure-k8s-billing",
+      "chartVersion": "1.9.79",
+      "appVersion": "1.9.79",
+      "namespace": "azure-extensions-usage-system",
+      "ociRef": null,
+      "digest": null
+    },
+    {
+      "release": "aio-190563023-adr",
+      "chartName": "assets-arc-extension",
+      "chartVersion": "1.2.8",
+      "appVersion": "1.2.8",
+      "namespace": "azure-iot-operations",
+      "ociRef": "mcr.microsoft.com/azureiotoperations/helm/adr/assets-arc-extension:1.2.8",
+      "digest": "sha256:7abf3db14240c7181ab6c3e912ffb0f7dbb4d078aa91df3a91a44efc5555b250"
+    },
+    {
+      "release": "aio-190563023-akri",
+      "chartName": "microsoft-managed-akri",
+      "chartVersion": "1.4.0-preview.9",
+      "appVersion": "1.4.0-preview.9",
+      "namespace": "azure-iot-operations",
+      "ociRef": "mcr.microsoft.com/azureiotoperations/helm/microsoft-managed-akri:1.4.0-preview.9",
+      "digest": "sha256:d6e6334bb9821afaf82e09853df28613b439305458d2d5630d877bcbbc61462b"
+    },
+    {
+      "release": "aio-190563023-connectors",
+      "chartName": "microsoft-aio-connectors",
+      "chartVersion": "1.5.22",
+      "appVersion": "1.5.22",
+      "namespace": "azure-iot-operations",
+      "ociRef": "mcr.microsoft.com/azureiotoperations/aio-connectors/helmchart/microsoft-aio-connectors:1.5.22",
+      "digest": "sha256:075da7d7d717a062122e5150713a4e292c5de0b93356c7f71c15e740c219bf9c"
+    },
+    {
+      "release": "aio-190563023-dataflows",
+      "chartName": "dataflows",
+      "chartVersion": "1.7.3",
+      "appVersion": "1.7.3",
+      "namespace": "azure-iot-operations",
+      "ociRef": "mcr.microsoft.com/azureiotoperations/helm/dataflows:1.7.3",
+      "digest": "sha256:a5e6f4f0941c96904e517bb08263d5c0052a953869f2b65808ad0b9e0c573b46"
+    },
+    {
+      "release": "aio-190563023-mcp",
+      "chartName": "aio-mcp-capability",
+      "chartVersion": "0.1.3",
+      "appVersion": "0.1.3",
+      "namespace": "azure-iot-operations",
+      "ociRef": "mcr.microsoft.com/azureiotoperations/helm/aio-mcp-capability:0.1.3",
+      "digest": "sha256:af1745a09ead66d5a260cf3ff4559acb927c9b3b74df901548b1899874f08b61"
+    },
+    {
+      "release": "aio-190563023-mqttbroker",
+      "chartName": "aio-broker",
+      "chartVersion": "1.6.4",
+      "appVersion": "1.6.4",
+      "namespace": "azure-iot-operations",
+      "ociRef": "mcr.microsoft.com/azureiotoperations/helm/aio-broker:1.6.4",
+      "digest": "sha256:1fe4aa01c3d986a60caffd576e2542de39d8714c7854ac185eed6ccbd26cda51"
+    },
+    {
+      "release": "aio-190563023-schemaregistry",
+      "chartName": "aio-edge-registry",
+      "chartVersion": "0.1.4",
+      "appVersion": "0.1.4",
+      "namespace": "azure-iot-operations",
+      "ociRef": "mcr.microsoft.com/azureiotoperations/helm/aio-edge-registry:0.1.4",
+      "digest": "sha256:05973cde3b785b0c8da814c4073ec9864962bb676cc7bf842eb1603d46de8ffa"
+    },
+    {
+      "release": "aioobservability",
+      "chartName": "aio-opentelemetry-collector",
+      "chartVersion": "0.2.55",
+      "appVersion": "0.2.55",
+      "namespace": "azure-iot-operations",
+      "ociRef": "mcr.microsoft.com/azureiotoperations/helm/meso/aio-opentelemetry-collector:0.2.55",
+      "digest": "sha256:a32714cce2c7f5c7493abc1eb52c4c60ab71203f09c144d14e56e82ec097cf9e"
+    },
+    {
+      "release": "aioobservabilityclustermetrics",
+      "chartName": "aio-opentelemetry-collector",
+      "chartVersion": "0.2.55",
+      "appVersion": "0.2.55",
+      "namespace": "azure-iot-operations",
+      "ociRef": "mcr.microsoft.com/azureiotoperations/helm/meso/aio-opentelemetry-collector:0.2.55",
+      "digest": "sha256:a32714cce2c7f5c7493abc1eb52c4c60ab71203f09c144d14e56e82ec097cf9e"
+    },
+    {
+      "release": "aioobservabilityoperator",
+      "chartName": "aio-observability-operator",
+      "chartVersion": "0.2.55",
+      "appVersion": "0.2.55",
+      "namespace": "azure-iot-operations",
+      "ociRef": "mcr.microsoft.com/azureiotoperations/helm/meso/aio-observability-operator:0.2.55",
+      "digest": "sha256:7228debfe06a548d0f25e27657fb7ad50d8698f5f2fd9bae8636bb18021025f3"
+    },
+    {
+      "release": "azure-iot-operations-nmmja",
+      "chartName": "azure-iot-operations",
+      "chartVersion": "1.6.0-preview.60",
+      "appVersion": "1.6.0-preview.60",
+      "namespace": "azure-iot-operations",
+      "ociRef": "mcr.microsoft.com/azureiotoperations/helm/azure-iot-operations:1.6.0-preview.60",
+      "digest": "sha256:ba62d7fd83623456f25e75cbbb73dab21b98c56ee85a0e4d1f6040b67c676530"
+    },
+    {
+      "release": "azure-secret-store",
+      "chartName": "secretsync",
+      "chartVersion": "1.6.1",
+      "appVersion": "1.6.1",
+      "namespace": "azure-secret-store",
+      "ociRef": "oci://mcr.microsoft.com/microsoft.secretsynccontroller/helmchart/rc/secretsync:1.5.2",
+      "digest": "sha256:e5e5dbac44bd2a7cba75fe53057557a25df00224d9429ec21a3f80d3766fa47f"
+    },
+    {
+      "release": "cert-manager",
+      "chartName": "certmanagement",
+      "chartVersion": "1.2.3",
+      "appVersion": "1.2.3",
+      "namespace": "cert-manager",
+      "ociRef": "oci://mcr.microsoft.com/microsoft.certmanagement/helmchart/prod/certmanagement:1.0.0",
+      "digest": "sha256:0ba83ee6d443ce1034d802bf4a63ea10adddd7ddb996b8e7e4bf2e2faef15408"
+    }
+  ]
+}

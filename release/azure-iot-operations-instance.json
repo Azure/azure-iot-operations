@@ -5,8 +5,8 @@
   "metadata": {
     "_generator": {
       "name": "bicep",
-      "version": "0.47.16.16243",
-      "templateHash": "17038013306831245672"
+      "version": "0.44.1.10279",
+      "templateHash": "6967798069032187934"
     }
   },
   "definitions": {
@@ -87,6 +87,18 @@
           "type": "object",
           "properties": {
             "version": {
+              "type": "string",
+              "nullable": true
+            },
+            "registry": {
+              "type": "string",
+              "nullable": true
+            },
+            "repository": {
+              "type": "string",
+              "nullable": true
+            },
+            "imageRegistry": {
               "type": "string",
               "nullable": true
             }
@@ -1189,6 +1201,17 @@
         "description": "AIO Instance features."
       }
     },
+    "sku": {
+      "type": "string",
+      "allowedValues": [
+        "Essentials",
+        "Standard"
+      ],
+      "nullable": true,
+      "metadata": {
+        "description": "AIO Instance SKU name. Leave unset for the RP default."
+      }
+    },
     "brokerConfig": {
       "$ref": "#/definitions/_1.BrokerConfig",
       "nullable": true,
@@ -1212,13 +1235,6 @@
         "description": "Instance count for the default dataflow profile. The default is 1."
       }
     },
-    "disableOpcUaFeature": {
-      "type": "bool",
-      "defaultValue": false,
-      "metadata": {
-        "description": "Force the OPC UA feature off, overriding any opcua entry in 'features'. Small-form-factor runs set this so the caller does not have to hand-merge a features object."
-      }
-    },
     "advancedConfig": {
       "$ref": "#/definitions/_1.AdvancedConfig",
       "defaultValue": {},
@@ -1229,8 +1245,8 @@
   },
   "variables": {
     "VERSIONS": {
-      "iotOperations": "1.4.112",
-      "connectors": "1.4.14"
+      "iotOperations": "1.5.45",
+      "connectors": "1.5.22"
     },
     "TRAINS": {
       "iotOperations": "stable"
@@ -1248,6 +1264,9 @@
     "TRUST_CONFIG_MAP": "[if(variables('customerManagedTrust'), parameters('trustConfig').settings.configMapName, format('{0}-aio-ca-trust-bundle', parameters('clusterNamespace')))]",
     "TRUST_CONFIG_MAP_KEY": "[if(variables('customerManagedTrust'), parameters('trustConfig').settings.configMapKey, 'ca.crt')]",
     "OPCUA_CONNECTOR_VERSION": "[coalesce(tryGet(tryGet(parameters('advancedConfig'), 'connectors'), 'version'), variables('VERSIONS').connectors)]",
+    "CONNECTORS_CHART_REGISTRY": "[coalesce(tryGet(tryGet(parameters('advancedConfig'), 'connectors'), 'registry'), 'mcr.microsoft.com')]",
+    "CONNECTORS_CHART_REPOSITORY": "[coalesce(tryGet(tryGet(parameters('advancedConfig'), 'connectors'), 'repository'), 'azureiotoperations/aio-connectors/helmchart/microsoft-aio-connectors')]",
+    "CONNECTORS_IMAGE_REGISTRY": "[coalesce(tryGet(tryGet(parameters('advancedConfig'), 'connectors'), 'imageRegistry'), 'mcr.microsoft.com')]",
     "MQTT_SETTINGS": {
       "brokerListenerServiceName": "aio-broker",
       "brokerListenerPort": 18883,
@@ -1267,10 +1286,18 @@
     },
     "defaultAioConfigurationSettings": {
       "AgentOperationTimeoutInMinutes": "120",
+      "connectors.image.tag": "[variables('OPCUA_CONNECTOR_VERSION')]",
+      "connectors.image.registry": "[variables('CONNECTORS_CHART_REGISTRY')]",
+      "connectors.image.repository": "[variables('CONNECTORS_CHART_REPOSITORY')]",
+      "connectors.values.image.registry": "[variables('CONNECTORS_IMAGE_REGISTRY')]",
       "connectors.values.mqttBroker.address": "[format('mqtts://{0}:{1}', variables('MQTT_SETTINGS').brokerListenerHost, variables('MQTT_SETTINGS').brokerListenerPort)]",
       "connectors.values.mqttBroker.serviceAccountTokenAudience": "[variables('MQTT_SETTINGS').serviceAccountAudience]",
       "connectors.values.securityPki.applicationUri": "[format('urn:microsoft.com:aio:opc:ua:broker:{0}', variables('AIO_EXTENSION_SUFFIX'))]",
       "connectors.values.securityPki.subjectName": "[format('CN=aio-opc-opcuabroker-{0}', variables('AIO_EXTENSION_SUFFIX'))]",
+      "connectors.values.opcUaConnector.environment[0].name": "opcuabroker_FeatureManagement__EdgeRegistryPreview",
+      "connectors.values.opcUaConnector.environment[0].value": "false",
+      "connectors.values.opcUaConnector.environment[1].name": "aioconnectors_FeatureManagement__EdgeRegistryPreview",
+      "connectors.values.opcUaConnector.environment[1].value": "false",
       "dataFlows.values.tinyKube.mqttBroker.hostName": "[variables('MQTT_SETTINGS').brokerListenerHost]",
       "dataFlows.values.tinyKube.mqttBroker.port": "[variables('MQTT_SETTINGS').brokerListenerPort]",
       "dataFlows.values.tinyKube.mqttBroker.authentication.serviceAccountTokenAudience": "[variables('MQTT_SETTINGS').serviceAccountAudience]",
@@ -1290,10 +1317,7 @@
       "name": "[resourceId('Microsoft.ExtendedLocation/customLocations', coalesce(parameters('customLocationName'), format('location-{0}', variables('HASH'))))]",
       "type": "CustomLocation"
     },
-    "effectiveFeatures": "[if(parameters('disableOpcUaFeature'), union(coalesce(parameters('features'), createObject()), createObject('opcua', createObject('mode', 'Disabled', 'settings', createObject()))), parameters('features'))]",
-    "opcUaConnectorTemplateName": "[format('azureiotoperationsconnectorforopcua-{0}', substring(uniqueString(resourceId('Microsoft.IoTOperations/instances', coalesce(parameters('aioInstanceName'), format('aio-{0}', variables('HASH'))))), 0, 4))]",
-    "opcUaFeature": "[coalesce(coalesce(tryGet(parameters('features'), 'opcua'), tryGet(parameters('features'), 'connectors')), createObject())]",
-    "opcUaFeatureMode": "[if(parameters('disableOpcUaFeature'), 'Disabled', coalesce(tryGet(variables('opcUaFeature'), 'mode'), 'Stable'))]"
+    "opcUaConnectorTemplateName": "[format('azureiotoperationsconnectorforopcua-{0}', substring(uniqueString(resourceId('Microsoft.IoTOperations/instances', coalesce(parameters('aioInstanceName'), format('aio-{0}', variables('HASH'))))), 0, 4))]"
   },
   "resources": {
     "cluster": {
@@ -1336,17 +1360,18 @@
     },
     "aioInstance": {
       "type": "Microsoft.IoTOperations/instances",
-      "apiVersion": "2026-07-01",
+      "apiVersion": "2026-10-01",
       "name": "[coalesce(parameters('aioInstanceName'), format('aio-{0}', variables('HASH')))]",
       "location": "[parameters('clusterLocation')]",
       "extendedLocation": "[variables('extendedLocation')]",
       "identity": "[_2.buildIdentity(createArray(parameters('userAssignedIdentity')))]",
+      "sku": "[if(not(equals(parameters('sku'), null())), createObject('name', parameters('sku')), null())]",
       "properties": {
         "description": "An AIO instance.",
         "schemaRegistryRef": {
           "resourceId": "[parameters('schemaRegistryId')]"
         },
-        "features": "[variables('effectiveFeatures')]",
+        "features": "[parameters('features')]",
         "adrNamespaceRef": "[if(not(empty(parameters('adrNamespaceId'))), createObject('resourceId', parameters('adrNamespaceId')), null())]"
       },
       "dependsOn": [
@@ -1355,7 +1380,7 @@
     },
     "broker": {
       "type": "Microsoft.IoTOperations/instances/brokers",
-      "apiVersion": "2026-07-01",
+      "apiVersion": "2026-10-01",
       "name": "[format('{0}/{1}', coalesce(parameters('aioInstanceName'), format('aio-{0}', variables('HASH'))), 'default')]",
       "extendedLocation": "[variables('extendedLocation')]",
       "properties": {
@@ -1384,7 +1409,7 @@
     },
     "brokerAuthn": {
       "type": "Microsoft.IoTOperations/instances/brokers/authentications",
-      "apiVersion": "2026-07-01",
+      "apiVersion": "2026-10-01",
       "name": "[format('{0}/{1}/{2}', coalesce(parameters('aioInstanceName'), format('aio-{0}', variables('HASH'))), 'default', 'default')]",
       "extendedLocation": "[variables('extendedLocation')]",
       "properties": {
@@ -1406,7 +1431,7 @@
     },
     "brokerListener": {
       "type": "Microsoft.IoTOperations/instances/brokers/listeners",
-      "apiVersion": "2026-07-01",
+      "apiVersion": "2026-10-01",
       "name": "[format('{0}/{1}/{2}', coalesce(parameters('aioInstanceName'), format('aio-{0}', variables('HASH'))), 'default', 'default')]",
       "extendedLocation": "[variables('extendedLocation')]",
       "properties": {
@@ -1437,7 +1462,7 @@
     },
     "dataflowProfile": {
       "type": "Microsoft.IoTOperations/instances/dataflowProfiles",
-      "apiVersion": "2026-07-01",
+      "apiVersion": "2026-10-01",
       "name": "[format('{0}/{1}', coalesce(parameters('aioInstanceName'), format('aio-{0}', variables('HASH'))), 'default')]",
       "extendedLocation": "[variables('extendedLocation')]",
       "properties": {
@@ -1451,7 +1476,7 @@
     },
     "dataflowEndpoint": {
       "type": "Microsoft.IoTOperations/instances/dataflowEndpoints",
-      "apiVersion": "2026-07-01",
+      "apiVersion": "2026-10-01",
       "name": "[format('{0}/{1}', coalesce(parameters('aioInstanceName'), format('aio-{0}', variables('HASH'))), 'default')]",
       "extendedLocation": "[variables('extendedLocation')]",
       "properties": {
@@ -1477,7 +1502,7 @@
     },
     "artifactRegistryEndpoint": {
       "type": "Microsoft.IoTOperations/instances/registryEndpoints",
-      "apiVersion": "2026-07-01",
+      "apiVersion": "2026-10-01",
       "name": "[format('{0}/{1}', coalesce(parameters('aioInstanceName'), format('aio-{0}', variables('HASH'))), 'default')]",
       "extendedLocation": "[variables('extendedLocation')]",
       "properties": {
@@ -1493,9 +1518,8 @@
       ]
     },
     "opcUaConnectorTemplate": {
-      "condition": "[not(equals(variables('opcUaFeatureMode'), 'Disabled'))]",
       "type": "Microsoft.IoTOperations/instances/akriConnectorTemplates",
-      "apiVersion": "2026-07-01",
+      "apiVersion": "2026-10-01",
       "name": "[format('{0}/{1}', coalesce(parameters('aioInstanceName'), format('aio-{0}', variables('HASH'))), variables('opcUaConnectorTemplateName'))]",
       "extendedLocation": "[variables('extendedLocation')]",
       "properties": {
@@ -1525,6 +1549,9 @@
         "deviceInboundEndpointTypes": [
           {
             "endpointType": "Microsoft.OpcUa"
+          },
+          {
+            "endpointType": "Microsoft.OpcUa.WoT"
           }
         ]
       },
