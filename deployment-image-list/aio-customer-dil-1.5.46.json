@@ -530,8 +530,8 @@
     },
     {
       "repo": "mcr.microsoft.com/azuremonitor/opentelemetry-collector-internal",
-      "tag": "0.159.1",
-      "digest": "sha256:7e340b0eadb47aacef5bbb1df3cb7cc0d2b3a69b1e257e443d34f1321828dedc",
+      "tag": "0.163.2",
+      "digest": "sha256:301178ff19e2e7c9f10c20f108f00145418401866bc3594a08e283ebaa718825",
       "namespace": "cert-manager",
       "multiArch": true,
       "architectures": [
@@ -585,8 +585,8 @@
     },
     {
       "repo": "mcr.microsoft.com/microsoft.certmanagement/zdtrcontroller",
-      "tag": "0.1.18",
-      "digest": "sha256:f9e3eab9441a0456c8c02c9ab4c73c99ef33b93cb13d50f92cda1c42057a488e",
+      "tag": "0.1.20",
+      "digest": "sha256:993f0ce00536d12ffe4b8e699a55a282bf1d10717a95d9b3ff2bcbab71dbc8a9",
       "namespace": "cert-manager",
       "multiArch": true,
       "architectures": [
@@ -596,8 +596,8 @@
     },
     {
       "repo": "mcr.microsoft.com/microsoft.secretsynccontroller/secretsynccontroller",
-      "tag": "1.5.5",
-      "digest": "sha256:eeb31787a50b805f4499bf708422f79ddbdb15db3ce919fa37a8d5052e53b240",
+      "tag": "1.6.1",
+      "digest": "sha256:f1dcf23a1d61c10bb0d5ff14082ff68aa2d0b8e2b01a9ab084516ebaaf1a7742",
       "namespace": "azure-secret-store",
       "multiArch": true,
       "architectures": [
@@ -607,8 +607,8 @@
     },
     {
       "repo": "mcr.microsoft.com/oss/v2/azure/secrets-store/provider-azure",
-      "tag": "v1.8.2-7",
-      "digest": "sha256:86cdab2d08810a276e6be39dcf450fc699035c49854b2fc476d1d54450a134e3",
+      "tag": "v1.8.2-16",
+      "digest": "sha256:b451542dd17a9b1b1b400fa1ca768a492720b87b696f373f0494217d855aee8c",
       "namespace": "azure-secret-store",
       "multiArch": true,
       "architectures": [
@@ -629,8 +629,8 @@
     },
     {
       "repo": "mcr.microsoft.com/oss/v2/cert-manager/acmesolver",
-      "tag": "v1.21.1-2",
-      "digest": "sha256:d2870fdf090f413cd35c618234274ff615c037a8586e083ce989c676c8bb78e9",
+      "tag": "v1.21.2-4",
+      "digest": "sha256:d9e4b965d95651af3ec8f0be1cd4b947126281b8fc540ed13486831708099bdc",
       "namespace": "cert-manager",
       "multiArch": true,
       "architectures": [
@@ -640,8 +640,8 @@
     },
     {
       "repo": "mcr.microsoft.com/oss/v2/cert-manager/cainjector",
-      "tag": "v1.21.1-3",
-      "digest": "sha256:f67ef8db73b5d703835673d0471de5d8d8fc7e5692f2552fb9e841741b31a514",
+      "tag": "v1.21.2-4",
+      "digest": "sha256:41939cdfb83ac05827f1c08b718f7fa5462d1e88ea34361df69af95fdc7b9e63",
       "namespace": "cert-manager",
       "multiArch": true,
       "architectures": [
@@ -651,8 +651,8 @@
     },
     {
       "repo": "mcr.microsoft.com/oss/v2/cert-manager/controller",
-      "tag": "v1.21.1-3",
-      "digest": "sha256:f3fffea62d01e00d0f171fcf90c9337cec03edda531cf44da5211259c3bd5f59",
+      "tag": "v1.21.2-6",
+      "digest": "sha256:6da610db64e8fef3f44af3b974d3dcb4e59203059f5c26cd22dbf865cebc2413",
       "namespace": "cert-manager",
       "multiArch": true,
       "architectures": [
@@ -662,8 +662,8 @@
     },
     {
       "repo": "mcr.microsoft.com/oss/v2/cert-manager/startupapicheck",
-      "tag": "v1.21.1-3",
-      "digest": "sha256:cc0f216f7dc01c630607d54194dfd0b71587473b71a9015a3c40c4e6e45a0060",
+      "tag": "v1.21.2-4",
+      "digest": "sha256:f78942a85d668adb1250d55eadfd3f93869bd42c00d0a865c8199c3184524902",
       "namespace": "cert-manager",
       "multiArch": true,
       "architectures": [
@@ -673,8 +673,8 @@
     },
     {
       "repo": "mcr.microsoft.com/oss/v2/cert-manager/trust-manager",
-      "tag": "v0.20.3-14",
-      "digest": "sha256:d7755c70643e7a05408982a963bb2c16a9a0ed70653136469e96d3c9d6d49d28",
+      "tag": "v0.20.3-20",
+      "digest": "sha256:ed63ac440916901bebe3b991b35a103d7cbfa3880a365fe4f356faef66062316",
       "namespace": "cert-manager",
       "multiArch": true,
       "architectures": [
@@ -684,8 +684,8 @@
     },
     {
       "repo": "mcr.microsoft.com/oss/v2/cert-manager/trust-pkg",
-      "tag": "v2023.03.11-9",
-      "digest": "sha256:a64e9c9532d5545d9502d0db21a3bd30d9104a0c9d2b3b92917ff4d9a676d7bc",
+      "tag": "v2023.03.11-15",
+      "digest": "sha256:9b6a86b680835fae4bc82b926437dcfa1059317a94ba3fdc7b6631f43ccf6f72",
       "namespace": "cert-manager",
       "multiArch": true,
       "architectures": [
@@ -695,8 +695,8 @@
     },
     {
       "repo": "mcr.microsoft.com/oss/v2/cert-manager/webhook",
-      "tag": "v1.21.1-3",
-      "digest": "sha256:b7840fb2d5b36430a81366c5753a0228222c28f2986add706aac6103b02d798b",
+      "tag": "v1.21.2-6",
+      "digest": "sha256:07590933eaf8f7412f361c606b9e17a1bddf4bcecb45fcb308252b6a91f90f9e",
       "namespace": "cert-manager",
       "multiArch": true,
       "architectures": [
@@ -772,8 +772,8 @@
     },
     {
       "repo": "mcr.microsoft.com/oss/v2/kubernetes/kubectl",
-      "tag": "v1.37.0-1",
-      "digest": "sha256:86e58fa5c3c9a45ebeb1a9fe06be022619ba4f80e7f6eeeae4c93362d39ad4f9",
+      "tag": "v1.37.0-4",
+      "digest": "sha256:4aba4e53e1351b48fd17d466eb9ca642fa9fa010c10ff11f80fa478b9a3e6178",
       "namespace": "azure-secret-store",
       "multiArch": true,
       "architectures": [
@@ -912,8 +912,8 @@
     {
       "release": "azure-secret-store",
       "chartName": "secretsync",
-      "chartVersion": "1.5.5",
-      "appVersion": "1.5.5",
+      "chartVersion": "1.6.1",
+      "appVersion": "1.6.1",
       "namespace": "azure-secret-store",
       "ociRef": "oci://mcr.microsoft.com/microsoft.secretsynccontroller/helmchart/rc/secretsync:1.5.2",
       "digest": "sha256:e5e5dbac44bd2a7cba75fe53057557a25df00224d9429ec21a3f80d3766fa47f"
@@ -921,8 +921,8 @@
     {
       "release": "cert-manager",
       "chartName": "certmanagement",
-      "chartVersion": "1.2.0",
-      "appVersion": "1.2.0",
+      "chartVersion": "1.2.3",
+      "appVersion": "1.2.3",
       "namespace": "cert-manager",
       "ociRef": "oci://mcr.microsoft.com/microsoft.certmanagement/helmchart/prod/certmanagement:1.0.0",
       "digest": "sha256:0ba83ee6d443ce1034d802bf4a63ea10adddd7ddb996b8e7e4bf2e2faef15408"
